@@ -1,27 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Page</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
+
 <body>
     <h1>Welcome to Flask App</h1>
-    <p>Lets see a card below...</p>
-    {% include 'cards.html'%}
+    <!-- <p>Lets see a card below...</p>
+    {% include 'cards.html'%} -->
 
     <h1>Your Pocketbase Records</h1>
     <div>
-        <ul>
-            {% for record in records %}
-                <li>
-                    ID: {{ record.id }} - 
-                    Status: {{ record.status }} - 
-                    Created: {{ record.created }}  <!-- Adjust based on your actual field names -->
-                </li>
-            {% endfor %}
-        </ul>
+        <h1>User Details</h1>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Email Visibility</th>
+                    <th>Password</th>
+                    <th>Password Confirm</th>
+                    <th>Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.emailVisibility }}</td>
+                        <td>{{ user.password }}</td>
+                        <td>{{ user.passwordConfirm }}</td>
+                        <td>{{ user.name }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
+
 </html>

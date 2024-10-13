@@ -16,12 +16,12 @@ app.config.from_object({
 # Initialize PocketBase client
 client = PocketBase('https://finsight.pockethost.io/')
 
-# Authenticate as regular user
+# Authenticate as admin
 try:
-    user_data = client.collection("users").auth_with_password("mrprogrammer5879@gmail.com", "1234567890")
-    print("User authenticated:", user_data.is_valid)
+    admin_data = client.admins.auth_with_password("hackerrank123sab@gmail.com", "123@hack#sab")
+    print("Admin authenticated:", admin_data.is_valid)
 except Exception as e:
-    print("User authentication failed:", str(e))
+    print("Admin authentication failed:", str(e))
 
 # data = {
 #     "username": "nurari",
@@ -57,15 +57,16 @@ def home():
     #     # print("Verification request sent:", verification_response)
     # except Exception as e:
     #     print("Error:", str(e))
+
     try:
-        # Fetch records from the "example" collection
-        result = client.collection("users").get_list(1, 20)  # Adjust pagination as needed
-        records = result.items
-        print(records)
-        return render_template('index.html', records=records)
+        # Fetch all user records
+        users_result = client.collection("users").get_list(1, 100)  # Adjust the page and limit as needed
+        users = users_result.items  # Get the list of user records
     except Exception as e:
-        print("Error fetching records:", str(e))
-        return render_template('index.html', records=[])  # Return an empty list on error
+        print("Error fetching users:", str(e))
+        users = []  # Default to an empty list if there's an error
+
+    return render_template('index.html', users=users)  # Pass users data to the template
 
 if __name__ == '__main__':
     app.run(debug=True)
