@@ -1,6 +1,8 @@
 import os
 from flask import Flask, render_template
 from config import Config, DevelopmentConfig, ProductionConfig, TestingConfig
+from pocketbase import PocketBase
+from pocketbase.client import FileUpload
 
 app = Flask(__name__)
 
@@ -11,9 +13,59 @@ app.config.from_object({
     'testing': TestingConfig
 }[app.config.get('ENV', 'development')])
 
+# Initialize PocketBase client
+client = PocketBase('https://finsight.pockethost.io/')
+
+# Authenticate as regular user
+try:
+    user_data = client.collection("users").auth_with_password("mrprogrammer5879@gmail.com", "1234567890")
+    print("User authenticated:", user_data.is_valid)
+except Exception as e:
+    print("User authentication failed:", str(e))
+
+# data = {
+#     "username": "nurari",
+#     "email": "nurarisab6453@gmail.com",
+#     "emailVisibility": True,
+#     "password": "12345678",
+#     "passwordConfirm": "12345678",
+#     "name": "nurari"
+# }
+
+# try:
+#     # Create a new record in the 'users' collection
+#     record = client.collection('users').create(data)
+#     print("Record created:", record)
+
+#     # (optional) send an email verification request
+#     # verification_response = client.collection('users').request_verification(data["email"])
+#     # print("Verification request sent:", verification_response)
+# except Exception as e:
+#     print("Error:", str(e))
+
+    
+
 @app.route('/')
 def home():
-    return render_template('index.html')
+    # try:
+    #     # Create a new record in the 'users' collection
+    #     record = client.collection('users').create(data)
+    #     print("Record created:", record)
+
+    #     # (optional) send an email verification request
+    #     # verification_response = client.collection('users').request_verification('test@example.com')
+    #     # print("Verification request sent:", verification_response)
+    # except Exception as e:
+    #     print("Error:", str(e))
+    try:
+        # Fetch records from the "example" collection
+        result = client.collection("users").get_list(1, 20)  # Adjust pagination as needed
+        records = result.items
+        print(records)
+        return render_template('index.html', records=records)
+    except Exception as e:
+        print("Error fetching records:", str(e))
+        return render_template('index.html', records=[])  # Return an empty list on error
 
 if __name__ == '__main__':
     app.run(debug=True)

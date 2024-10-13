@@ -6,6 +6,7 @@ class Config:
     TESTING = False
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///default.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    POCKETBASE_URL = os.environ.get('https://finsight.pockethost.io/') or 'http://127.0.0.1:5000'  # Change this to your Pocketbase URL
 
 class DevelopmentConfig(Config):
     DEBUG = True

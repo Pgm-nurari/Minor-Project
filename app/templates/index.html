@@ -10,5 +10,18 @@
     <h1>Welcome to Flask App</h1>
     <p>Lets see a card below...</p>
     {% include 'cards.html'%}
+
+    <h1>Your Pocketbase Records</h1>
+    <div>
+        <ul>
+            {% for record in records %}
+                <li>
+                    ID: {{ record.id }} - 
+                    Status: {{ record.status }} - 
+                    Created: {{ record.created }}  <!-- Adjust based on your actual field names -->
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
