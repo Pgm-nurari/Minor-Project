@@ -21,29 +21,7 @@ try:
     admin_data = client.admins.auth_with_password("hackerrank123sab@gmail.com", "123@hack#sab")
     print("Admin authenticated:", admin_data.is_valid)
 except Exception as e:
-    print("Admin authentication failed:", str(e))
-
-# data = {
-#     "username": "nurari",
-#     "email": "nurarisab6453@gmail.com",
-#     "emailVisibility": True,
-#     "password": "12345678",
-#     "passwordConfirm": "12345678",
-#     "name": "nurari"
-# }
-
-# try:
-#     # Create a new record in the 'users' collection
-#     record = client.collection('users').create(data)
-#     print("Record created:", record)
-
-#     # (optional) send an email verification request
-#     # verification_response = client.collection('users').request_verification(data["email"])
-#     # print("Verification request sent:", verification_response)
-# except Exception as e:
-#     print("Error:", str(e))
-
-    
+    print("Admin authentication failed:", str(e))    
 
 @app.route('/')
 def home():

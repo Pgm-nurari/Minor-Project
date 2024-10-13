@@ -31,3 +31,24 @@ except Exception as e:
 #         print("Record created:", result)
 # except Exception as e:
 #     print("Error creating record:", str(e))
+
+# For adding records into 'users' collection...!
+# data = {
+#     "username": "nurari",
+#     "email": "nurarisab6453@gmail.com",
+#     "emailVisibility": True,
+#     "password": "12345678",
+#     "passwordConfirm": "12345678",
+#     "name": "nurari"
+# }
+
+# try:
+#     # Create a new record in the 'users' collection
+#     record = client.collection('users').create(data)
+#     print("Record created:", record)
+
+#     # (optional) send an email verification request
+#     # verification_response = client.collection('users').request_verification(data["email"])
+#     # print("Verification request sent:", verification_response)
+# except Exception as e:
+#     print("Error:", str(e))
