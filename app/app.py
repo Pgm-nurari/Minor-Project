@@ -14,37 +14,53 @@ app.config.from_object({
 }[app.config.get('ENV', 'development')])
 
 # Initialize PocketBase client
-client = PocketBase('https://finsight.pockethost.io/')
-
-# Authenticate as admin
-try:
-    admin_data = client.admins.auth_with_password("hackerrank123sab@gmail.com", "123@hack#sab")
-    print("Admin authenticated:", admin_data.is_valid)
-except Exception as e:
-    print("Admin authentication failed:", str(e))    
+client = PocketBase('https://finsight.pockethost.io/')  
 
 @app.route('/')
-def home():
-    # try:
-    #     # Create a new record in the 'users' collection
-    #     record = client.collection('users').create(data)
-    #     print("Record created:", record)
+def home_page():
+    navigations = [
+        ('Home', 'dashboard'),  # Redirects to dashboard
+        ('About Us', 'section'), 
+        ('Contact Us', 'section'),
+        ('Login', 'button'),
+        ('Sign Up', 'button')
+    ]
+    return render_template('index.html', navbar=navigations)
 
-    #     # (optional) send an email verification request
-    #     # verification_response = client.collection('users').request_verification('test@example.com')
-    #     # print("Verification request sent:", verification_response)
-    # except Exception as e:
-    #     print("Error:", str(e))
+@app.route('/admin')
+def admin_page():
+    navigations = [
+        ('admin', 'dashboard'),  # Redirects to admin dashboard
+        ('Users', 'section'),
+        ('Events', 'section'),
+        ('Notifications', 'button'),
+        ('Logout', 'button')
+    ]
+    return render_template('adminpage.html', navbar=navigations)
 
-    try:
-        # Fetch all user records
-        users_result = client.collection("users").get_list(1, 100)  # Adjust the page and limit as needed
-        users = users_result.items  # Get the list of user records
-    except Exception as e:
-        print("Error fetching users:", str(e))
-        users = []  # Default to an empty list if there's an error
+@app.route('/event-manager')
+def event_manager_page():
+    navigations = [
+        ('event manager', 'dashboard'),  # Redirects to event manager dashboard
+        ('Transactions', 'section'),
+        ('Events', 'section'),
+        ('Notifications', 'button'),
+        ('Logout', 'button')
+    ]
+    return render_template('eventmanagerpage.html', navbar=navigations)
 
-    return render_template('index.html', users=users)  # Pass users data to the template
+@app.route('/finance-manager')
+def finance_manager_page():
+    navigations = [
+        ('finance manager', 'dashboard'),  # Redirects to finance manager dashboard
+        ('Events', 'section'),
+        ('Transactions', 'section'),
+        ('Analysis', 'section'),
+        ('Charts', 'section'),
+        ('Notifications', 'button'),
+        ('Logout', 'button')
+    ]
+    return render_template('financemanagerpage.html', navbar=navigations)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -4,46 +4,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
+    <title>FinSight</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 
 <body>
-    <h1>Welcome to Flask App</h1>
-    <!-- <p>Lets see a card below...</p>
-    {% include 'cards.html'%} -->
+    {% include 'navbar.html' %}
 
-    <h1>Your Pocketbase Records</h1>
+    <header>
+        <h1>Welcome to FinSight</h1>
+    </header>
+
+    <section id="about_us">
+        <h2>About Us</h2>
+        <p>Information about the application...</p>
+    </section>
+
+    <section id="contact_us">
+        <h2>Contact Us</h2>
+        <p>Contact details...</p>
+    </section>
     <div>
-        <h1>User Details</h1>
-        <table border="1">
-            <thead>
-                <tr>
-                    <th>Username</th>
-                    <th>Email</th>
-                    <th>Email Visibility</th>
-                    <th>Password</th>
-                    <th>Password Confirm</th>
-                    <th>Name</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                    <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.emailVisibility }}</td>
-                        <td>{{ user.password }}</td>
-                        <td>{{ user.passwordConfirm }}</td>
-                        <td>{{ user.name }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+        <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Ut repellendus nostrum beatae sit, eius cum laborum
+            amet minima est quia at repellat consequuntur sapiente et repudiandae debitis iste veritatis deserunt!
+        </p>
     </div>
-
-    {% include 'cards.html' %}
-
 </body>
+
 
 </html>

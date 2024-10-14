@@ -52,3 +52,29 @@ except Exception as e:
 #     # print("Verification request sent:", verification_response)
 # except Exception as e:
 #     print("Error:", str(e))
+
+# try:
+    #     # Create a new record in the 'users' collection
+    #     record = client.collection('users').create(data)
+    #     print("Record created:", record)
+
+    #     # (optional) send an email verification request
+    #     # verification_response = client.collection('users').request_verification('test@example.com')
+    #     # print("Verification request sent:", verification_response)
+    # except Exception as e:
+    #     print("Error:", str(e))
+
+    # try:
+    #     # Fetch all user records
+    #     users_result = client.collection("users").get_list(1, 100)  # Adjust the page and limit as needed
+    #     users = users_result.items  # Get the list of user records
+    # except Exception as e:
+    #     print("Error fetching users:", str(e))
+    #     users = []  # Default to an empty list if there's an error
+    
+# Authenticate as admin
+    # try:
+    #     admin_data = client.admins.auth_with_password("hackerrank123sab@gmail.com", "123@hack#sab")
+    #     print("Admin authenticated:", admin_data.is_valid)
+    # except Exception as e:
+    #     print("Admin authentication failed:", str(e))      
