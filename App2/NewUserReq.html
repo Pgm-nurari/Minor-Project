@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New User Requests</title>
+    <style>
+        body {
+            font-family: 'Samsung Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .requests-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .request-card {
+            flex: 1;
+            margin: 0 10px;
+            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .request-card .field-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .request-card b {
+            color: #1e1e1e;
+            font-size: 16px;
+        }
+
+        .request-card span {
+            font-size: 16px;
+            color: #757575;
+        }
+
+        /* Password field with hide/unhide */
+        .password-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input {
+            font-size: 16px;
+            border: none;
+            background: none;
+            color: #757575;
+        }
+
+        .eye-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-left: 5px;
+            font-size: 14px;
+            color: #757575;
+        }
+
+        /* Authorize Button */
+        .authorize-btn {
+            background-color: #ff6b6b;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            align-self: center;
+        }
+
+        .authorize-btn:hover {
+            background-color: #e55b5b;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .requests-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .request-card {
+                margin: 10px 0;
+                width: 100%;
+                max-width: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Reusable New User Requests Component -->
+    <section class="requests-container">
+        <!-- User Request Card 1 -->
+        <div class="request-card">
+            <div class="field-container">
+                <b>User Name:</b> <span>User 1</span>
+            </div>
+            <div class="field-container">
+                <b>Department:</b> <span>CS</span>
+            </div>
+            <div class="field-container">
+                <b>Role:</b> <span>Finance Manager</span>
+            </div>
+            <div class="field-container">
+                <b>Email:</b> <span>finman001@mail.com</span>
+            </div>
+            <div class="field-container password-container">
+                <b>Password:</b>
+                <input type="password" value="********" class="password-input" id="password1" readonly>
+                <button class="eye-button" onclick="togglePassword('password1')">&#128065;</button>
+            </div>
+            <div class="field-container">
+                <b>Event:</b> <span>Biz Blitz</span>
+            </div>
+            <!-- Subevents only if available -->
+            <div class="field-container">
+                <b>Sub Events:</b> <span>E-Football, Market Mania</span>
+            </div>
+            <div class="field-container">
+                <b>Phone:</b> <span>67565*****</span>
+            </div>
+            <button class="authorize-btn">Authorize</button>
+        </div>
+
+       
+    </section>
+
+    <script>
+        // Toggle password visibility
+        function togglePassword(id) {
+            const passwordInput = document.getElementById(id);
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+            } else {
+                passwordInput.type = "password";
+            }
+        }
+    </script>
+</body>
+</html>
