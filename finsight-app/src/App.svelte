@@ -38,6 +38,14 @@
             type: "Sports Event"
         }
     ];
+
+	import Modal from './modal.svelte';
+    import EventForm from './eventform.svelte';
+
+    let showModal = false;
+
+    const openModal = () => showModal = true;
+    const closeModal = () => showModal = false;
 </script>
 
 <style>
@@ -82,3 +90,9 @@
         />
     {/each}
 </div>
+
+<button on:click={openModal}>Create Event</button>
+
+<Modal openModal={showModal} onClose={closeModal}>
+    <EventForm />
+</Modal>
