@@ -137,15 +137,36 @@
 
     <script>
         function validateForm() {
+            let valid = true;
             const today = new Date().toISOString().split('T')[0];
             const dateInput = document.getElementById('date');
-            if (dateInput.value > today) {
-                document.getElementById('dateError').innerText = "Date cannot be in the future";
-                return false;
-            } else {
-                document.getElementById('dateError').innerText = "";
+            const amountInput = document.getElementById('amount');
+            const billNumberInput = document.getElementById('billNumber');
+
+            // Clear all error messages
+            document.querySelectorAll('.error-message').forEach(function (el) {
+                el.innerText = "";
+            });
+
+            // Validate Bill Number
+            if (!/^[A-Za-z0-9]{3,10}$/.test(billNumberInput.value)) {
+                document.getElementById('billNumberError').innerText = "Bill number must be 3-10 alphanumeric characters.";
+                valid = false;
             }
-            return true;
+
+            // Validate Date (cannot be in the future)
+            if (dateInput.value > today) {
+                document.getElementById('dateError').innerText = "Date cannot be in the future.";
+                valid = false;
+            }
+
+            // Validate Amount (must be positive)
+            if (amountInput.value <= 0) {
+                document.getElementById('amountError').innerText = "Amount must be a positive value.";
+                valid = false;
+            }
+
+            return valid;
         }
     </script>
 </body>
