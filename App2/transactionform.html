@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Input Form</title>
+    <style>
+        body {
+            font-family: 'Samsung Sans', sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-field {
+            margin-bottom: 20px;
+        }
+
+        .form-field label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-field input, .form-field select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .form-field .rupee-symbol {
+            position: absolute;
+            margin-left: 10px;
+            margin-top: 12px;
+            font-size: 16px;
+        }
+
+        .form-field .amount-input {
+            padding-left: 25px;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Transaction Input Form</h2>
+        <form id="transactionForm" action="transaction_output.html" method="get" onsubmit="return validateForm()">
+            <div class="form-field">
+                <label for="billNumber">Bill Number</label>
+                <input type="text" id="billNumber" name="billNumber" required pattern="[A-Za-z0-9]{3,10}" title="Bill number should be alphanumeric and between 3 to 10 characters">
+                <span class="error-message" id="billNumberError"></span>
+            </div>
+            <div class="form-field">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+                <span class="error-message" id="dateError"></span>
+            </div>
+            <div class="form-field" style="position: relative;">
+                <label for="amount">Amount</label>
+                <span class="rupee-symbol">₹</span>
+                <input type="number" step="0.01" id="amount" name="amount" class="amount-input" required min="0" title="Please enter a valid amount">
+                <span class="error-message" id="amountError"></span>
+            </div>
+            <div class="form-field">
+                <label for="transactionNature">Transaction Nature</label>
+                <select id="transactionNature" name="transactionNature" required>
+                    <option value="">Select</option>
+                    <option value="Revenue">Revenue</option>
+                    <option value="Expense">Expense</option>
+                </select>
+                <span class="error-message" id="transactionNatureError"></span>
+            </div>
+            <div class="form-field">
+                <label for="transactionMode">Transaction Mode</label>
+                <select id="transactionMode" name="transactionMode" required>
+                    <option value="">Select</option>
+                    <option value="Cash">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="Net-Banking">Net-Banking</option>
+                </select>
+                <span class="error-message" id="transactionModeError"></span>
+            </div>
+            <div class="form-field">
+                <label for="transactionCategory">Transaction Category</label>
+                <select id="transactionCategory" name="transactionCategory" required>
+                    <option value="">Select</option>
+                    <option value="Asset">Asset</option>
+                    <option value="Liabilities">Liabilities</option>
+                    <option value="Equity">Equity</option>
+                </select>
+                <span class="error-message" id="transactionCategoryError"></span>
+            </div>
+            <div class="form-field">
+                <label for="partyName">Party Name</label>
+                <input type="text" id="partyName" name="partyName" required minlength="3" maxlength="50" pattern="[A-Za-z\s]+" title="Party Name should contain only letters and be between 3 to 50 characters">
+                <span class="error-message" id="partyNameError"></span>
+            </div>
+            <button type="submit" class="submit-btn">Submit Transaction</button>
+        </form>
+    </div>
+
+    <script>
+        function validateForm() {
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('date');
+            if (dateInput.value > today) {
+                document.getElementById('dateError').innerText = "Date cannot be in the future";
+                return false;
+            } else {
+                document.getElementById('dateError').innerText = "";
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>
