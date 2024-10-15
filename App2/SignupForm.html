@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #44c3b3; /* Teal background */
+        }
+
+        .image-container {
+            margin-bottom: 20px;
+        }
+
+        .image-container img {
+            width: 250px; /* Adjust width according to your image */
+        }
+
+        .form-container {
+            background-color: white;
+            padding: 15px ;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin: 10px 0 5px;
+            font-size: 14px;
+        }
+
+        input {
+            padding: 8px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-container">
+            <img src="signup-illustration.png" alt="Signup Illustration">
+        </div>
+        <div class="form-container">
+            <form>
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Value">
+
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Value">
+
+                <label for="department">Department</label>
+                <input type="text" id="department" name="department" placeholder="Value">
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Value">
+
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" name="phone" placeholder="Value">
+
+                <label for="role">Role</label>
+                <input type="text" id="role" name="role" placeholder="Value">
+
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
