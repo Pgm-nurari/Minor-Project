@@ -3,155 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New User Requests</title>
+    <title>New User Request Form</title>
     <style>
         body {
             font-family: 'Samsung Sans', sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             background-color: #f4f4f4;
         }
 
-        .requests-container {
+        .form-container {
             background-color: #fff;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            margin: 20px;
-            display: flex;
-            justify-content: space-between;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .request-card {
-            flex: 1;
-            margin: 0 10px;
-            padding: 20px;
-            background-color: #fafafa;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
         }
 
-        .request-card .field-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
+        .form-field {
+            margin-bottom: 20px;
         }
 
-        .request-card b {
-            color: #1e1e1e;
+        .form-field label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-field input, .form-field select {
+            width: 100%;
+            padding: 10px;
             font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
         }
 
-        .request-card span {
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
             font-size: 16px;
-            color: #757575;
-        }
-
-        /* Password field with hide/unhide */
-        .password-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .password-input {
-            font-size: 16px;
+            background-color: #afd46e;
+            color: #fff;
             border: none;
-            background: none;
-            color: #757575;
-        }
-
-        .eye-button {
-            background: none;
-            border: none;
-            cursor: pointer;
-            margin-left: 5px;
-            font-size: 14px;
-            color: #757575;
-        }
-
-        /* Authorize Button */
-        .authorize-btn {
-            background-color: #ff6b6b;
-            border: none;
-            color: white;
-            padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 16px;
-            align-self: center;
         }
 
-        .authorize-btn:hover {
-            background-color: #e55b5b;
+        .submit-btn:hover {
+            background-color: #94b65a;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .requests-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .request-card {
-                margin: 10px 0;
-                width: 100%;
-                max-width: 400px;
-            }
+        .error-message {
+            color: red;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Reusable New User Requests Component -->
-    <section class="requests-container">
-        <!-- User Request Card 1 -->
-        <div class="request-card">
-            <div class="field-container">
-                <b>User Name:</b> <span>User 1</span>
+    <div class="form-container">
+        <h2>New User Request Form</h2>
+        <form id="userForm" action="output.html" method="get" onsubmit="return validateForm()">
+            <div class="form-field">
+                <label for="username">User Name</label>
+                <input type="text" id="username" name="username" required minlength="3" maxlength="30" pattern="[A-Za-z\s]+" title="Username should contain only letters and be between 3 and 30 characters">
+                <span class="error-message" id="usernameError"></span>
             </div>
-            <div class="field-container">
-                <b>Department:</b> <span>CS</span>
+            <div class="form-field">
+                <label for="department">Department</label>
+                <input type="text" id="department" name="department" required minlength="2" maxlength="50" title="Department name should be between 2 and 50 characters">
+                <span class="error-message" id="departmentError"></span>
             </div>
-            <div class="field-container">
-                <b>Role:</b> <span>Finance Manager</span>
+            <div class="form-field">
+                <label for="role">Role</label>
+                <input type="text" id="role" name="role" required minlength="2" maxlength="50" title="Role should be between 2 and 50 characters">
+                <span class="error-message" id="roleError"></span>
             </div>
-            <div class="field-container">
-                <b>Email:</b> <span>finman001@mail.com</span>
+            <div class="form-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <span class="error-message" id="emailError"></span>
             </div>
-            <div class="field-container password-container">
-                <b>Password:</b>
-                <input type="password" value="********" class="password-input" id="password1" readonly>
-                <button class="eye-button" onclick="togglePassword('password1')">&#128065;</button>
+            <div class="form-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required minlength="6" maxlength="20" title="Password must be between 6 and 20 characters">
+                <span class="error-message" id="passwordError"></span>
             </div>
-            <div class="field-container">
-                <b>Event:</b> <span>Biz Blitz</span>
+            <div class="form-field">
+                <label for="event">Event</label>
+                <input type="text" id="event" name="event" required minlength="2" maxlength="50" title="Event name should be between 2 and 50 characters">
+                <span class="error-message" id="eventError"></span>
             </div>
-            <!-- Subevents only if available -->
-            <div class="field-container">
-                <b>Sub Events:</b> <span>E-Football, Market Mania</span>
+            <div class="form-field">
+                <label for="subevents">Sub Events (Optional)</label>
+                <input type="text" id="subevents" name="subevents">
             </div>
-            <div class="field-container">
-                <b>Phone:</b> <span>67565*****</span>
+            <div class="form-field">
+                <label for="phone">Phone</label>
+                <input type="text" id="phone" name="phone" required pattern="\d{10}" title="Phone number should be 10 digits">
+                <span class="error-message" id="phoneError"></span>
             </div>
-            <button class="authorize-btn">Authorize</button>
-        </div>
-
-       
-    </section>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
 
     <script>
-        // Toggle password visibility
-        function togglePassword(id) {
-            const passwordInput = document.getElementById(id);
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-            } else {
-                passwordInput.type = "password";
+        function validateForm() {
+            let valid = true;
+            const phoneInput = document.getElementById('phone');
+            const usernameInput = document.getElementById('username');
+
+            // Clear all error messages
+            document.querySelectorAll('.error-message').forEach(function (el) {
+                el.innerText = "";
+            });
+
+            // Validate Username (Only letters and spaces allowed)
+            if (!/^[A-Za-z\s]+$/.test(usernameInput.value)) {
+                document.getElementById('usernameError').innerText = "Username must contain only letters and spaces.";
+                valid = false;
             }
+
+            // Validate Phone Number (Should be exactly 10 digits)
+            if (!/^\d{10}$/.test(phoneInput.value)) {
+                document.getElementById('phoneError').innerText = "Phone number must be exactly 10 digits.";
+                valid = false;
+            }
+
+            return valid;
         }
     </script>
 </body>
