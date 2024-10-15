@@ -46,6 +46,24 @@
 
     const openModal = () => showModal = true;
     const closeModal = () => showModal = false;
+
+	import UserAuthCard from './UserAuthCard.svelte';
+
+    const userData = {
+        userName: 'User 1',
+        department: 'CS',
+        role: 'Finance Manager',
+        email: 'finman001@mail.com',
+        password: '********',
+        event: 'Biz Blitz',
+        subEvents: ['E-Football', 'Market Mania'],
+        phone: '67565*****',
+    };
+
+    const handleAuthorize = () => {
+        // Authorization logic here
+        console.log('User authorized:', userData.userName);
+    };
 </script>
 
 <style>
@@ -96,3 +114,15 @@
 <Modal openModal={showModal} onClose={closeModal}>
     <EventForm />
 </Modal>
+
+<UserAuthCard 
+    userName={userData.userName}
+    department={userData.department}
+    role={userData.role}
+    email={userData.email}
+    password={userData.password}
+    event={userData.event}
+    subEvents={userData.subEvents}
+    phone={userData.phone}
+    onAuthorize={handleAuthorize}
+/>
