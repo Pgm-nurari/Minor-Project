@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - FinSight{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='index.css') }}">
+{% endblock %}
+
+{% block content %}
+<section id="home" class="hero">
+    <h1>Event Finance Management Software</h1>
+    <p>Streamline your events and manage them with ease.</p>
+</section>
+
+<section id="features" class="features">
+    <div class="feature">
+        <h3>Secure</h3>
+        <p>Your data is encrypted using TLS protocols for maximum security.</p>
+    </div>
+    <div class="feature">
+        <h3>Easy-to-use</h3>
+        <p>Simplified onboarding and a comprehensive knowledge base.</p>
+    </div>
+    <div class="feature">
+        <h3>All-in-one</h3>
+        <p>Manage all event data seamlessly from one platform.</p>
+    </div>
+    <div class="feature">
+        <h3>Customizable</h3>
+        <p>Adapt Finsight to meet the needs of your business.</p>
+    </div>
+</section>
+
+<section id="about" class="about">
+    <h2>About Us</h2>
+    <div class="about-content">
+        <div>
+            <p>Finsight is your go-to solution for efficient event financial management...</p>
+        </div>
+        <img src="{{ url_for('static', filename='about-us-image.jpg') }}" alt="About Us Image" />
+    </div>
+</section>
+
+<section id="contact" class="contact">
+    <h2>Contact Us</h2>
+    <p>Follow us on social media or reach out via email:</p>
+    <a href="https://www.instagram.com" target="_blank" class="social-link">Instagram</a>
+    <a href="https://www.facebook.com" target="_blank" class="social-link">Facebook</a>
+    <a href="mailto:info@finsight.com" class="social-link">Gmail</a>
+</section>
+{% endblock %}

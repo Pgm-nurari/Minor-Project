@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block extra_css %} {% endblock %}
+
+{% block content %}
+    <br><br>
+    <section id="Authentication">
+        {% include '/components/userauthcard.html' %}
+    </section>
+    <section id="Events">
+        {% include '/components/eventcard.html' %}
+    </section>
+    <section id="Users"></section>
+{% endblock %}
+

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up</title>
+
+    <style>
+      /* Global reset and styling */
+       * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background-color: #f0f0f0;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #52b8b7;
+        padding: 40px;
+      }
+
+      .inner-container {
+        display: flex;
+        background-color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .form-container {
+        padding: 20px;
+        width: 400px;
+      }
+
+      .form-container h2 {
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      label {
+        margin: 10px 0 5px;
+        font-size: 14px;
+      }
+
+      input,
+      select {
+        padding: 8px;
+        font-size: 14px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        margin-bottom: 5px;
+      }
+
+      .email-group {
+        display: flex;
+        align-items: center;
+      }
+
+      .email-group input {
+        width: 45%;
+      }
+
+      .email-group span {
+        margin: 0 5px;
+      }
+
+      .error {
+        color: red;
+        font-size: 12px;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      button {
+        background-color: #000;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #555;
+      }
+
+      .image-container {
+        display: flex;
+        align-items: center;
+        margin-left: 20px;
+      }
+
+      .image-container img {
+        width: 250px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="inner-container">
+        <div class="form-container">
+          <h2>Sign Up</h2>
+          <form id="signup-form" onsubmit="validateForm(event)">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Value" required />
+            <span id="usernameError" class="error"></span>
+
+            <label>Email</label>
+            <div class="email-group">
+              <input type="text" id="emailUsername" placeholder="Username" required />
+              <span>@</span>
+              <input type="text" id="emailDomain" placeholder="domain.com" required />
+            </div>
+            <span id="emailError" class="error"></span>
+
+            <label for="department">Department</label>
+            <select id="department" required>
+              <option value="">Select Department</option>
+              <option value="Mathematics">Mathematics</option>
+              <option value="Visual Media">Visual Media</option>
+              <option value="Computer Science and IT">Computer Science and IT</option>
+              <option value="Commerce">Commerce</option>
+              <option value="Arts">Arts</option>
+            </select>
+            <span id="departmentError" class="error"></span>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Value" required />
+            <span id="passwordError" class="error"></span>
+
+            <label for="role">Role</label>
+            <select id="role" required>
+              <option value="">Select Role</option>
+              <option value="Event Manager">Event Manager</option>
+              <option value="Finance Manager">Finance Manager</option>
+            </select>
+            <span id="roleError" class="error"></span>
+
+            <button type="submit">Sign Up</button>
+          </form>
+        </div>
+        <div class="image-container">
+          <img src="/static/signupillustration.jpg" alt="Signup Illustration" />
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    function validateForm(event) {
+      event.preventDefault();
+
+      // Get form fields
+      const username = document.getElementById("username");
+      const emailUsername = document.getElementById("emailUsername");
+      const emailDomain = document.getElementById("emailDomain");
+      const department = document.getElementById("department");
+      const password = document.getElementById("password");
+      const role = document.getElementById("role");
+
+      // Get error elements
+      const usernameError = document.getElementById("usernameError");
+      const emailError = document.getElementById("emailError");
+      const departmentError = document.getElementById("departmentError");
+      const passwordError = document.getElementById("passwordError");
+      const roleError = document.getElementById("roleError");
+
+      // Clear previous error messages
+      usernameError.textContent = "";
+      emailError.textContent = "";
+      departmentError.textContent = "";
+      passwordError.textContent = "";
+      roleError.textContent = "";
+
+      let isValid = true;
+
+      // Username validation
+      if (username.value.trim().length < 3) {
+        usernameError.textContent = "Username must be at least 3 characters long.";
+        isValid = false;
+      }
+
+      // Email validation
+      const emailPattern = /^[^\s@]+$/;
+      if (!emailPattern.test(emailUsername.value) || !emailPattern.test(emailDomain.value)) {
+        emailError.textContent = "Please enter a valid email address.";
+        isValid = false;
+      }
+
+      // Department validation
+      if (department.value === "") {
+        departmentError.textContent = "Please select a department.";
+        isValid = false;
+      }
+
+      // Password validation
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordPattern.test(password.value)) {
+        passwordError.textContent =
+          "Password must be more than 8 characters, with at least one lowercase letter, one uppercase letter, one numeric digit, and one special character.";
+        isValid = false;
+      }
+
+      // Role validation
+      if (role.value === "") {
+        roleError.textContent = "Please select a role.";
+        isValid = false;
+      }
+
+      // If form is valid, submit it (or do something else as needed)
+      if (isValid) {
+        const fullEmail = `${emailUsername.value}@${emailDomain.value}`;
+        alert("Form submitted successfully with email: " + fullEmail);
+        window.location.href = "{{url_for('login')}}";
+      }
+    }
+  </script>
+</html>

@@ -1,0 +1,162 @@
+<style>
+    .cardscontainer {
+      width: 100%;
+      max-width: 1450px;
+      height: 300px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 10px;
+      padding: 16px;
+      overflow-x: auto;
+    }
+  
+    .request-card {
+      width: 300px;
+      height: 200px;
+      margin: 10px;
+      padding: 10px;
+      background-color: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+  
+    .field-container {
+      display: flex;
+      justify-content: flex-start; /* Align text to the left */
+      margin-bottom: 5px;
+      font-size: 14px;
+      font-family: "Times New Roman", Times, serif;
+    }
+  
+    .field-container b {
+      color: #1e1e1e;
+      margin-right: 5px;
+    }
+  
+    .field-container span {
+      color: #757575;
+    }
+  
+    .authorize-btn {
+      background-color: #ff6b6b;
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      align-self: center;
+    }
+  
+    .authorize-btn:hover {
+      background-color: #e55b5b;
+    }
+  
+    .authorized {
+      color: green;
+      font-weight: bold;
+    }
+  
+    .header-content {
+      margin: 0px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    .header-button {
+      display: flex;
+      gap: 15px;
+    }
+  
+    .header-button button {
+      color: #000100;
+      background-color: #afd46e;
+      font-weight: bold;
+      padding: 8px 20px;
+      border: 0;
+      border-radius: 25px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+  
+    .header-button button:hover {
+      background-color: #8bc34a;
+      transform: scale(1.05);
+    }
+  
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  
+    .card-header h3 {
+      margin: 0;
+      flex-grow: 1;
+    }
+  </style>
+  
+  <div>
+    <div class="header-content">
+      <h2>USER AUTHENTICATION</h2>
+      <div class="header-button">
+        <button>New User</button>
+      </div>
+    </div>
+    <div class="cardscontainer">
+      {% for user in users %}
+      <div class="request-card" id="user-card-{{ user.id }}">
+        <div class="card-header">
+          <h3>{{ user.username }}</h3>
+          <div id="authorizationContainer-{{ user.id }}">
+            <button class="authorize-btn" onclick="handleAuthorize({{ user.id }})">
+              Authorize
+            </button>
+          </div>
+        </div>
+        <ul>
+          <li class="field-container">
+            <b>Department:</b> <span id="department">{{ user.department }}</span>
+          </li>
+          <li class="field-container">
+            <b>Role:</b> <span id="role">{{ user.role }}</span>
+          </li>
+          <li class="field-container">
+            <b>Event:</b> <span id="event">{{ user.event }}</span>
+          </li>
+          {% if user.sub_event|length == 0 or user.role == 'Finance Manager' %}
+          <li class="field-container">
+            <b>Sub Events:</b> <span>No Sub Event Assigned!</span>
+          </li>
+          {% else %}
+          <li class="field-container" id="subEventsContainer">
+            <b>Sub Events:</b> <span id="subEvents">{{ user.sub_event }}</span>
+          </li>
+          {% endif %}
+          <li class="field-container">
+            <b>Email:</b> <span id="email">{{ user.email }}</span>
+          </li>
+          <li class="field-container">
+            <b>Phone:</b> <span id="phone">{{ user.phone }}</span>
+          </li>
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  
+  <script>
+    function handleAuthorize(userId) {
+      // Find the authorization container for this specific user card
+      const authorizationContainer = document.getElementById("authorizationContainer-" + userId);
+      if (authorizationContainer) {
+        authorizationContainer.innerHTML = '<div class="field-container authorized">Authorized</div>';
+      }
+    }
+  </script>
+  
