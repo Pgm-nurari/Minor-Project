@@ -38,3 +38,5 @@ def connect_and_read():
 
 # Run the function
 connect_and_read()
+
+print("I'm learning now")
