@@ -5,14 +5,13 @@
 {% block extra_css %} {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <br><br>
     <section id="User">
         <h1>Welcome {{user.username}}</h1>
     </section>
     <section id="Events">
         {% include '/components/eventcard.html' %}
     </section>
-    <section id="Users"></section>
-    </div>
+    <section id="Table">
+
+    </section>
 {% endblock %}

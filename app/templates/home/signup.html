@@ -227,7 +227,7 @@
       if (isValid) {
         const fullEmail = `${emailUsername.value}@${emailDomain.value}`;
         alert("Form submitted successfully with email: " + fullEmail);
-        window.location.href = "{{url_for('login')}}";
+        window.location.href = "{{url_for('home.login')}}";
       }
     }
   </script>
