@@ -7,3 +7,5 @@ from app import home
 from app import admin
 from app import event_manager
 from app import finance_manager
+
+from app.modules import validations
