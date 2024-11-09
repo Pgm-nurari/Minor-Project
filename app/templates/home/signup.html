@@ -4,113 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up</title>
-
-    <style>
-      /* Global reset and styling */
-       * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-      }
-
-      body {
-        background-color: #f0f0f0;
-      }
-
-      .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background-color: #52b8b7;
-        padding: 40px;
-      }
-
-      .inner-container {
-        display: flex;
-        background-color: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 800px;
-        width: 100%;
-      }
-
-      .form-container {
-        padding: 20px;
-        width: 400px;
-      }
-
-      .form-container h2 {
-        font-size: 18px;
-        color: #333;
-        margin-bottom: 20px;
-        text-align: center;
-      }
-
-      form {
-        display: flex;
-        flex-direction: column;
-      }
-
-      label {
-        margin: 10px 0 5px;
-        font-size: 14px;
-      }
-
-      input,
-      select {
-        padding: 8px;
-        font-size: 14px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        margin-bottom: 5px;
-      }
-
-      .email-group {
-        display: flex;
-        align-items: center;
-      }
-
-      .email-group input {
-        width: 45%;
-      }
-
-      .email-group span {
-        margin: 0 5px;
-      }
-
-      .error {
-        color: red;
-        font-size: 12px;
-        margin-bottom: 10px;
-        display: block;
-      }
-
-      button {
-        background-color: #000;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-      }
-
-      button:hover {
-        background-color: #555;
-      }
-
-      .image-container {
-        display: flex;
-        align-items: center;
-        margin-left: 20px;
-      }
-
-      .image-container img {
-        width: 250px;
-      }
-    </style>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/signup.css')}}">
   </head>
   <body>
     <div class="container">
@@ -157,7 +51,7 @@
           </form>
         </div>
         <div class="image-container">
-          <img src="/static/signupillustration.jpg" alt="Signup Illustration" />
+          <img src="{{url_for('static', filename='images/signupillustration.jpg')}}" alt="Signup Illustration" />
         </div>
       </div>
     </div>

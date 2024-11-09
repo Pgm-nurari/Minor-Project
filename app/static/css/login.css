@@ -1,0 +1,79 @@
+/* Reset and global styling */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #52B8B7;
+}
+
+/* Container styling */
+.container {
+    margin: 0 25%;
+}
+
+.login-wrapper {
+    background-color: #ffffff;
+    text-align: center;
+    padding: 40px 50px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.login-heading {
+    margin-bottom: 20px;
+    color: #2d6832;
+}
+
+/* Form styling */
+.login-form {
+    width: 300px;
+    margin: 0 auto;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.error {
+    color: red;
+    font-size: 12px;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    display: block;
+}
+
+button {
+    width: 100%;
+    background-color: #ff6b6b;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.forgot-password {
+    color: #757575;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.illustration {
+    margin-bottom: 20px;
+    max-width: 400px;
+    width: 100%;
+}

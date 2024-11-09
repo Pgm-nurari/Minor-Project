@@ -4,174 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <style>
-        /* Reset and global styling */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #52B8B7;
-        }
-
-        /* Container styling */
-        .container {
-            margin: 0 25%;
-        }
-
-        .login-wrapper {
-            background-color: #ffffff;
-            text-align: center;
-            padding: 40px 50px;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .login-heading {
-            margin-bottom: 20px;
-            color: #2d6832;
-        }
-
-        /* Form styling */
-        .login-form {
-            width: 300px;
-            margin: 0 auto;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-
-        .error {
-            color: red;
-            font-size: 12px;
-            margin-top: -10px;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        button {
-            width: 100%;
-            background-color: #ff6b6b;
-            color: #fff;
-            border: none;
-            border-radius: 6px;
-            padding: 10px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .forgot-password {
-            color: #757575;
-            font-size: 14px;
-            text-decoration: none;
-        }
-
-        .illustration {
-            margin-bottom: 20px;
-            max-width: 400px;
-            width: 100%;
-        }
-    </style>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/login.css')}}">
 </head>
 <body>
     <div class="container">
         <div class="login-wrapper">
             <h2 class="login-heading">Login</h2>
-            <img src="/static/loginillsutration.jpg" alt="Login Illustration" class="illustration" />
+            <img src="{{url_for('static', filename='images/loginillsutration.jpg')}}" alt="Login Illustration" class="illustration" />
 
             <div class="login-form">
-                <form id="loginForm" action="/app/templates/home/login.html" method="POST">
+                <form action="{{ url_for('home.login') }}" method="POST">
                     <div>
                         <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Enter your email" required />
-                        <span id="emailError" class="error">{{}}</span>
+                        <input type="text" id="email" name="email" placeholder="Enter your email" required 
+                           value="{{ email or '' }}" />
+                        {% if errors and errors.get("email") %}
+                            <span class="error">{{ errors["email"] }}</span>
+                        {% endif %}
                     </div>
 
                     <div>
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Enter your password" required />
-                        <span id="passwordError" class="error">{{}}</span>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required 
+                           value="{{ password or '' }}" />
+                        {% if errors and errors.get("password") %}
+                            <span class="error">{{ errors["password"] }}</span>
+                        {% endif %}
                     </div>
 
                     <button type="submit">Log In</button>
                     <br><br>
                     <div>
-                        <a href="{{url_for('home.forgot_password')}}" class="forgot-password">Forgot password?</a>
+                        <a href="{{ url_for('home.forgot_password') }}" class="forgot-password">Forgot password?</a>
                     </div>
                 </form>
             </div>
         </div>
     </div>
-
-    <!-- <script>
-        // JavaScript validation functions
-        function validateEmail(email) {
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return emailPattern.test(email);
-        }
-
-        function validatePassword(password) {
-            const lengthCriteria = password.length >= 8;
-            const uppercaseCriteria = /[A-Z]/.test(password);
-            const lowercaseCriteria = /[a-z]/.test(password);
-            const numberCriteria = /\d/.test(password);
-            const specialCharCriteria = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-
-            return lengthCriteria && uppercaseCriteria && lowercaseCriteria && numberCriteria && specialCharCriteria;
-        }
-
-        // Event listeners for validation
-        document.addEventListener('DOMContentLoaded', function () {
-            const emailInput = document.getElementById('email');
-            const passwordInput = document.getElementById('password');
-            const emailError = document.getElementById('emailError');
-            const passwordError = document.getElementById('passwordError');
-
-            // Validate email on input
-            emailInput.addEventListener('input', function () {
-                if (!validateEmail(emailInput.value)) {
-                    emailError.textContent = 'Please enter a valid email address.';
-                } else {
-                    emailError.textContent = '';
-                }
-            });
-
-            // Validate password on input
-            passwordInput.addEventListener('input', function () {
-                if (!validatePassword(passwordInput.value)) {
-                    passwordError.textContent = 'Password must be at least 8 characters, with uppercase, lowercase, a number, and a special character.';
-                } else {
-                    passwordError.textContent = '';
-                }
-            });
-
-            // Form submission handling
-            document.getElementById('loginForm').addEventListener('submit', function (event) {
-                event.preventDefault(); // Prevent default form submission
-
-                const isEmailValid = validateEmail(emailInput.value);
-                const isPasswordValid = validatePassword(passwordInput.value);
-
-                // Final validation check
-                if (isEmailValid && isPasswordValid) {
-                    alert('Form submitted successfully!');
-                    // Replace with fetch call or redirect if needed
-                }
-            });
-        });
-    </script> -->
 </body>
 </html>
