@@ -1,0 +1,56 @@
+.cardscontainer {
+    width: 100%;  /* Make the container width responsive */
+    max-width: 1450px;
+    height: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Ensure only 4 cards per row */
+    grid-gap: 10px;  /* Gap between the grid items */
+    padding: 16px;   /* Padding around the grid */
+    overflow-x: auto; /* Enable horizontal scrolling for additional cards */
+}
+/* Ensure the cards stack responsively on smaller screens */
+@media (max-width: 1200px) {
+    .cardscontainer {
+        grid-template-columns: repeat(3, 1fr); /* 3 cards per row for smaller screens */
+    }
+}
+
+@media (max-width: 900px) {
+    .cardscontainer {
+        grid-template-columns: repeat(2, 1fr); /* 2 cards per row for tablet-sized screens */
+    }
+}
+
+@media (max-width: 600px) {
+    .cardscontainer {
+        grid-template-columns: 1fr; /* 1 card per row for mobile screens */
+    }
+}
+
+/* Header styles */
+.header-content {
+    margin: 0px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-button {
+    display: flex;
+    gap: 15px;
+}
+
+.header-button button {
+    color: #000100;
+    background-color: #AFD46E;
+    font-weight: bold;
+    padding: 8px 20px;
+    border: 0;
+    border-radius: 25px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.header-button button:hover {
+    background-color: #8bc34a;
+    transform: scale(1.05);
+}

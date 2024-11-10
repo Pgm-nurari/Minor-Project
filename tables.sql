@@ -81,7 +81,7 @@ CREATE TABLE Account_Category (
 );
 
 -- 11. Individual Event Transaction Table
-CREATE TABLE Individual_Event_Transaction (
+CREATE TABLE Transactions_table (
     Transaction_ID INT PRIMARY KEY,
     User_ID INT,
     Event_ID INT,

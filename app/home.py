@@ -4,8 +4,10 @@ from wtforms import StringField, SubmitField, IntegerField, SelectField, Decimal
 from wtforms.validators import DataRequired, NumberRange, InputRequired, Email, Length, EqualTo, Regexp
 from app.modules import validations
 
-home_bp = Blueprint('home', __name__, url_prefix='/main')
+home_bp = Blueprint('home', __name__, url_prefix='')
 
+@home_bp.route("/")
+@home_bp.route("/index")
 @home_bp.route("/home")
 def index():
     return render_template("home/index.html")

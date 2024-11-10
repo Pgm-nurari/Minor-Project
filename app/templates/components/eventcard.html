@@ -1,19 +1,8 @@
 <style>
-    /* Container for the cards */
-.cardscontainer {
-    width: 100%;  /* Make the container width responsive */
-    max-width: 1450px;  /* Ensure it doesn't exceed 1512px */
-    height: 751px;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Ensure only 4 cards per row */
-    grid-gap: 16px;  /* Gap between the grid items */
-    padding: 16px;   /* Padding around the grid */
-    overflow-x: auto; /* Enable horizontal scrolling for additional cards */
-  }
   /* Styling for individual event cards */
   .eventcard {
-    width: 240px;
-    height: 331px;
+    width: 220px; /* Reduced width */
+    height: auto; /* Set to auto to fit content */
     background: white;
     box-shadow: 4px 10px 4px rgba(0, 0, 0, 0.25);
     border-radius: 15px;
@@ -21,137 +10,99 @@
     border: 3px #AFD46E solid;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    gap: 24px;
-  }
-  
+    padding: 12px; /* Reduced padding */
+}
+
   /* Hover effect on the event card */
   .eventcard:hover {
-    transform: translateY(-5px); /* Lift effect on hover */
-    transition: transform 0.3s ease;
+      transform: translateY(-5px); /* Lift effect on hover */
+      transition: transform 0.3s ease;
   }
-  
+
   /* Layout inside the card */
   .topbox {
-    width: 100%; /* Stretch to fit the card width */
-    height: 200px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
     align-items: center;
-    gap: 16px;
-  }
-  
-  .cardheadingbox {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  
-  .cardheading {
-    font-size: 24px;
-    font-weight: 600;
-    color: #1E1E1E;
-  }
-  
-  .cardlist {
-    align-self: stretch;
-    height: 158px;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-    gap: 12px;
-    display: flex;
-  }
-  
-  .cardlistitem {
-    width: 89px;
-    height: 22px;
-    padding-left: 2px;
-    padding-right: 2px;
-    justify-content: left;
-    align-items: left;
-    display: inline-flex;
-  }
-  
-  .cardlistitemtext {
-    color: #0b0a0a;
-    font-size: 16px;
-    font-family: 'Times New Roman', Times, serif;
-    font-weight: 400;
-    line-height: 22.40px;
-    white-space: nowrap; /* Prevents text from wrapping */
+    gap: 6px; /* Smaller gap between elements */
 }
-  
+
+  .cardheadingbox {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+  }
+
+  .cardheading {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1E1E1E;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px; /* Adjust the max-width to prevent wrapping */
+  }
+
+  .cardlist {
+      width: 100%;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      gap: 8px;
+      display: flex;
+  }
+
+  .cardlistitem {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+  }
+
+  .cardlistitemtext {
+      color: #0b0a0a;
+      font-size: 14px;
+      font-family: 'Times New Roman', Times, serif;
+      font-weight: 400;
+      line-height: 22.40px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 200px; /* Ensures text doesn't overflow */
+  }
+
   .cardbutton {
-    width: 176px;
-    height: 40px;
+    width: 160px; /* Slightly smaller button width */
+    height: 36px; /* Slightly reduced height */
     background: #AFD46E;
     border-radius: 8px;
     display: flex;
     justify-content: center;
     align-items: center;
     border: 1px solid #2C2C2C;
-  }
-  
-  .cardbutton:hover {
-    background-color: #8bc34a;
     cursor: pointer;
+    margin-top: 8px; /* Small margin to separate button from content */
+}
+
+  .cardbutton:hover {
+      background-color: #8bc34a;
   }
-  
+
   .cardbuttontext {
     color: white;
-    font-size: 16px;
+    font-size: 14px; /* Smaller font size for button text */
     text-align: center;
-  }
-  
-  /* Ensure the cards stack responsively on smaller screens */
-  @media (max-width: 1200px) {
-    .cardscontainer {
-      grid-template-columns: repeat(3, 1fr); /* 3 cards per row for smaller screens */
-    }
-  }
-  
-  @media (max-width: 900px) {
-    .cardscontainer {
-      grid-template-columns: repeat(2, 1fr); /* 2 cards per row for tablet-sized screens */
-    }
-  }
-  
-  @media (max-width: 600px) {
-    .cardscontainer {
-      grid-template-columns: 1fr; /* 1 card per row for mobile screens */
-    }
-  }
-  .header-content {
-    margin: 0px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .header-button {
-    display: flex;
-    gap: 15px;
-  }
-  
-  .header-button button {
-    color: #000100;
-    background-color: #AFD46E; /* Light green */
-    font-weight: bold;
-    padding: 8px 20px;
-    border: 0;
-    border-radius: 25px; /* Increased border-radius */
-    transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .header-button button:hover {
-    background-color: #8bc34a; /* Darker green for hover */
-    transform: scale(1.05); /* Slightly enlarges button on hover */
-  }
-  </style>
+}
+</style>
+
   
 
 <div>
