@@ -1,128 +1,155 @@
-/* base.css */
+/* General Styles */
+body {
+    font-family: "Helvetica Neue", sans-serif;
+    background-color: #f0fff4;
+    margin: 0;
+    color: #2c3e50;
+    scroll-behavior: smooth;
+    padding-top: 120px; /* Space for header */
+}
 
-/* Header styles */
+/* Header and Navbar Styles */
 header {
-    background-color: #48bb78;
-    padding: 15px;
-    position: fixed; /* Fixes the header at the top */
-    top: 0; /* Positions it at the top */
-    left: 0; /* Aligns to the left */
-    right: 0; /* Aligns to the right */
-    z-index: 1000; /* Ensures it stays above other content */
+    background-color: #66b775; /* Dark green background */
+    padding: 5px 20px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
 }
 
 .header-content {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: flex-start;
 }
 
 .header-content h1 {
     margin: 0;
     color: #fff;
+    font-size: 1.5em;
 }
 
-/* Auth Links (Login & Signup) Styles */
-.auth-links {
+.header-button {
     display: flex;
+    justify-content: flex-end;
     gap: 15px;
 }
 
-.auth-links a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 8px 15px;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
-}
-
-.auth-links a:hover {
-    background-color: #2f855a;
-}
-.auth-links button {
+.header-button a button {
     color: #000100;
     background-color: #AFD46E; /* Light green */
     font-weight: bold;
     padding: 8px 20px;
     border: 0;
-    border-radius: 25px; /* Increased border-radius */
+    border-radius: 25px;
     transition: background-color 0.3s ease, transform 0.2s ease;
-  }
-  
-  .auth-links button:hover {
-    background-color: #8bc34a; /* Darker green for hover */
-    transform: scale(1.05); /* Slightly enlarges button on hover */
-  }
+    text-decoration: none;
+}
+
+.header-button a button:hover {
+    background-color: #8bc34a;
+    transform: scale(1.05);
+}
 
 /* Navigation Styles */
 nav {
-    background-color: #2f855a; /* Darker shade of the primary color */
-    padding: 15px 0; /* Vertical padding for the navbar */
-    display: flex; /* Flexbox for layout */
-    justify-content: center; /* Center align buttons horizontally */
-    position: fixed; /* Fixes the navbar below the header */
-    top: 60px; /* Adjust based on header height */
-    left: 0; /* Aligns to the left */
-    right: 0; /* Aligns to the right */
-    z-index: 999; /* Ensures it stays above other content */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Soft shadow */
-    transition: background-color 0.3s; /* Smooth background transition */
+    display: flex;
+    justify-content: center;
 }
 
-nav:hover {
-    background-color: #276749; /* Slightly darker on hover */
-}
-
-.nav-button {
-    background-color: transparent; /* Transparent background */
-    color: white; /* White text color */
-    border: 2px solid white; /* White border */
-    border-radius: 5px; /* Rounded button corners */
-    padding: 10px 20px; /* Padding inside buttons */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 1em; /* Font size for button text */
-    transition: background-color 0.3s, color 0.3s; /* Smooth transitions */
-    margin: 0 10px; /* Space between buttons */
-}
-
-.nav-button:hover {
-    background-color: white; /* White background on hover */
-    color: #2f855a; /* Change text color on hover */
-}
-
-.nav-button.active {
-    background-color: #2f855a;
-}
-
-/* Body styles */
-body {
-    font-family: "Helvetica Neue", sans-serif;
-    background-color: #f0fff4;
-    margin: 0;
-    padding: 0;
-    color: #2c3e50;
-    scroll-behavior: smooth;
-    padding-top: 120px; /* Space for header and navbar */
-} 
-
-.footer {
-    background-color: #22543d;
+.nav-link {
     color: white;
-    text-align: center;
-    padding: 10px 20px;
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 1em;
+    padding: 8px 15px;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0 10px;
 }
 
-/* Mobile responsiveness */
+.nav-link:hover {
+    background-color: white;
+    color: #2a5a3f;
+}
+
+/* Responsive Design */
 @media (max-width: 900px) {
-    nav {
-        flex-direction: column; /* Stack buttons on smaller screens */
-        align-items: center; /* Center align buttons */
+    body {
+        padding-top: 100px;
     }
 
-    .nav-button {
-        margin: 5px 0; /* Margin between buttons */
-        width: 80%; /* Full width buttons */
+    header {
+        padding: 10px 15px;
+    }
+
+    .header-content h1 {
+        font-size: 1.2em;
+    }
+
+    nav {
+        padding: 8px;
+    }
+
+    .header-button a button,
+    .nav-link {
+        padding: 6px 10px;
     }
 }
+
+/* Footer Styles */
+footer {
+    background-color: #8dbf6b;  /* Darker green background */
+    color: #fff;  /* White text */
+    padding: 0.5rem 0;  /* Reduced top and bottom padding */
+    position: relative;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  footer .container {
+    display: flex;
+    flex-direction: row;  /* Horizontal alignment */
+    align-items: center;  /* Center the items vertically */
+    justify-content: space-between;  /* Space between elements */
+    text-align: center;
+  }
+  
+  footer .footer-links {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
+  footer .footer-links a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  footer .footer-links a:hover {
+    color: #AFD46E;  /* Light green hover effect */
+  }
+  
+  footer .footer-bottom {
+    display: flex;  /* Display in a row */
+    gap: 1rem;  /* Space between the two elements */
+    font-size: 0.875rem;  /* Slightly smaller font for copyright */
+    color: #fdfdfd;
+  }
+  
+  footer .footer-bottom a {
+    color: #2f3cf2;
+    text-decoration: none;
+  }
+  
+  footer .footer-bottom a:hover {
+    color: #fff;
+  }  

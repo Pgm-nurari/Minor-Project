@@ -1,16 +1,53 @@
 {% extends 'base.html' %} {% block title %}Admin Dashboard{% endblock %} {%
 block extra_css %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/common.css')}}">
-{% endblock %} {% block content %}
-<br /><br />
+{% endblock %} 
+
+{% block header %}
+<header class="p-3 mb-3 border-bottom" style="background-color: #66b775;">
+  <div class="d-flex align-items-center justify-content-between w-100">
+    <!-- FinSight Logo and Name aligned left -->
+    <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+      <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
+      <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
+    </a>
+
+    <!-- Navigation links centered -->
+    <ul class="nav mb-2 justify-content-center mb-md-0 flex-grow-1">
+      <li><a href="#Authentication" class="nav-link px-2 link-secondary">Dashboard</a></li>
+      <li><a href="#Events" class="nav-link px-2 link-body-emphasis">Events</a></li>
+      <li><a href="#Users table" class="nav-link px-2 link-body-emphasis">Users</a></li>
+    </ul>
+
+    <!-- User dropdown aligned right -->
+    <div class="dropdown text-end">
+      <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+      </a>
+      <ul class="dropdown-menu text-small">
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="#">Sign out</a></li>
+      </ul>
+    </div>
+  </div>
+</header>
+
+{% endblock %}
+
+
+{% block content %}
 <section id="Authentication">
   {% include '/components/userauthcard.html' %}
 </section>
+
 <section id="Events">{% include '/components/eventcard.html' %}</section>
-<section id="Users">
+
+<section id="Users table">
   <div>
     <div class="header-content">
-      <h2>USER TABLE</h2>
+      <h2>User Table</h2>
       <div class="header-button">
         <button>New User</button>
       </div>
