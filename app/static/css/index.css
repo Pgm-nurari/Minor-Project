@@ -66,9 +66,9 @@
 
 /* About Section */
 .about {
-    padding: 100px 20px;
-    text-align: center;
-    background-color: #48bb78;
+    padding: 100px 40px;
+    text-align: justify;
+    background-color: #62796b;
     color: white;
     border-radius: 10px;
     margin: 20px;
@@ -76,22 +76,41 @@
 }
 
 .about-content {
+    position: relative;
+    padding: 20px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     gap: 20px;
-    margin-top: 30px;
 }
 
-.about-content img {
-    width: 45%;
+/* Watermark background image styling */
+.watermark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.4; /* Adjust opacity for watermark effect */
+}
+
+.watermark img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.about-content div {
-    width: 50%;
+/* Text styling */
+.watermark-text {
+    position: relative;
+    z-index: 1; /* Keeps text on top of watermark */
+    font-size: 1.2em;
+    line-height: 1.6;
 }
+
+
 
 /* Contact Section */
 .contact {
