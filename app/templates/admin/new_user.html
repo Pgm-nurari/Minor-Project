@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New User Request Form</title>
+    <style>
+        body {
+            font-family: 'Samsung Sans', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+
+        .form-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-field {
+            margin-bottom: 20px;
+        }
+
+        .form-field label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .form-field input, .form-field select {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #afd46e;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #94b65a;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 12px;
+        }
+
+        .flash-messages .flash {
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .flash.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .flash.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>New User Request Form</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form id="userForm" action="{{ url_for('admin.new_user') }}" method="POST" onsubmit="return validateForm()">
+
+            <div class="form-field">
+                <label for="username">User Name</label>
+                <input type="text" id="username" name="username" required minlength="3" maxlength="30" pattern="[A-Za-z\s]+" title="Username should contain only letters and be between 3 and 30 characters">
+                <span class="error-message" id="usernameError"></span>
+            </div>
+
+            <!-- Department select dropdown -->
+            <div class="form-field">
+                <label for="department">Department</label>
+                <select id="department" name="department" required>
+                    <!-- Options will be populated here -->
+                    <option value="" disabled selected>Select Department</option>
+                    {% for department in departments %}
+                        <option value="{{ department.Dept_ID }}">{{ department.Name }}</option>
+                    {% endfor %}
+                </select>
+                <span class="error-message" id="departmentError"></span>
+            </div>
+
+            <!-- Role select dropdown -->
+            <div class="form-field">
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <!-- Options will be populated here -->
+                    <option value="" disabled selected>Select Role</option>
+                    {% for role in roles %}
+                        <option value="{{ role.Role_ID }}">{{ role.Role_Name }}</option>
+                    {% endfor %}
+                </select>
+                <span class="error-message" id="roleError"></span>
+            </div>
+
+            <div class="form-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <span class="error-message" id="emailError"></span>
+            </div>
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        function validateForm() {
+            let valid = true;
+            const usernameInput = document.getElementById('username');
+
+            // Clear all error messages
+            document.querySelectorAll('.error-message').forEach(function (el) {
+                el.innerText = "";
+            });
+
+            // Validate Username (Only letters and spaces allowed)
+            if (!/^[A-Za-z\s]+$/.test(usernameInput.value)) {
+                document.getElementById('usernameError').innerText = "Username must contain only letters and spaces.";
+                valid = false;
+            }
+            return valid;
+        }
+    </script>
+</body>
+</html>

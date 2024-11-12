@@ -1,0 +1,54 @@
+{% macro render_table(data, actions=True, table_classes="table table-striped table-success table-bordered border-dark align-middle rounded-3", action_buttons=None, is_admin_dashboard=False) %}
+  <div class="container mt-5 table-responsive">
+    {% if data %}
+      <table class="{{ table_classes }}">
+        <thead class="table-dark">
+          <tr>
+            {% for key in data[0].keys() %}
+              <th class="text-center">{{ key | title }}</th>
+            {% endfor %}
+            {% if actions %}
+              <th class="text-center">Actions</th>
+            {% endif %}
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for row in data %}
+            <tr>
+              {% for key, value in row.items() %}
+                <td class="text-center">{{ value }}</td>
+              {% endfor %}
+              {% if actions %}
+                <td class="text-center">
+                  <div class="d-flex justify-content-center">
+                    {% if action_buttons is not none %}
+                      {% for button in action_buttons %}
+                        <button 
+                          class="btn btn-{{ button['class'] }} btn-sm me-1" 
+                          {% if button['action'] %} onclick="{{ button['action'] }}({{ row['id'] }})"{% endif %}
+                        >
+                          {{ button['label'] }}
+                        </button>
+                      {% endfor %}
+                    {% else %}
+                      <!-- Default Buttons -->
+                      <button class="btn btn-warning btn-sm me-1">Edit</button>
+                      <button class="btn btn-danger btn-sm">Delete</button>
+                      {% if is_admin_dashboard %}
+                        <!-- Only for Admin Dashboard -->
+                        <button class="btn btn-success btn-sm">Authorize</button>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                </td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="text-center mt-4">No data available to display.</p>
+    {% endif %}
+  </div>
+{% endmacro %}

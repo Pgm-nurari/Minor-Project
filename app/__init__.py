@@ -1,11 +1,27 @@
+# app/__init__.py
+
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from .config import config
 
-app = Flask(__name__)
+# Initialize SQLAlchemy without an app instance here
+db = SQLAlchemy()
 
-from app import routes
-from app import home
-from app import admin
-from app import event_manager
-from app import finance_manager
+def create_app(config_name='default'):
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
 
-from app.modules import validations
+    # Initialize the db with the app
+    db.init_app(app)
+
+    # Register blueprints
+    from . import routes
+    routes.register_blueprints(app)
+
+    # Import models so they are registered with SQLAlchemy
+    with app.app_context():
+        from .modules import models  # Importing models registers them with SQLAlchemy
+    
+    return app
+
+

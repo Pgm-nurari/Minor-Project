@@ -10,14 +10,16 @@ CREATE TABLE Role (
     Role_Name VARCHAR(50) NOT NULL
 );
 
--- 3. User Table
 CREATE TABLE User (
     User_ID INT PRIMARY KEY,
     Username VARCHAR(50) NOT NULL,
     Email VARCHAR(100) NOT NULL UNIQUE,
     Password VARCHAR(255) NOT NULL,
     Role INT,
-    FOREIGN KEY (Role) REFERENCES Role(Role_ID)
+    Dept_ID INT,
+    Verified INT DEFAULT 0 CHECK (Verified IN (0, 1)),
+    FOREIGN KEY (Role) REFERENCES Role(Role_ID),
+    FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID)
 );
 
 -- 4. Event_Type Table

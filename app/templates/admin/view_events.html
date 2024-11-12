@@ -38,40 +38,15 @@
 {% endblock %}
 
 {% block content %}
-<section id="Authentication">
-  <!-- Use header_with_button to render New User button -->
-  {% set button1 = {'text': 'New User', 'action': url_for('admin.new_user'), 'class': 'header-button'} %}
-  
-  <!-- Render the header with title and button -->
-  {{ header.render_header(title='User Authentication', buttons=[button1]) }}
-  
-  <!-- Include the user authentication card -->
-  {% include '/components/userauthcard.html' %}
-</section>
-
-
 <section id="Events">
   <!-- Use header_with_button to render two buttons for the Events section -->
   {% set button1 = {'text': 'New Event', 'action': url_for('admin.new_event'), 'class': 'header-button'} %}
-  {% set button2 = {'text': 'View Events', 'action': url_for('admin.view_events'), 'class': 'header-button'} %}
   
   {{ header.render_header(
     title='Events',
-    buttons=[button1, button2]
+    buttons=[button1]
   ) }}
   
   {% include '/components/eventcard.html' %}
-</section>
-
-<section id="Users table">
-  <!-- Use header_with_button to render New User button -->
-  {% set button1 = {'text': 'New User', 'action': url_for('admin.new_user'), 'class': 'header-button'} %}
-  
-  {{ header.render_header(title='User Table', buttons=[button1]) }}
-  
-  <div>
-    <!-- Render the table with the 'is_admin_dashboard' flag set to True -->
-    {{ table.render_table(users, actions=True, is_admin_dashboard=True) }}
-  </div>
 </section>
 {% endblock %}

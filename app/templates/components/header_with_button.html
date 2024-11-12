@@ -1,0 +1,13 @@
+{% macro render_header(title, buttons) %}
+  <div class="header-content">
+    <h2>{{ title }}</h2>
+    <div class="header-button">
+      {% for button in buttons %}
+        <a href="{{ button.action }}" class="{{ button.class }}">
+          <span>{{ button.text }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+{% endmacro %}
+

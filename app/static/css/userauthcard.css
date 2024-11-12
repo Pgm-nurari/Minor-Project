@@ -1,0 +1,87 @@
+.request-card {
+  width: 300px;
+  height: 230px; /* Fixed height for uniformity */
+  margin: 10px;
+  padding: 10px;
+  background-color: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  position: relative;
+}
+
+.field-container {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-family: "Times New Roman", Times, serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.field-container b {
+  color: #1e1e1e;
+  margin-right: 5px;
+}
+
+.field-container span {
+  color: #757575;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 150px;
+}
+
+/* Tooltip on hover for extra text */
+.field-container span:hover {
+  overflow: visible;
+  white-space: normal;
+  background-color: #f0f0f0;
+  padding: 4px;
+  border-radius: 4px;
+  position: absolute;
+  z-index: 1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.authorize-btn {
+  background-color: #ff6b6b;
+  border: none;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  position: absolute;
+  top: 0.5px;
+  right: 8px; /* Adjust the right position */
+}
+
+.authorize-btn:hover {
+  background-color: #e55b5b;
+}
+
+.authorized {
+  color: green;
+  font-weight: bold;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  position: relative;
+}
+
+.card-header h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+}

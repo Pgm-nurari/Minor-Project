@@ -1,151 +1,35 @@
-<style>
-  /* Styling for individual event cards */
-  .eventcard {
-    width: 220px; /* Reduced width */
-    height: auto; /* Set to auto to fit content */
-    background: white;
-    box-shadow: 4px 10px 4px rgba(0, 0, 0, 0.25);
-    border-radius: 15px;
-    overflow: hidden;
-    border: 3px #AFD46E solid;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 12px; /* Reduced padding */
-}
-
-  /* Hover effect on the event card */
-  .eventcard:hover {
-      transform: translateY(-5px); /* Lift effect on hover */
-      transition: transform 0.3s ease;
-  }
-
-  /* Layout inside the card */
-  .topbox {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px; /* Smaller gap between elements */
-}
-
-  .cardheadingbox {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-  }
-
-  .cardheading {
-      font-size: 18px;
-      font-weight: 600;
-      color: #1E1E1E;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 200px; /* Adjust the max-width to prevent wrapping */
-  }
-
-  .cardlist {
-      width: 100%;
-      flex-direction: column;
-      justify-content: flex-start;
-      align-items: flex-start;
-      gap: 8px;
-      display: flex;
-  }
-
-  .cardlistitem {
-      display: flex;
-      align-items: center;
-      width: 100%;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-  }
-
-  .cardlistitemtext {
-      color: #0b0a0a;
-      font-size: 14px;
-      font-family: 'Times New Roman', Times, serif;
-      font-weight: 400;
-      line-height: 22.40px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      max-width: 200px; /* Ensures text doesn't overflow */
-  }
-
-  .cardbutton {
-    width: 160px; /* Slightly smaller button width */
-    height: 36px; /* Slightly reduced height */
-    background: #AFD46E;
-    border-radius: 8px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 1px solid #2C2C2C;
-    cursor: pointer;
-    margin-top: 8px; /* Small margin to separate button from content */
-}
-
-  .cardbutton:hover {
-      background-color: #8bc34a;
-  }
-
-  .cardbuttontext {
-    color: white;
-    font-size: 14px; /* Smaller font size for button text */
-    text-align: center;
-}
-</style>
-
-  
-
+<link rel="stylesheet" href="{{url_for('static',filename='css/eventcard.css')}}">
 <div>
-  <div class="header-content">
-    <h2>Events</h2>
-    <div class="header-button">
-      {% if request.endpoint == 'admin' %}
-      <button>New Event</button>
-      {% endif %}
-      <button>View Events</button>
-    </div>
-  </div>
   <div class="cardscontainer">
     {% for event in events %}
-<div class="eventcard">
-  <div class="topbox">
-    <h3 class="cardheadingbox">
-      <span class="cardheading">{{ event.event_name }}</span>
-    </h3>
-    <ul class="cardlist">
-      <li class="cardlistitem"><span class="cardlistitemtext"><strong>Status:</strong> {{ event.status }}</span></li>
-      <li class="cardlistitem"><span class="cardlistitemtext"><strong>Type:</strong> {{ event.type }}</span></li>
-      <li class="cardlistitem"><span class="cardlistitemtext"><strong>Department:</strong> {{ event.department }}</span></li>
-      <li class="cardlistitem"><span class="cardlistitemtext"><strong>Duration:</strong> {{ event.duration }}</span></li>
-    </ul>
-  </div>
-  <div>
-    {% if request.endpoint.startswith('admin') %}
-      <a href="{{ url_for('admin.event_details', event_id=event.id) }}" class="cardbutton">
-        <span class="cardbuttontext">View Event</span>
-      </a>
-    {% elif request.endpoint.startswith('event_manager') %}
-      <a href="{{ url_for('event_manager.event_details', event_id=event.id) }}" class="cardbutton">
-        <span class="cardbuttontext">View Event</span>
-      </a>
-    {% elif request.endpoint.startswith('finance_manager') %}
-      <a href="{{ url_for('finance_manager.event_details', event_id=event.id) }}" class="cardbutton">
-        <span class="cardbuttontext">View Event</span>
-      </a>
-    {% endif %}
-  </div>
-</div>
-{% endfor %}
-
+    <div class="eventcard">
+      <div class="topbox">
+        <h3 class="cardheadingbox">
+          <span class="cardheading">{{ event.event_name }}</span>
+        </h3>
+        <ul class="cardlist">
+          <li class="cardlistitem"><span class="cardlistitemtext"><strong>Status:</strong> {{ event.status }}</span></li>
+          <li class="cardlistitem"><span class="cardlistitemtext"><strong>Type:</strong> {{ event.type }}</span></li>
+          <li class="cardlistitem"><span class="cardlistitemtext"><strong>Department:</strong> {{ event.department }}</span></li>
+          <li class="cardlistitem"><span class="cardlistitemtext"><strong>Duration:</strong> {{ event.duration }}</span></li>
+        </ul>
+      </div>
+      <div>
+        {% if request.endpoint.startswith('admin') %}
+          <a href="{{ url_for('admin.event_details', event_id=event.id) }}" class="cardbutton">
+            <span class="cardbuttontext">View Event</span>
+          </a>
+        {% elif request.endpoint.startswith('event_manager') %}
+          <a href="{{ url_for('event_manager.event_details', event_id=event.id) }}" class="cardbutton">
+            <span class="cardbuttontext">View Event</span>
+          </a>
+        {% elif request.endpoint.startswith('finance_manager') %}
+          <a href="{{ url_for('finance_manager.event_details', event_id=event.id) }}" class="cardbutton">
+            <span class="cardbuttontext">View Event</span>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
   </div>
 </div>

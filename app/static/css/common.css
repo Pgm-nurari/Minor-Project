@@ -40,17 +40,48 @@
     gap: 15px;
 }
 
-.header-button button {
+/* Apply styles to header buttons only inside specific sections */
+#Authentication .header-button button,
+#Authentication .header-button a,
+#Events .header-button button,
+#Events .header-button a,
+#Users\ table .header-button button,
+#Users\ table .header-button a {
     color: #000100;
     background-color: #AFD46E;
     font-weight: bold;
-    padding: 8px 20px;
+    padding: 4px 12px; /* Reduced padding for smaller button size */
+    font-size: 14px;  /* Reduced font size */
     border: 0;
     border-radius: 25px;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.header-button button:hover {
+#Authentication .header-button button:hover,
+#Authentication .header-button a:hover,
+#Events .header-button button:hover,
+#Events .header-button a:hover,
+#Users\ table .header-button button:hover,
+#Users\ table .header-button a:hover {
+    background-color: #8bc34a;
+    transform: scale(1.05);
+}
+
+/* Main header buttons should remain unaffected */
+header .header-button button,
+header .header-button a {
+    color: #000100;
+    background-color: #AFD46E;
+    font-weight: bold;
+    padding: 4px 12px;
+    font-size: 16px;  /* Default font size for main header */
+    border: 0;
+    border-radius: 25px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+header .header-button button:hover,
+header .header-button a:hover {
     background-color: #8bc34a;
     transform: scale(1.05);
 }
