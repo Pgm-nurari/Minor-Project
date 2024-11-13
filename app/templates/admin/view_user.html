@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}View User - {{ user.name }}{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2>View User Details</h2>
+
+    <!-- Display error message if user is not found -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <!-- User Details Section -->
+    <div class="user-details">
+      <h3>Profile Information</h3>
+      <table class="table table-bordered">
+        <tbody>
+          <tr>
+            <th>Name</th>
+            <td>{{ user.name }}</td>
+          </tr>
+          <tr>
+            <th>Email</th>
+            <td>{{ user.email }}</td>
+          </tr>
+          <tr>
+            <th>Phone Number</th>
+            <td>{{ user.phone }}</td>
+          </tr>
+          <tr>
+            <th>Registered On</th>
+            <td>{{ user.registration_date }}</td>
+          </tr>
+          <tr>
+            <th>Status</th>
+            <td>
+              {% if user.is_active %}
+                <span class="badge bg-success">Active</span>
+              {% else %}
+                <span class="badge bg-danger">Inactive</span>
+              {% endif %}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Additional Information (optional) -->
+      {% if user.bio %}
+        <h4>Bio</h4>
+        <p>{{ user.bio }}</p>
+      {% endif %}
+      
+      <!-- Add any other user-specific information you want to display -->
+      <h4>Roles</h4>
+      <ul>
+        {% for role in user.roles %}
+          <li>{{ role.name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <!-- Back Button -->
+    <div class="mt-3">
+      <a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+  </div>
+{% endblock %}

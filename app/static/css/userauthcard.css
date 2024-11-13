@@ -1,23 +1,51 @@
 .request-card {
   width: 300px;
-  height: 230px; /* Fixed height for uniformity */
+  height: auto; /* Adjust the height automatically */
   margin: 10px;
   padding: 10px;
+  padding-left: 30px; /* Increased left padding for more space between text and stripe */
   background-color: #fafafa;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-between; /* Ensures the button stays at the bottom */
   overflow: hidden;
   position: relative;
+  /* Add left stripe using the pseudo-element */
+}
+
+.request-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px; /* Keep the stripe width the same */
+  height: 100%;
+  background-color: #afd46e; /* Color of the stripe */
+  border-top-left-radius: 8px; /* Round the top-left corner */
+  border-bottom-left-radius: 8px; /* Round the bottom-left corner */
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 5px; /* Reduced padding to minimize space */
+}
+
+.card-header h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
 }
 
 .field-container {
   display: flex;
   justify-content: flex-start;
-  margin-bottom: 5px;
+  margin-bottom: 5px; /* Reduced margin */
   font-size: 14px;
   font-family: "Times New Roman", Times, serif;
   overflow: hidden;
@@ -50,38 +78,49 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Authorization Button */
+/* Authorization Button */
+.authorize-form {
+  margin-top: 10px; /* Ensures some space between the last field and the button */
+  text-align: center;
+}
+
 .authorize-btn {
+  display: inline-block;
   background-color: #ff6b6b;
-  border: none;
+  padding: 4px 12px; /* Smaller padding for a more compact button */
   color: white;
-  padding: 6px 14px;
-  border-radius: 8px;
+  border-radius: 25px; /* More rounded corners */
+  font-size: 12px; /* Smaller font size */
   cursor: pointer;
-  font-size: 14px;
-  position: absolute;
-  top: 0.5px;
-  right: 8px; /* Adjust the right position */
+  border: none;
+  transition: background-color 0.3s ease; /* Smooth color change on hover */
 }
 
 .authorize-btn:hover {
   background-color: #e55b5b;
 }
 
-.authorized {
-  color: green;
-  font-weight: bold;
+/* Authorized Button */
+.authorized-btn {
+  display: inline-block;
+  background-color: #4CAF50; /* Green color */
+  color: white;
+  padding: 4px 8px;; /* Smaller padding */
+  border-radius: 25px; /* Rounded corners */
+  font-size: 12px; /* Smaller font size */
+  cursor: not-allowed; /* Prevent interaction */
+  border: none;
+  transition: background-color 0.3s ease;
 }
 
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  position: relative;
+.authorized-btn:disabled {
+  background-color: #4CAF50; /* Green color stays the same */
+  cursor: not-allowed; /* Disabled state */
 }
 
-.card-header h5 {
-  margin: 0;
-  font-size: 16px;
-  font-weight: bold;
+/* Add smooth transitions to the buttons for hover effects */
+.authorize-btn, .authorized-btn {
+  transition: background-color 0.3s ease;
 }
+

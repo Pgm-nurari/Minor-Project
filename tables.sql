@@ -11,7 +11,7 @@ CREATE TABLE Role (
 );
 
 CREATE TABLE User (
-    User_ID INT PRIMARY KEY,
+    User_ID INT AUTO_INCREMENT PRIMARY KEY ,
     Username VARCHAR(50) NOT NULL,
     Email VARCHAR(100) NOT NULL UNIQUE,
     Password VARCHAR(255) NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE Event_Type (
 
 -- 5. Event Table
 CREATE TABLE Event (
-    Event_ID INT PRIMARY KEY,
+    Event_ID INT AUTO_INCREMENT PRIMARY KEY,
     User_ID INT,
     Name VARCHAR(100) NOT NULL,
     Event_Type_ID INT,
@@ -44,7 +44,7 @@ CREATE TABLE Event (
 
 -- 6. Sub-Event Table
 CREATE TABLE Sub_Event (
-    Sub_Event_ID INT PRIMARY KEY,
+    Sub_Event_ID INT AUTO_INCREMENT PRIMARY KEY,
     User_ID INT,
     Name VARCHAR(100) NOT NULL,
     Event_Type_ID INT,
@@ -84,7 +84,7 @@ CREATE TABLE Account_Category (
 
 -- 11. Individual Event Transaction Table
 CREATE TABLE Transactions_table (
-    Transaction_ID INT PRIMARY KEY,
+    Transaction_ID INT AUTO_INCREMENT PRIMARY KEY,
     User_ID INT,
     Event_ID INT,
     Amount DECIMAL(10, 2) NOT NULL,

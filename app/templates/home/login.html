@@ -32,6 +32,10 @@
                         {% endif %}
                     </div>
 
+                    {% if errors and errors.get("general") %}
+                        <div class="error">{{ errors["general"] }}</div>
+                    {% endif %}
+
                     <button type="submit">Log In</button>
                     <br><br>
                     <div>

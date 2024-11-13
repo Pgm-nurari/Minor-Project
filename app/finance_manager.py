@@ -49,8 +49,10 @@ events = [
     },
 ]
 
-@finance_manager_bp.route('/')
-def finance_manager():
+
+@finance_manager_bp.route('/finance_manager/<int:user_id>')
+def finance_manager(user_id):
+    # Logic for finance manager, based on user_id
     return render_template('finance_manager/financemanager_dashboard.html', events=events, user=users)
 
 @finance_manager_bp.route('/event_details/<int:event_id>')

@@ -1,59 +1,42 @@
-<link rel="stylesheet" href="{{url_for('static',filename='css/userauthcard.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/userauthcard.css') }}">
 
 <div>
   <div class="cardscontainer">
-    {% for user in users %}
-    <div class="request-card" id="user-card-{{ user.id }}">
+    {% for card_data in data %}
+    <div class="request-card" id="user-card-{{ card_data.id }}">
       <div class="card-header">
-        <h5>{{ user.username }}</h5>
-        <div id="authorizationContainer-{{ user.id }}">
-          <button class="authorize-btn" onclick="handleAuthorize({{ user.id }})"> Authorize </button>
-        </div>
+        <h5>{{ card_data.name }}</h5>
       </div>
       <ul>
+        <!-- Email -->
         <li class="field-container">
-          <b>Department:</b> <span>{{ user.department }}</span>
+          <b>Email:</b>
+          <span>{{ card_data.email }}</span>
         </li>
+        
+        <!-- Role -->
         <li class="field-container">
-          <b>Role:</b> <span>{{ user.role }}</span>
+          <b>Role:</b>
+          <span>{{ card_data.role }}</span>
         </li>
+        
+        <!-- Department -->
         <li class="field-container">
-          <b>Event:</b> <span>{{ user.event }}</span>
-        </li>
-        {% if user.sub_event|length == 0 or user.role == 'Finance Manager' %}
-        <li class="field-container">
-          <b>Sub Events:</b> <span>No Sub Event Assigned!</span>
-        </li>
-        {% else %}
-        <li class="field-container">
-          <b>Sub Events:</b> <span>{{ user.sub_event }}</span>
-        </li>
-        {% endif %}
-        <li class="field-container">
-          <b>Email:</b> <span>{{ user.email }}</span>
-        </li>
-        <li class="field-container">
-          <b>Phone:</b> <span>{{ user.phone }}</span>
+          <b>Department:</b>
+          <span>{{ card_data.department }}</span>
         </li>
       </ul>
+      
+      <!-- Moved button to the bottom -->
+      {% if card_data.verified == 0 %}
+        <form action="{{ url_for('admin.authorize_user', user_id=card_data.id) }}" method="POST" class="authorize-form">
+          <button type="submit" class="authorize-btn">Authorize</button>
+        </form>
+      {% else %}
+        <!-- Show the 'Authorized' button with green color if already authorized -->
+        <button class="authorized-btn" disabled>Authorized</button>
+      {% endif %}
     </div>
     {% endfor %}
   </div>
 </div>
-
-<script>
-  function handleAuthorize(userId) {
-    const authorizationContainer = document.getElementById(
-      "authorizationContainer-" + userId
-    );
-    if (authorizationContainer) {
-      authorizationContainer.innerHTML =
-        '<div class="field-container authorized">Authorized</div>';
-    }
-  }
-
-  function handleNewUser() {
-    // Action for creating a new user
-    alert('New user creation process triggered!');
-  }
-</script>

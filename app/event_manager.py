@@ -48,14 +48,8 @@ events = [
     },
 ]
 
-@event_manager_bp.route('/')
-def event_manager():
+@event_manager_bp.route('/event_manager/<int:user_id>')
+def event_manager(user_id):
+    # Logic for event manager, based on user_id
     return render_template('event_manager/eventmanager_dash.html',events=events, data=transaction_data)
 
-@event_manager_bp.route('/event_details/<int:event_id>')
-def event_details(event_id):
-    # Get the event based on the ID
-    event = next((event for event in events if int(event['id']) == event_id), None)
-    if event is None:
-        return "Event not found", 404  # Add a 404 error page or message
-    return render_template('event_manager/event_details.html', event=event)

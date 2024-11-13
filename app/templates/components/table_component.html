@@ -1,8 +1,10 @@
-{% macro render_table(data, actions=True, table_classes="table table-striped table-success table-bordered border-dark align-middle rounded-3", action_buttons=None, is_admin_dashboard=False) %}
+<link rel="stylesheet" href="{{url_for('static',filename='css/tablecomponent.css')}}">
+
+{% macro render_table(data, actions=True, table_classes="table table-striped table-hover table-bordered", action_buttons=None, identifier_key='id', url_patterns=None) %}
   <div class="container mt-5 table-responsive">
     {% if data %}
-      <table class="{{ table_classes }}">
-        <thead class="table-dark">
+      <table class="{{ table_classes }} custom-table-card">
+        <thead class="table-primary">
           <tr>
             {% for key in data[0].keys() %}
               <th class="text-center">{{ key | title }}</th>
@@ -22,22 +24,31 @@
               {% if actions %}
                 <td class="text-center">
                   <div class="d-flex justify-content-center">
-                    {% if action_buttons is not none %}
+                    {% if action_buttons and url_patterns %}
                       {% for button in action_buttons %}
-                        <button 
-                          class="btn btn-{{ button['class'] }} btn-sm me-1" 
-                          {% if button['action'] %} onclick="{{ button['action'] }}({{ row['id'] }})"{% endif %}
+                        <a 
+                          href="{{ url_for(url_patterns[button['endpoint']], **{identifier_key: row[identifier_key]}) }}" 
+                          class="btn btn-clean btn-clean-{{ button['type'] }} me-2"
+                          {% if button.get('title') %} title="{{ button['title'] }}" {% endif %}
                         >
                           {{ button['label'] }}
-                        </button>
+                        </a>
                       {% endfor %}
                     {% else %}
-                      <!-- Default Buttons -->
-                      <button class="btn btn-warning btn-sm me-1">Edit</button>
-                      <button class="btn btn-danger btn-sm">Delete</button>
-                      {% if is_admin_dashboard %}
-                        <!-- Only for Admin Dashboard -->
-                        <button class="btn btn-success btn-sm">Authorize</button>
+                      <!-- Default action buttons if no action_buttons or url_patterns are provided -->
+                      {% if url_patterns %}
+                        <a href="{{ url_for(url_patterns['edit'], **{identifier_key: row[identifier_key]}) }}" 
+                           class="btn btn-clean btn-clean-edit me-2" 
+                           title="Edit this entry">
+                           Edit
+                        </a>
+                        <a href="{{ url_for(url_patterns['delete'], **{identifier_key: row[identifier_key]}) }}" 
+                           class="btn btn-clean btn-clean-delete me-2" 
+                           title="Delete this entry">
+                           Delete
+                        </a>
+                      {% else %}
+                        <span class="text-muted">No actions available</span>
                       {% endif %}
                     {% endif %}
                   </div>

@@ -1,44 +1,72 @@
-{% extends 'base.html' %} {% block title %}Admin Dashboard{% endblock %} {%
-    block extra_css %}
-    <link rel="stylesheet" href="{{url_for('static', filename='css/common.css')}}">
-    {% endblock %} 
-    
-    {% block header %}
-    <header class="p-3 mb-3 border-bottom" style="background-color: #66b775;">
-      <div class="d-flex align-items-center justify-content-between w-100">
-        <!-- FinSight Logo and Name aligned left -->
+{% extends 'base.html' %}
+
+{% block title %}Event Details{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+{% endblock %}
+
+{% block header %}
+<header class="p-3 mb-3 border-bottom" style="background-color: #66b775;">
+    <div class="d-flex align-items-center justify-content-between w-100">
         <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-          <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
-          <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
+            <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
+            <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
         </a>
-    
-        <!-- Navigation links centered -->
+
         <ul class="nav mb-2 justify-content-center mb-md-0 flex-grow-1">
-          <li><a href="#Authentication" class="nav-link px-2 link-secondary">Dashboard</a></li>
-          <li><a href="#Events" class="nav-link px-2 link-body-emphasis">Events</a></li>
-          <li><a href="#Users table" class="nav-link px-2 link-body-emphasis">Users</a></li>
+            <li><a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link px-2 link-secondary">Dashboard</a></li>
         </ul>
-    
-        <!-- User dropdown aligned right -->
+
         <div class="dropdown text-end">
-          <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
-          </a>
-          <ul class="dropdown-menu text-small">
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
-          </ul>
+            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://github.com/mdo.png" alt="User" width="32" height="32" class="rounded-circle">
+            </a>
+            <ul class="dropdown-menu text-small">
+                <li><a class="dropdown-item" href="#">Sign out</a></li>
+            </ul>
         </div>
-      </div>
-    </header>
-    
-    {% endblock %}
-    
-    
-    {% block content %}
-    <p>
-        {{event}}
-    </p>
-    {% endblock %}
+    </div>
+</header>
+{% endblock %}
+
+{% block content %}
+<h2>Event Details: {{ event.Name }}</h2>
+
+<!-- Display event details -->
+<ul>
+    <li><strong>Event Name:</strong> {{ event.Name }}</li>
+    <li><strong>Event Type:</strong> {{ event.event_type.Event_Type_Name if event.event_type else "N/A" }}</li>
+    <li><strong>Department:</strong> {{ event.department.Name if event.department else "N/A" }}</li>
+    <li><strong>Date:</strong> {{ event.Date.strftime('%Y-%m-%d %H:%M') if event.Date else "N/A" }}</li>
+    <li><strong>Event Manager:</strong> 
+        {% if event.event_manager %}
+            {{ event.event_manager.Username }}
+        {% else %}
+            N/A
+        {% endif %}
+    </li>
+    <li><strong>Finance Manager:</strong> 
+        {% if event.finance_manager %}
+            {{ event.finance_manager.Username }}
+        {% else %}
+            N/A
+        {% endif %}
+    </li>
+</ul>
+
+<!-- Display sub-events if available -->
+{% if sub_events %}
+    <h3>Sub-Events</h3>
+    <ul>
+        {% for sub_event in sub_events %}
+            <li>
+                <strong>{{ sub_event.Name }}</strong> - {{ sub_event.Date.strftime('%Y-%m-%d') }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No sub-events available for this event.</p>
+{% endif %}
+
+{% endblock %}

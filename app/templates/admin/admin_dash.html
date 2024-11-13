@@ -71,7 +71,16 @@
   
   <div>
     <!-- Render the table with the 'is_admin_dashboard' flag set to True -->
-    {{ table.render_table(users, actions=True, is_admin_dashboard=True) }}
+    {{ table.render_table(
+      users_table, 
+      actions=True, 
+      identifier_key='user_id', 
+      action_buttons=[
+        {'endpoint': 'edit', 'label': 'Edit', 'class': 'warning'},
+        {'endpoint': 'delete', 'label': 'Delete', 'class': 'danger'}
+      ],
+      url_patterns={'edit': 'admin.edit_user', 'delete': 'admin.delete_user'}
+    ) }}
   </div>
 </section>
 {% endblock %}

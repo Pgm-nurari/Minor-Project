@@ -1,128 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='css/signup.css')}}">
-  </head>
-  <body>
-    <div class="container">
-      <div class="inner-container">
-        <div class="form-container">
-          <h2>Sign Up</h2>
-          <form id="signup-form" onsubmit="validateForm(event)">
-            <label for="username">Username</label>
-            <input type="text" id="username" placeholder="Value" required />
-            <span id="usernameError" class="error"></span>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+</head>
+<body>
+  <div class="container">
+    <div class="inner-container">
+      <div class="form-container">
+        <h2>Sign Up</h2>
+        {% if error_messages.get("general") %}
+          <p style="color: red;">{{ error_messages["general"] }}</p>
+        {% endif %}
+        <form id="signup-form" method="POST">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Enter your username" value="{{ request.form.get('username') }}" required />
+          {% if error_messages.get('username') %}
+            <span class="error" style="color: red;">{{ error_messages['username'] }}</span>
+          {% endif %}
 
-            <label>Email</label>
-            <div class="email-group">
-              <input type="text" id="emailUsername" placeholder="Username" required />
-              <span>@</span>
-              <input type="text" id="emailDomain" placeholder="domain.com" required />
-            </div>
-            <span id="emailError" class="error"></span>
+          <label for="email">Email</label>
+          <input type="text" id="email" name="email" placeholder="Enter your email" value="{{ request.form.get('email') }}" required />
+          {% if error_messages.get('email') %}
+            <span class="error" style="color: red;">{{ error_messages['email'] }}</span>
+          {% endif %}
 
-            <label for="department">Department</label>
-            <select id="department" required>
-              <option value="">Select Department</option>
-              <option value="Mathematics">Mathematics</option>
-              <option value="Visual Media">Visual Media</option>
-              <option value="Computer Science and IT">Computer Science and IT</option>
-              <option value="Commerce">Commerce</option>
-              <option value="Arts">Arts</option>
-            </select>
-            <span id="departmentError" class="error"></span>
+          <label for="department">Department</label>
+          <select id="department" name="department" required>
+            <option value="">Select Department</option>
+            {% for dept in departments %}
+              <option value="{{ dept.Dept_ID }}" {% if dept.Dept_ID == request.form.get('department') %}selected{% endif %}>{{ dept.Name }}</option>
+            {% endfor %}
+          </select>
+          {% if error_messages.get('department') %}
+            <span class="error" style="color: red;">{{ error_messages['department'] }}</span>
+          {% endif %}
 
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Value" required />
-            <span id="passwordError" class="error"></span>
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required />
+          {% if error_messages.get('password') %}
+            <span class="error" style="color: red;">{{ error_messages['password'] }}</span>
+          {% endif %}
 
-            <label for="role">Role</label>
-            <select id="role" required>
-              <option value="">Select Role</option>
-              <option value="Event Manager">Event Manager</option>
-              <option value="Finance Manager">Finance Manager</option>
-            </select>
-            <span id="roleError" class="error"></span>
+          <label for="confirmPassword">Confirm Password</label>
+          <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter your password" required />
+          {% if error_messages.get('confirmPassword') %}
+            <span class="error" style="color: red;">{{ error_messages['confirmPassword'] }}</span>
+          {% endif %}
 
-            <button type="submit">Sign Up</button>
-          </form>
-        </div>
-        <div class="image-container">
-          <img src="{{url_for('static', filename='images/signupillustration.jpg')}}" alt="Signup Illustration" />
-        </div>
+          <label for="role">Role</label>
+          <select id="role" name="role" required>
+            <option value="">Select Role</option>
+            {% for role in roles %}
+              <option value="{{ role.Role_ID }}" {% if role.Role_ID == request.form.get('role') %}selected{% endif %}>{{ role.Role_Name }}</option>
+            {% endfor %}
+          </select>
+          {% if error_messages.get('role') %}
+            <span class="error" style="color: red;">{{ error_messages['role'] }}</span>
+          {% endif %}
+
+          <button type="submit">Sign Up</button>
+        </form>
+      </div>
+      <div class="image-container">
+        <img src="{{ url_for('static', filename='images/signupillustration.jpg') }}" alt="Signup Illustration" />
       </div>
     </div>
-  </body>
-  <script>
-    function validateForm(event) {
-      event.preventDefault();
-
-      // Get form fields
-      const username = document.getElementById("username");
-      const emailUsername = document.getElementById("emailUsername");
-      const emailDomain = document.getElementById("emailDomain");
-      const department = document.getElementById("department");
-      const password = document.getElementById("password");
-      const role = document.getElementById("role");
-
-      // Get error elements
-      const usernameError = document.getElementById("usernameError");
-      const emailError = document.getElementById("emailError");
-      const departmentError = document.getElementById("departmentError");
-      const passwordError = document.getElementById("passwordError");
-      const roleError = document.getElementById("roleError");
-
-      // Clear previous error messages
-      usernameError.textContent = "";
-      emailError.textContent = "";
-      departmentError.textContent = "";
-      passwordError.textContent = "";
-      roleError.textContent = "";
-
-      let isValid = true;
-
-      // Username validation
-      if (username.value.trim().length < 3) {
-        usernameError.textContent = "Username must be at least 3 characters long.";
-        isValid = false;
-      }
-
-      // Email validation
-      const emailPattern = /^[^\s@]+$/;
-      if (!emailPattern.test(emailUsername.value) || !emailPattern.test(emailDomain.value)) {
-        emailError.textContent = "Please enter a valid email address.";
-        isValid = false;
-      }
-
-      // Department validation
-      if (department.value === "") {
-        departmentError.textContent = "Please select a department.";
-        isValid = false;
-      }
-
-      // Password validation
-      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      if (!passwordPattern.test(password.value)) {
-        passwordError.textContent =
-          "Password must be more than 8 characters, with at least one lowercase letter, one uppercase letter, one numeric digit, and one special character.";
-        isValid = false;
-      }
-
-      // Role validation
-      if (role.value === "") {
-        roleError.textContent = "Please select a role.";
-        isValid = false;
-      }
-
-      // If form is valid, submit it (or do something else as needed)
-      if (isValid) {
-        const fullEmail = `${emailUsername.value}@${emailDomain.value}`;
-        alert("Form submitted successfully with email: " + fullEmail);
-        window.location.href = "{{url_for('home.login')}}";
-      }
-    }
-  </script>
+  </div>
+</body>
 </html>
