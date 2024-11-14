@@ -1,0 +1,35 @@
+{# event_card_macro.html #}
+{% macro render_event_cards(events, user_role, minimum_cards=None) %}
+  <div class="cardscontainer">
+    {% for item in events[:minimum_cards if minimum_cards else events | length] %}
+      <div class="eventcard">
+        <div class="topbox">
+          <h3 class="cardheadingbox">
+            <span class="cardheading">{{ item.event_name }}</span>
+          </h3>
+          <ul class="cardlist">
+            <li class="cardlistitem"><span class="cardlistitemtext"><strong>Status:</strong> {{ item.status }}</span></li>
+            <li class="cardlistitem"><span class="cardlistitemtext"><strong>Type:</strong> {{ item.type }}</span></li>
+            <li class="cardlistitem"><span class="cardlistitemtext"><strong>Department:</strong> {{ item.department }}</span></li>
+            <li class="cardlistitem"><span class="cardlistitemtext"><strong>Event Manager:</strong> {{ item.event_manager }}</span></li>
+          </ul>
+        </div>
+        <div>
+          {% if user_role == 'admin' %}
+            <a href="{{ url_for('admin.event_details', event_id=item.id if 'sub_event' not in item.__class__.__name__.lower() else item.parent_event_id) }}" class="cardbutton">
+              <span class="cardbuttontext">View Event</span>
+            </a>
+          {% elif user_role == 'event_manager' %}
+            <a href="{{ url_for('event_manager.event_details', event_id=item.id if 'sub_event' not in item.__class__.__name__.lower() else item.parent_event_id) }}" class="cardbutton">
+              <span class="cardbuttontext">View Event</span>
+            </a>
+          {% elif user_role == 'finance_manager' %}
+            <a href="{{ url_for('finance_manager.event_details', event_id=item.id if 'sub_event' not in item.__class__.__name__.lower() else item.parent_event_id) }}" class="cardbutton">
+              <span class="cardbuttontext">View Event</span>
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endmacro %}

@@ -139,8 +139,8 @@ def create_single_event():
     event_type = request.form.get('eventType')
     event_date = request.form.get('eventDate')
     department_id = request.form.get('department')
-    event_manager_id = request.form.get('EveMan')  # Updated to match form name
-    finance_manager_id = request.form.get('FinMan')  # Updated to match form name
+    event_manager_id = request.form.get('EveMan')  
+    finance_manager_id = request.form.get('FinMan')  
 
     # Validate required fields
     if not event_name or not event_type or not event_date or not event_manager_id or not finance_manager_id:
@@ -217,7 +217,7 @@ def create_multiple_events():
         Name=event_name,
         Event_Type_ID=event_type,
         Date=event_start_date,
-        Days=event_duration,  # Set the 'Days' as the number of unique dates
+        Days=event_duration,  
         Dept_ID=department_id,
         Event_Manager=event_manager_id,
         Finance_Manager=finance_manager_id
@@ -375,7 +375,7 @@ def view_user(user_id):
         flash(f"User with ID {user_id} not found.", "error")
         return redirect(url_for('admin.admin_dashboard'))
     
-    user_info = get_user_info(user)  # Retrieve structured user data
+    user_info = get_user_info(user)  
     return render_template('admin/view_user.html', user=user_info)
 
 @admin_bp.route('/edit_user/<int:user_id>', methods=['GET', 'POST'])
@@ -421,3 +421,11 @@ def delete_user(user_id):
     else:
         return redirect(url_for('admin.admin_dashboard'))
 
+@admin_bp.route('/users')
+def users_table():
+    # Retrieve all users
+    users = filter_data(User)  # Fetch all users
+
+    # Prepare structured data for each user by calling get_user_info for each one
+    user_data = [get_user_info(user) for user in users]
+    return render_template('admin/user_table.html',data=user_data, users_table = get_user_table_data())

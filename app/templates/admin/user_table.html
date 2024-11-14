@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% import 'components/table_component.html' as table %}
 {% import 'components/header_with_button.html' as header %}
-{% import 'components/event_card_macro.html' as event_card %}
-{% import 'components/userauthcard.html' as user_auth_card %}
 {% import 'admin/header_bar.html' as admin_header %}
+{% import 'components/userauthcard.html' as user_auth_card %}
 
 {% block title %}Admin Dashboard{% endblock %}
 
@@ -18,22 +17,6 @@
 {% endblock %}
 
 {% block content %}
-<section id="Events">
-  <!-- Render New Event and View Events buttons with header component -->
-  {% set button1 = {'text': 'New Event', 'action': url_for('admin.new_event'), 'class': 'header-button'} %}
-  {% set button2 = {'text': 'View Events', 'action': url_for('admin.view_events'), 'class': 'header-button'} %}
-  {{ header.render_header(title='Events', buttons=[button1, button2]) }}
-
-  <!-- Check if there are events to display, otherwise prompt to create new events -->
-  <div class="cardscontainer">
-    {% if events %}
-      {{ event_card.render_event_cards(events, user_role='admin', minimum_cards=7) }}
-    {% else %}
-      <p>No events found. <a style="text-decoration:none;" href="{{ url_for('admin.new_event') }}">Create a new event</a> to get started.</p>
-    {% endif %}
-  </div>
-</section>
-
 <section id="Authentication">
   <!-- Render New User button with header component -->
   {% set button1 = {'text': 'New User', 'action': url_for('admin.new_user'), 'class': 'header-button'} %}
@@ -50,6 +33,26 @@
         <p>No unauthorized users found. <a href="{{ url_for('admin.new_user') }}" style="text-decoration: none;">Create New User</a></p>
       {% endif %}
     </div>
+  </div>
+</section>
+
+<section id="Users table">
+  <!-- Render New User button with header component -->
+  {% set button1 = {'text': 'New User', 'action': url_for('admin.new_user'), 'class': 'header-button'} %}
+  {{ header.render_header(title='User Table', buttons=[button1]) }}
+
+  <div>
+    <!-- Render the users table with Edit and Delete options -->
+    {{ table.render_table(
+      users_table, 
+      actions=True, 
+      identifier_key='user_id', 
+      action_buttons=[
+        {'endpoint': 'edit', 'label': 'Edit', 'class': 'warning'},
+        {'endpoint': 'delete', 'label': 'Delete', 'class': 'danger'}
+      ],
+      url_patterns={'edit': 'admin.edit_user', 'delete': 'admin.delete_user'}
+    ) }}
   </div>
 </section>
 {% endblock %}

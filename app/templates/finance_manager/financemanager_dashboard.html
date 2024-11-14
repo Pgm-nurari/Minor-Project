@@ -4,40 +4,53 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{url_for('static',filename='css/common.css')}}">
+<style>
+  .hover-pill {
+    padding: 8px 16px;
+    border-radius: 50px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+  .hover-pill:hover {
+      background-color: #AFD46E;  /* Light green background on hover */
+      color: white;               /* White text on hover */
+      text-decoration: none;      /* Remove underline */
+  }
+</style>
 {% endblock %}
 
 {% block header %}
 <header class="p-3 mb-3 border-bottom" style="background-color: #66b775;">
-    <div class="d-flex align-items-center justify-content-between w-100">
-      <!-- FinSight Logo and Name aligned left -->
-      <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-        <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
-        <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
-      </a>
-  
-      <!-- Navigation links centered -->
-      <ul class="nav mb-2 justify-content-center mb-md-0 flex-grow-1">
-        <li><a href="#Overview" class="nav-link px-2 link-body-emphasis">Overview</a></li>
-        <li><a href="#Inventory" class="nav-link px-2 link-body-emphasis">Inventory</a></li>
-        <li><a href="#Customers" class="nav-link px-2 link-body-emphasis">Customers</a></li>
-        <li><a href="#Products" class="nav-link px-2 link-body-emphasis">Products</a></li>
-      </ul>
+  <div class="d-flex align-items-center justify-content-between w-100">
+    <!-- FinSight Logo and Name aligned left -->
+    <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+      <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
+      <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
+    </a>
 
-      <!-- User dropdown aligned right -->
-      <div class="dropdown text-end">
-        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
-        </a>
-        <ul class="dropdown-menu text-small">
-          <li><a class="dropdown-item" href="#">New project...</a></li>
-          <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li><a class="dropdown-item" href="#">Profile</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="{{url_for('home.index')}}">Sign out</a></li>
-        </ul>
-      </div>
+    <!-- Navigation links centered -->
+    <ul class="nav mb-2 justify-content-center mb-md-0 flex-grow-1">
+      <li><a href="#Overview" class="nav-link px-2 link-body-emphasis hover-pill">Overview</a></li>
+      <li><a href="#Inventory" class="nav-link px-2 link-body-emphasis hover-pill">Inventory</a></li>
+      <li><a href="#Customers" class="nav-link px-2 link-body-emphasis hover-pill">Customers</a></li>
+      <li><a href="#Products" class="nav-link px-2 link-body-emphasis hover-pill">Products</a></li>
+    </ul>
+
+    <!-- User dropdown aligned right -->
+    <div class="dropdown text-end">
+      <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+        <img src="https://github.com/mdo.png" alt="User Profile" width="32" height="32" class="rounded-circle">
+      </a>
+      <ul class="dropdown-menu text-small">
+        <li><a class="dropdown-item" href="#">New project...</a></li>
+        <li><a class="dropdown-item" href="#">Settings</a></li>
+        <li><a class="dropdown-item" href="#">Profile</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item" href="{{ url_for('home.index') }}">Sign out</a></li>
+      </ul>
     </div>
-  </header>   
+  </div>
+</header>  
 {% endblock %}
 
 {% block content %}

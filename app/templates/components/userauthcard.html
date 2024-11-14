@@ -1,42 +1,36 @@
-<link rel="stylesheet" href="{{ url_for('static', filename='css/userauthcard.css') }}">
-
-<div>
-  <div class="cardscontainer">
-    {% for card_data in data %}
-    <div class="request-card" id="user-card-{{ card_data.id }}">
-      <div class="card-header">
-        <h5>{{ card_data.name }}</h5>
-      </div>
-      <ul>
-        <!-- Email -->
-        <li class="field-container">
-          <b>Email:</b>
-          <span>{{ card_data.email }}</span>
-        </li>
-        
-        <!-- Role -->
-        <li class="field-container">
-          <b>Role:</b>
-          <span>{{ card_data.role }}</span>
-        </li>
-        
-        <!-- Department -->
-        <li class="field-container">
-          <b>Department:</b>
-          <span>{{ card_data.department }}</span>
-        </li>
-      </ul>
-      
-      <!-- Moved button to the bottom -->
-      {% if card_data.verified == 0 %}
-        <form action="{{ url_for('admin.authorize_user', user_id=card_data.id) }}" method="POST" class="authorize-form">
-          <button type="submit" class="authorize-btn">Authorize</button>
-        </form>
-      {% else %}
-        <!-- Show the 'Authorized' button with green color if already authorized -->
-        <button class="authorized-btn" disabled>Authorized</button>
-      {% endif %}
+{% macro render_user_auth_card(card_data) %}
+  <div class="request-card" id="user-card-{{ card_data.id }}">
+    <div class="card-header">
+      <h5>{{ card_data.name }}</h5>
     </div>
-    {% endfor %}
+    <ul>
+      <!-- Email -->
+      <li class="field-container">
+        <b>Email:</b>
+        <span>{{ card_data.email }}</span>
+      </li>
+      
+      <!-- Role -->
+      <li class="field-container">
+        <b>Role:</b>
+        <span>{{ card_data.role }}</span>
+      </li>
+      
+      <!-- Department -->
+      <li class="field-container">
+        <b>Department:</b>
+        <span>{{ card_data.department }}</span>
+      </li>
+    </ul>
+    
+    <!-- Authorization button -->
+    {% if card_data.verified == 0 %}
+      <form action="{{ url_for('admin.authorize_user', user_id=card_data.id) }}" method="POST" class="authorize-form">
+        <button type="submit" class="authorize-btn">Authorize</button>
+      </form>
+    {% else %}
+      <!-- Show the 'Authorized' button with green color if already authorized -->
+      <button class="authorized-btn" disabled>Authorized</button>
+    {% endif %}
   </div>
-</div>
+{% endmacro %}
