@@ -24,7 +24,8 @@ class User(db.Model, BaseMixin):
     Role = db.Column(db.Integer, db.ForeignKey('Role.Role_ID'))
     Dept_ID = db.Column(db.Integer, db.ForeignKey('Department.Dept_ID'))  # Foreign key reference to Department
     Verified = db.Column(db.Integer, default=0, nullable=False)  # Default value of 0, only 0 or 1 are valid
-
+    modified_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
     department = db.relationship('Department', backref='users', lazy=True)
     role = db.relationship('Role', backref='users', lazy=True)
 
@@ -45,6 +46,7 @@ class Event(db.Model, BaseMixin):
     Date = db.Column(db.Date, nullable=False)
     Days = db.Column(db.Integer, nullable=False)
     Dept_ID = db.Column(db.Integer, db.ForeignKey('Department.Dept_ID'))  # Foreign key to Department
+    modified_date = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     # Relationships to the User, EventType, and Department models
     finance_manager = db.relationship('User', foreign_keys=[Finance_Manager], backref='finance_managed_events', lazy=True)
@@ -63,6 +65,7 @@ class SubEvent(db.Model, BaseMixin):
     Time = db.Column(db.Time, nullable=False)
     Dept_ID = db.Column(db.Integer, db.ForeignKey('Department.Dept_ID'))  # Foreign key to Department
     Event_ID = db.Column(db.Integer, db.ForeignKey('Event.Event_ID'))
+    modified_date = db.Column(db.DateTime, default=db.func.current_timestamp())
 
     # Relationships to User, EventType, Department, and Event models
     sub_event_manager = db.relationship('User', foreign_keys=[Sub_Event_Manager], backref='sub_events_managed', lazy=True)

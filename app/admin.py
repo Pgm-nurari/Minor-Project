@@ -396,6 +396,7 @@ def edit_user(user_id):
 
         user.Username = username
         user.Email = email
+        user.modified_date = datetime.now()
         if role_id:
             user.Role = role_id
         if dept_id:

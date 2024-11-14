@@ -18,6 +18,7 @@ CREATE TABLE User (
     Role INT,
     Dept_ID INT,
     Verified INT DEFAULT 0 CHECK (Verified IN (0, 1)),
+    modified_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (Role) REFERENCES Role(Role_ID),
     FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID)
 );
@@ -31,13 +32,16 @@ CREATE TABLE Event_Type (
 -- 5. Event Table
 CREATE TABLE Event (
     Event_ID INT AUTO_INCREMENT PRIMARY KEY,
-    User_ID INT,
+    Finance_Manager INT,  
+    Event_Manager INT,  
     Name VARCHAR(100) NOT NULL,
     Event_Type_ID INT,
     Date DATE NOT NULL,
     Days INT NOT NULL,
     Dept_ID INT,
-    FOREIGN KEY (User_ID) REFERENCES User(User_ID),
+    modified_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (Finance_Manager) REFERENCES User(User_ID),  
+    FOREIGN KEY (Event_Manager) REFERENCES User(User_ID),
     FOREIGN KEY (Event_Type_ID) REFERENCES Event_Type(Event_Type_ID),
     FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID)
 );
@@ -45,14 +49,15 @@ CREATE TABLE Event (
 -- 6. Sub-Event Table
 CREATE TABLE Sub_Event (
     Sub_Event_ID INT AUTO_INCREMENT PRIMARY KEY,
-    User_ID INT,
+    Sub_Event_Manager INT,
     Name VARCHAR(100) NOT NULL,
     Event_Type_ID INT,
     Date DATE NOT NULL,
     Time TIME NOT NULL,
     Dept_ID INT,
     Event_ID INT,
-    FOREIGN KEY (User_ID) REFERENCES User(User_ID),
+    modified_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (Sub_Event_Manager) REFERENCES User(User_ID),
     FOREIGN KEY (Event_Type_ID) REFERENCES Event_Type(Event_Type_ID),
     FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID),
     FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID)
