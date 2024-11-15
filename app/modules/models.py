@@ -2,8 +2,6 @@ from app import db
 from sqlalchemy import CheckConstraint, func, DECIMAL
 from sqlalchemy.orm import validates
 
-
-
 class BaseMixin:
     def to_dict(self):
         """Convert model instance to dictionary."""
@@ -55,8 +53,6 @@ class Event(db.Model, BaseMixin):
     event_manager = db.relationship('User', foreign_keys=[Event_Manager], backref='managed_events', lazy=True)
     event_type = db.relationship('EventType', backref='events', lazy=True)
     department = db.relationship('Department', backref='events', lazy=True)
-
-
 
 class SubEvent(db.Model, BaseMixin):
     __tablename__ = 'Sub_Event'

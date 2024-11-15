@@ -15,7 +15,7 @@ finance_manager_bp = Blueprint('finance_manager', __name__, url_prefix='/finmng/
 @finance_manager_bp.route('/dashboard')
 def finance_manager(user_id):
     events = get_events(user_id)
-    return render_template('finance_manager/financemanager_dashboard.html', events=events, user=test_user_data)
+    return render_template('finance_manager/financemanager_dashboard.html', events=events, user=test_user_data, user_id=user_id)
 
 @finance_manager_bp.route('/view_events')
 def view_events(user_id):

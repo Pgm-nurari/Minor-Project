@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% import 'components/header_with_button.html' as header %}
+{% import 'admin/header_bar.html' as admin_header %}
+
+{% block title %}View Sub-Event - Admin{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<style>
+    .card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 20px 0;
+        background-color: #f9f9f9;
+    }
+    .card-header {
+        background-color: #e9ecef;
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .btn-group {
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+{{ admin_header.header() }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Sub-Event Details: {{ sub_event.Name }}</h2>
+
+    <div class="card">
+        <div class="card-header">Sub-Event Information</div>
+        <div class="card-body">
+            <p><strong>Name:</strong> {{ sub_event.Name }}</p>
+            <p><strong>Date:</strong> {{ sub_event.Date.strftime('%Y-%m-%d') if sub_event.Date else "N/A" }}</p>
+            <p><strong>Time:</strong> {{ sub_event.Time.strftime('%H:%M:%S') if sub_event.Time else "N/A" }}</p>
+            <p><strong>Event Type:</strong> 
+                {{ sub_event.event_type.Event_Type_Name if sub_event.event_type else "N/A" }}
+            </p>
+            <p><strong>Department:</strong> 
+                {{ sub_event.department.Name if sub_event.department else "N/A" }}
+            </p>
+            <p><strong>Manager:</strong> 
+                {{ sub_event.sub_event_manager.Username if sub_event.sub_event_manager else "N/A" }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="btn-group">
+        <a href="{{ url_for('admin.edit_sub_event', sub_event_id=sub_event.Sub_Event_ID) }}" 
+           class="btn btn-secondary">Edit Sub-Event</a>
+        <a href="{{ url_for('admin.event_details', event_id=sub_event.Event_ID) }}" 
+           class="btn btn-primary">Back to Event</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+
+{% import 'components/header_with_button.html' as header %}
+{% import 'admin/header_bar.html' as admin_header %}
+
+{% block title %}Edit Event - Admin{% endblock %}
+
+{% block header %}
+{{ admin_header.header() }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Edit Event: {{ event.Name }}</h2>
+
+    {% if sub_events %}
+        <div class="alert alert-warning">
+            <strong>Warning:</strong> Update the dates of all sub-events before editing the event.
+        </div>
+    {% endif %}
+
+    <form method="POST" action="{{ url_for('admin.edit_event', event_id=event.Event_ID) }}">
+        <div class="mb-3">
+            <label for="event_type" class="form-label">Event Type</label>
+            <select class="form-control" id="event_type" name="event_type">
+                {% for event_type in event_types %}
+                    <option value="{{ event_type.Event_Type_ID }}" 
+                        {% if event.Event_Type_ID == event_type.Event_Type_ID %}selected{% endif %}>
+                        {{ event_type.Event_Type_Name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Event Manager Dropdown -->
+        <div class="form-group">
+            <label for="event_manager">Event Manager</label>
+            <select class="form-control" id="event_manager" name="event_manager">
+                <option value="{{ event.event_manager.User_ID }}" selected>{{ event_manager_name }}</option>
+                {% for manager in managers %}
+                    <option value="{{ manager.User_ID }}">{{ manager.Username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Finance Manager Dropdown -->
+        <div class="form-group">
+            <label for="finance_manager">Finance Manager</label>
+            <select class="form-control" id="finance_manager" name="finance_manager">
+                <option value="{{ event.finance_manager.User_ID }}" selected>{{ finance_manager_name }}</option>
+                {% for manager in finance_managers %}
+                    <option value="{{ manager.User_ID }}">{{ manager.Username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- Date Options -->
+        <div class="form-group">
+            <label for="date_options">Event Date Options</label>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="disable_date" name="disable_date" 
+                       {% if sub_events %}checked{% endif %} disabled>
+                <label class="form-check-label" for="disable_date">
+                    Disable Date (due to Sub-events)
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="date_option" id="current_date" 
+                       value="current" {% if request.form.date_option == 'current' %}checked{% endif %}>
+                <label class="form-check-label" for="current_date">
+                    Set to today's date
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="date_option" id="older_date" 
+                       value="older" {% if request.form.date_option == 'older' %}checked{% endif %}>
+                <label class="form-check-label" for="older_date">
+                    Set to a date older than today
+                </label>
+            </div>
+        </div>
+
+        <!-- Date Input for Event Date -->
+        <div class="form-group">
+            <label for="event_date">Event Date</label>
+            <input type="date" class="form-control" id="event_date" name="date" 
+                   value="{{ event.Date.strftime('%Y-%m-%d') }}" 
+                   {% if sub_events %}disabled{% endif %} 
+                   {% if request.form.date_option == 'older' %}min="{{ (datetime.utcnow().date() - timedelta(days=1)).strftime('%Y-%m-%d') }}"{% endif %}>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update Event</button>
+        <a href="{{ url_for('admin.event_details', event_id=event.Event_ID) }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

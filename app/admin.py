@@ -8,7 +8,6 @@ from sqlalchemy import func
 from datetime import datetime, date
 from .test_data import test_user_data, test_event_data
 
-
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
 @admin_bp.route('/')
@@ -19,34 +18,6 @@ def admin_dashboard():
 
     # Render the template with the structured user data
     return render_template('admin/admin_dash.html', data=user_data, users_table = get_user_table_data(), events=get_event_data())
-
-@admin_bp.route('/authorize/<int:user_id>', methods=['POST'])
-def authorize_user(user_id):
-    """Route to handle user authorization by updating Verified status."""
-    try:
-        # Find the user by ID
-        user = User.query.get(user_id)
-        if not user:
-            flash("User not found.", "error")
-            return redirect(url_for('admin.admin_dashboard'))
-        
-        # Check if the user is already authorized
-        if user.Verified == 1:
-            flash("User is already authorized.", "info")
-            return redirect(url_for('admin.admin_dashboard'))
-        
-        # Update the Verified status
-        user.Verified = 1
-        db.session.commit()
-        flash("User has been authorized successfully.", "success")
-    
-    except SQLAlchemyError as e:
-        db.session.rollback()
-        print("Error authorizing user:", e)
-        flash("An error occurred while authorizing the user.", "error")
-    
-    # Redirect back to the dashboard
-    return redirect(url_for('admin.admin_dashboard'))
 
 @admin_bp.route('/event_details/<int:event_id>')
 def event_details(event_id):
@@ -69,62 +40,20 @@ def event_details(event_id):
                            event_manager=event_manager,
                            finance_manager=finance_manager,
                            sub_events=sub_events)
-
-@admin_bp.route('/new_user', methods=['POST', 'GET'])
-def new_user():
-    if request.method == 'POST':
-        # Process form data
-        username = request.form.get('username')
-        department_name = request.form.get('department')
-        role_name = request.form.get('role')
-        email = request.form.get('email')
-        print("Form data:", username, department_name, role_name, email)
-
-        # Fetch department and role from the database
-        department = Department.query.filter_by(Dept_ID=department_name).first()
-        role = Role.query.filter_by(Role_ID=role_name).first()
-
-
-        # Check if the department and role exist
-        if not department:
-            flash('Department not found.', 'error')
-            return redirect(url_for('admin.new_user'))
-
-        if not role:
-            flash('Role not found.', 'error')
-            return redirect(url_for('admin.new_user'))
-
-        # Create a new user
-        user_data = {
-            'Username': username,
-            'Email': email,
-            'Role': role.Role_ID,  
-            'Dept_ID': department.Dept_ID,  
-            'Password': ''  
-        }
-
-        # Add the new user to the database using the create_entry function
-        new_user = create_entry(User, **user_data)
-
-        if new_user:
-            flash('New user created successfully!', 'success')
-        else:
-            flash('Error creating new user.', 'error')
-
-        return redirect(url_for('admin.admin_dashboard'))
-    if request.method=='GET':
-        # Query all departments and roles
-        departments = Department.query.all()
-        roles = Role.query.all()
-        return render_template('admin/new_user.html', departments=departments, roles=roles)
+    
+@admin_bp.route('/view_events')
+def view_events():
+    return render_template('admin/view_events.html', events=get_event_data())
 
 @admin_bp.route('/new_event', methods=['GET'])
 def new_event():
     # Query the database for departments, users for Event Manager/Finance Manager, and event types
     departments = Department.query.all()
-    event_managers = User.query.all()  # Assuming all users can be event managers
-    finance_managers = User.query.all()  # Assuming all users can be finance managers
     event_types = EventType.query.all()
+    
+    # Filter users based on roles
+    event_managers = User.query.join(Role).filter(Role.Role_Name == 'Event Manager').all()
+    finance_managers = User.query.join(Role).filter(Role.Role_Name == 'Finance Manager').all()
     
     return render_template('admin/new_event_creation.html', 
                            departments=departments, 
@@ -254,88 +183,53 @@ def create_multiple_events():
     flash("Multiple Events and Sub-Events Created Successfully!")
     return redirect(url_for('admin.new_event'))
 
-def get_event_data():
-    """
-    This function returns a dictionary containing events grouped by their status.
-    The dictionary will have the following keys: "Upcoming", "Ongoing", and "Completed",
-    each containing a list of event data (dictionaries).
-    Each event dictionary will have the following keys:
-        "id", "event_name", "status", "type", "department", "event_manager"
-    """
+@admin_bp.route('/new_user', methods=['POST', 'GET'])
+def new_user():
+    if request.method == 'POST':
+        # Process form data
+        username = request.form.get('username')
+        department_name = request.form.get('department')
+        role_name = request.form.get('role')
+        email = request.form.get('email')
+        print("Form data:", username, department_name, role_name, email)
 
-    # Initialize the dictionary to store events by status
-    grouped_event_data = {'Upcoming': [], 'Ongoing': [], 'Completed': []}
+        # Fetch department and role from the database
+        department = Department.query.filter_by(Dept_ID=department_name).first()
+        role = Role.query.filter_by(Role_ID=role_name).first()
 
-    # Get the current date
-    current_date = date.today()
 
-    # Fetch all the events, sub-events, users, and departments from the database
-    events = Event.query.all()
-    sub_events = SubEvent.query.all()
-    users = User.query.all()
-    depts = Department.query.all()
-    event_types = EventType.query.all()
+        # Check if the department and role exist
+        if not department:
+            flash('Department not found.', 'error')
+            return redirect(url_for('admin.new_user'))
 
-    # Loop through the events and build the data for each
-    for event in events:
-        # Determine the event status based on the event date
-        if event.Date > current_date:
-            status = "Upcoming"
-        elif event.Date == current_date:
-            status = "Ongoing"
-        else:
-            status = "Completed"
+        if not role:
+            flash('Role not found.', 'error')
+            return redirect(url_for('admin.new_user'))
 
-        # Get the event type name using EventType model
-        event_type = next((et.Event_Type_Name for et in event_types if et.Event_Type_ID == event.Event_Type_ID), "Unknown")
-
-        # Get the department name using the Department model
-        department = next((dept.Name for dept in depts if dept.Dept_ID == event.Dept_ID), "Unknown")
-
-        # Get the event manager using the User model
-        event_manager = next((user.Username for user in users if user.User_ID == event.Event_Manager), "Unknown")
-
-        # Build the event card data dictionary
-        event_data = {
-            "id": event.Event_ID,
-            "event_name": event.Name,
-            "status": status,
-            "type": event_type,
-            "department": department,
-            "event_manager": event_manager,
+        # Create a new user
+        user_data = {
+            'Username': username,
+            'Email': email,
+            'Role': role.Role_ID,  
+            'Dept_ID': department.Dept_ID,  
+            'Password': ''  
         }
 
-        # Append the event data to the appropriate status list in the dictionary
-        grouped_event_data[status].append(event_data)
+        # Add the new user to the database using the create_entry function
+        new_user = create_entry(User, **user_data)
 
-    return grouped_event_data
-    
-def get_user_info(user):
-    """Fetch and structure data for a single user, including related roles, departments."""
-    
-    # Fetch related role and department for the specified user
-    roles = filter_data(Role, columns=["Role_ID", "Role_Name"])
-    departments = filter_data(Department, columns=["Dept_ID", "Name"])
+        if new_user:
+            flash('New user created successfully!', 'success')
+        else:
+            flash('Error creating new user.', 'error')
 
-    # Convert role and department data into dictionaries for fast lookup
-    roles_dict = {role.Role_ID: role.Role_Name for role in roles}
-    departments_dict = {dept.Dept_ID: dept.Name for dept in departments}
-
-    # Determine the user's role
-    user_role = roles_dict.get(user.Role, "No Role Assigned")
-
-    # Construct user info dictionary without events and sub-events
-    user_info = {
-        "id": user.User_ID,
-        "name": user.Username or "User Name",
-        "email": user.Email,
-        "role": user_role,
-        "department": departments_dict.get(user.Dept_ID, "No Department Assigned"),
-        "verified": user.Verified  # Ensure Verified data is passed
-    }
-    #User Info Display....
-    # print(user_info)
-    return user_info
+        return redirect(url_for('admin.admin_dashboard'))
+    if request.method=='GET':
+        # Query all departments and roles
+        departments = Department.query.all()
+        roles = Role.query.all()
+        return render_template('admin/new_user.html', departments=departments, roles=roles)
 
 @admin_bp.route('/view_user/<int:user_id>', methods=['GET'])
 def view_user(user_id):
@@ -392,10 +286,6 @@ def delete_user(user_id):
     else:
         return redirect(url_for('admin.admin_dashboard'))
 
-@admin_bp.route('/view_events')
-def view_events():
-    return render_template('admin/view_events.html', events=get_event_data())
-
 @admin_bp.route('/users')
 def users_table():
     # Get parameters for sorting and filtering from the request
@@ -427,6 +317,33 @@ def users_table():
                            sort_key=sort_key,
                            sort_order=sort_order,data=user_data)
 
+@admin_bp.route('/authorize/<int:user_id>', methods=['POST'])
+def authorize_user(user_id):
+    """Route to handle user authorization by updating Verified status."""
+    try:
+        # Find the user by ID
+        user = User.query.get(user_id)
+        if not user:
+            flash("User not found.", "error")
+            return redirect(url_for('admin.admin_dashboard'))
+        
+        # Check if the user is already authorized
+        if user.Verified == 1:
+            flash("User is already authorized.", "info")
+            return redirect(url_for('admin.admin_dashboard'))
+        
+        # Update the Verified status
+        user.Verified = 1
+        db.session.commit()
+        flash("User has been authorized successfully.", "success")
+    
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        print("Error authorizing user:", e)
+        flash("An error occurred while authorizing the user.", "error")
+    
+    # Redirect back to the dashboard
+    return redirect(url_for('admin.admin_dashboard'))
 
 def get_user_table_data(sort_key='username', sort_order='asc', filter_role='', filter_department='', filter_username=''):
     query = db.session.query(User.User_ID, User.Username, User.Email, User.Role, User.Dept_ID)
@@ -483,3 +400,152 @@ def get_user_table_data(sort_key='username', sort_order='asc', filter_role='', f
         user_table_data.append(row)
 
     return user_table_data
+
+def get_event_data():
+    """
+    This function returns a dictionary containing events grouped by their status.
+    The dictionary will have the following keys: "Upcoming", "Ongoing", and "Completed",
+    each containing a list of event data (dictionaries).
+    Each event dictionary will have the following keys:
+        "id", "event_name", "status", "type", "department", "event_manager", "finance_manager"
+    """
+
+    # Initialize the dictionary to store events by status
+    grouped_event_data = {'Upcoming': [], 'Ongoing': [], 'Completed': []}
+
+    # Get the current date
+    current_date = date.today()
+
+    # Fetch all the events, sub-events, users, and departments from the database
+    events = Event.query.all()
+    sub_events = SubEvent.query.all()
+    users = User.query.all()
+    depts = Department.query.all()
+    event_types = EventType.query.all()
+
+    # Loop through the events and build the data for each
+    for event in events:
+        # Determine the event status based on the event date
+        if event.Date > current_date:
+            status = "Upcoming"
+        elif event.Date == current_date:
+            status = "Ongoing"
+        else:
+            status = "Completed"
+
+        # Get the event type name using EventType model
+        event_type = next((et.Event_Type_Name for et in event_types if et.Event_Type_ID == event.Event_Type_ID), "Unknown")
+
+        # Get the department name using the Department model
+        department = next((dept.Name for dept in depts if dept.Dept_ID == event.Dept_ID), "Unknown")
+
+        # Get the event manager using the User model
+        event_manager = next((user.Username for user in users if user.User_ID == event.Event_Manager), "Unknown")
+
+        # Build the event card data dictionary
+        event_data = {
+            "id": event.Event_ID,
+            "event_name": event.Name,
+            "status": status,
+            "type": event_type,
+            "department": department,
+            "event_manager": event_manager,
+        }
+
+        # Append the event data to the appropriate status list in the dictionary
+        grouped_event_data[status].append(event_data)
+    return grouped_event_data
+    
+def get_user_info(user):
+    """Fetch and structure data for a single user, including related roles, departments."""
+    
+    # Fetch related role and department for the specified user
+    roles = filter_data(Role, columns=["Role_ID", "Role_Name"])
+    departments = filter_data(Department, columns=["Dept_ID", "Name"])
+
+    # Convert role and department data into dictionaries for fast lookup
+    roles_dict = {role.Role_ID: role.Role_Name for role in roles}
+    departments_dict = {dept.Dept_ID: dept.Name for dept in departments}
+
+    # Determine the user's role
+    user_role = roles_dict.get(user.Role, "No Role Assigned")
+
+    # Construct user info dictionary without events and sub-events
+    user_info = {
+        "id": user.User_ID,
+        "name": user.Username or "User Name",
+        "email": user.Email,
+        "role": user_role,
+        "department": departments_dict.get(user.Dept_ID, "No Department Assigned"),
+        "verified": user.Verified  # Ensure Verified data is passed
+    }
+    #User Info Display....
+    # print(user_info)
+    return user_info
+
+@admin_bp.route('/view_sub_event/<int:sub_event_id>')
+def view_sub_event(sub_event_id):
+    sub_event = SubEvent.query.get(sub_event_id)
+    if not sub_event:
+        return "Sub-Event not found", 404
+    return render_template('admin/view_sub_event.html', sub_event=sub_event)
+
+@admin_bp.route('/edit_sub_event/<int:sub_event_id>', methods=['GET', 'POST'])
+def edit_sub_event(sub_event_id):
+    sub_event = SubEvent.query.get(sub_event_id)
+    if not sub_event:
+        return "Sub-Event not found", 404
+    
+    if request.method == 'POST':
+        # Process form data to update the sub-event
+        sub_event.Name = request.form['name']
+        sub_event.Date = request.form['date']
+        sub_event.Time = request.form['time']
+        db.session.commit()
+        return redirect(url_for('admin.event_details', event_id=sub_event.Event_ID))
+    
+    return render_template('admin/edit_sub_event.html', sub_event=sub_event)
+
+@admin_bp.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
+def edit_event(event_id):
+    event = Event.query.get(event_id)
+    if not event:
+        return "Event not found", 404
+
+    # Check for sub-events
+    sub_events = SubEvent.query.filter_by(Event_ID=event_id).all()
+
+    if request.method == 'POST':
+        if sub_events:
+            flash("Please update the dates of all sub-events before editing this event.", "warning")
+            return redirect(url_for('admin.event_details', event_id=event_id))
+
+        # Update fields
+        event.Event_Type_ID = request.form.get('event_type') or event.Event_Type_ID
+        event.Event_Manager = request.form.get('event_manager') or event.Event_Manager
+        event.Finance_Manager = request.form.get('finance_manager') or event.Finance_Manager
+
+        # Handle the date options
+        date_option = request.form.get('date_option')
+        if date_option == 'current':
+            event.Date = datetime.utcnow().date()
+        elif date_option == 'older':
+            new_date = datetime.strptime(request.form.get('date'), '%Y-%m-%d')
+            event.Date = new_date
+
+        db.session.commit()
+
+        flash("Event updated successfully!", "success")
+        return redirect(url_for('admin.event_details', event_id=event_id))
+
+    # Fetch all event types, managers, and finance managers for dropdowns
+    event_types = EventType.query.all()
+    managers = User.query.filter_by(Role=102).all()  # Role=1 assumed to be 'Event Manager'
+    finance_managers = User.query.filter_by(Role=103).all()  # Role=2 assumed to be 'Finance Manager'
+
+    return render_template('admin/edit_event.html', 
+                           event=event, 
+                           event_types=event_types, 
+                           managers=managers, 
+                           finance_managers=finance_managers, 
+                           sub_events=sub_events)

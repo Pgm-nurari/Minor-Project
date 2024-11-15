@@ -8,17 +8,26 @@
         body {
             font-family: 'Samsung Sans', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-
+        h2 {
+            text-align: center;
+            color: #6cba5e;
+            margin-bottom: 20px;
+        }
         .form-container {
             background-color: #fff;
             padding: 30px;
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             max-width: 600px;
-            margin: 0 auto;
+            width: 100%;
+            position: relative;
         }
 
         .form-container h2 {
@@ -80,12 +89,31 @@
             background-color: #f8d7da;
             color: #721c24;
         }
+
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: #555;
+        }
+
+        .back-button:hover {
+            color: #333;
+        }
+
+        .back-button:focus {
+            outline: none;
+        }
     </style>
 </head>
 <body>
-
+    <button class="back-button" onclick="window.history.back();">&larr; Back</button>
     <div class="form-container">
-        <h2>New User Request Form</h2>
+        <h2>New User Form</h2>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -100,7 +128,7 @@
         <form id="userForm" action="{{ url_for('admin.new_user') }}" method="POST" onsubmit="return validateForm()">
 
             <div class="form-field">
-                <label for="username">User Name</label>
+                <label for="username">Full Name</label>
                 <input type="text" id="username" name="username" required minlength="3" maxlength="30" pattern="[A-Za-z\s]+" title="Username should contain only letters and be between 3 and 30 characters">
                 <span class="error-message" id="usernameError"></span>
             </div>

@@ -22,12 +22,10 @@
 
 {% block content %}
 <section id="Events">
-  <!-- Render New Event and View Events buttons with header component -->
   {% set button1 = {'text': 'New Event', 'action': url_for('admin.new_event'), 'class': 'header-button'} %}
   {% set button2 = {'text': 'View Events', 'action': url_for('admin.view_events'), 'class': 'header-button'} %}
   {{ header.render_header(title='Events', buttons=[button1, button2]) }}
 
-  <!-- Check if there are events to display, otherwise prompt to create new events -->
   <div class="cardscontainer">
     {% if events %}
       {{ event_card.render_event_cards_admin(events, user_role, minimum_cards=True) }}
@@ -38,11 +36,9 @@
 </section>
 
 <section id="Authentication">
-  <!-- Render New User button with header component -->
   {% set button1 = {'text': 'New User', 'action': url_for('admin.new_user'), 'class': 'header-button'} %}
   {{ header.render_header(title='User Authentication', buttons=[button1]) }}
-  
-  <!-- Include the user authentication card -->
+
   <div>
     <div class="cardscontainer">
       {% if data | selectattr("verified", "equalto", 0) | list %}

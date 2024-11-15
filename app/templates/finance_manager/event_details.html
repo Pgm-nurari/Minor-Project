@@ -1,43 +1,21 @@
-{% extends 'base.html' %} {% block title %}Admin Dashboard{% endblock %} {%
-    block extra_css %}
-    <link rel="stylesheet" href="{{url_for('static', filename='css/common.css')}}">
-    {% endblock %} 
+{% extends 'base.html' %} 
+
+{% import 'components/header_with_button.html' as section_header %}
+{% import 'finance_manager/event_cards.html' as event_card %}
+{% import 'finance_manager/header_bar.html' as finance_header %}
+
+{% block title %}Event Details - Finance Manager{% endblock %} 
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{url_for('static', filename='css/common.css')}}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
+{% endblock %} 
     
-    {% block header %}
-    <header class="p-3 mb-3 border-bottom" style="background-color: #66b775;">
-      <div class="d-flex align-items-center justify-content-between w-100">
-        <!-- FinSight Logo and Name aligned left -->
-        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-          <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
-          <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
-        </a>
-    
-        <!-- Navigation links centered -->
-        <ul class="nav mb-2 justify-content-center mb-md-0 flex-grow-1">
-          <li><a href="#Overview" class="nav-link px-2 link-body-emphasis">Overview</a></li>
-          <li><a href="#Inventory" class="nav-link px-2 link-body-emphasis">Inventory</a></li>
-          <li><a href="#Customers" class="nav-link px-2 link-body-emphasis">Customers</a></li>
-          <li><a href="#Products" class="nav-link px-2 link-body-emphasis">Products</a></li>
-        </ul>
-  
-        <!-- User dropdown aligned right -->
-        <div class="dropdown text-end">
-          <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
-          </a>
-          <ul class="dropdown-menu text-small">
-            <li><a class="dropdown-item" href="#">New project...</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
-          </ul>
-        </div>
-      </div>
-    </header>   
-    {% endblock %}
-    
-    
-    {% block content %}
-    {{event}}
-    {% endblock %}
+{% block header %}
+{{ finance_header.finance_header(user_id) }}
+{% endblock %}
+
+
+{% block content %}
+  <h1>Event Detail Page of Finance Manager...!</h1>
+{% endblock %}

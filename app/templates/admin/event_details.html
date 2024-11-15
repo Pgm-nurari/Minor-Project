@@ -1,15 +1,32 @@
 {% extends 'base.html' %}
 
-{% import 'components/table_component.html' as table %}
 {% import 'components/header_with_button.html' as header %}
-{% import 'admin/event_cards.html' as event_card %}
-{% import 'components/userauthcard.html' as user_auth_card %}
 {% import 'admin/header_bar.html' as admin_header %}
 
-{% block title %}Event Details{% endblock %}
+{% block title %}Event Details - Admin{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<style>
+    .card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+        background-color: #f9f9f9;
+    }
+    .card h5 {
+        margin-bottom: 12px;
+        font-size: 18px;
+    }
+    .btn {
+        margin-right: 8px;
+    }
+    .no-data {
+        color: #999;
+        font-style: italic;
+    }
+</style>
 {% endblock %}
 
 {% block header %}
@@ -17,40 +34,58 @@
 {% endblock %}
 
 {% block content %}
-<h2>Event Details: {{ event.Name }}</h2>
+<div class="container">
+    <h2 class="mb-4">Event Details: {{ event.Name }}</h2>
 
-<!-- Display event details -->
-<ul>
-    <li><strong>Event Name:</strong> {{ event.Name }}</li>
-    <li><strong>Event Type:</strong> {{ event.event_type.Event_Type_Name if event.event_type else "N/A" }}</li>
-    <li><strong>Department:</strong> {{ event.department.Name if event.department else "N/A" }}</li>
-    <li><strong>Date:</strong> {{ event.Date.strftime('%Y-%m-%d %H:%M') if event.Date else "N/A" }}</li>
-    <li><strong>Event Manager:</strong> 
-        {% if event.event_manager %}
-            {{ event.event_manager.Username }}
-        {% else %}
-            N/A
-        {% endif %}
-    </li>
-    <li><strong>Finance Manager:</strong> 
-        {% if event.finance_manager %}
-            {{ event.finance_manager.Username }}
-        {% else %}
-            N/A
-        {% endif %}
-    </li>
-</ul>
+    <!-- Event Details -->
+    <ul class="list-group mb-4">
+        <li class="list-group-item"><strong>Event Name:</strong> {{ event.Name }}</li>
+        <li class="list-group-item"><strong>Event Type:</strong> 
+            {{ event.event_type.Event_Type_Name if event.event_type else "N/A" }}
+        </li>
+        <li class="list-group-item"><strong>Department:</strong> 
+            {{ event.department.Name if event.department else "N/A" }}
+        </li>
+        <li class="list-group-item"><strong>Date:</strong> 
+            {{ event.Date.strftime('%Y-%m-%d') if event.Date else "N/A" }}
+        </li>
+        <li class="list-group-item"><strong>Duration (Days):</strong> 
+            {{ event.Days if event.Days else "N/A" }}
+        </li>
+        <li class="list-group-item"><strong>Event Manager:</strong> 
+            {{ event.event_manager.Username if event.event_manager else "N/A" }}
+        </li>
+        <li class="list-group-item"><strong>Finance Manager:</strong> 
+            {{ event.finance_manager.Username if event.finance_manager else "N/A" }}
+        </li>
+    </ul>
 
-<!-- Display sub-events if available -->
-{% if sub_events %}
-    <h3>Sub-Events</h3>
-    {% for sub_event in sub_events %}
-            {{ sub_event }}
-    {% endfor %}
-    
+    <!-- Edit Event Button -->
+    <a href="{{ url_for('admin.edit_event', event_id=event.Event_ID) }}" class="btn btn-warning">Edit Event</a>
 
-{% else %}
-    <p>No sub-events available for this event.</p>
-{% endif %}
-
+    <!-- Sub-Events Section -->
+    <h3 class="mb-3">Sub-Events</h3>
+    {% if sub_events %}
+        <div class="row">
+            {% for sub_event in sub_events %}
+                <div class="col-md-4">
+                    <div class="card">
+                        <h5>{{ sub_event.Name }}</h5>
+                        <p><strong>Date:</strong> {{ sub_event.Date.strftime('%Y-%m-%d') }}</p>
+                        <p><strong>Time:</strong> {{ sub_event.Time.strftime('%H:%M:%S') }}</p>
+                        <p><strong>Manager:</strong> 
+                            {{ sub_event.sub_event_manager.Username if sub_event.sub_event_manager else "N/A" }}
+                        </p>
+                        <a href="{{ url_for('admin.view_sub_event', sub_event_id=sub_event.Sub_Event_ID) }}" 
+                           class="btn btn-primary">View Details</a>
+                        <a href="{{ url_for('admin.edit_sub_event', sub_event_id=sub_event.Sub_Event_ID) }}" 
+                           class="btn btn-secondary">Edit Sub-Event</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="no-data">No sub-events available for this event.</p>
+    {% endif %}
+</div>
 {% endblock %}

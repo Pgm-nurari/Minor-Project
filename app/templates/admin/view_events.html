@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
+
 {% import 'components/table_component.html' as table %}
 {% import 'components/header_with_button.html' as header %}
 {% import 'admin/event_cards.html' as event_card %}
+
 {% import 'admin/header_bar.html' as admin_header %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}View Events - Admin{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{url_for('static', filename='css/common.css')}}">
@@ -17,14 +19,10 @@
 
 {% block content %}
 <section id="Events">
-  <!-- Use header_with_button to render two buttons for the Events section -->
   {% set button1 = {'text': 'New Event', 'action': url_for('admin.new_event'), 'class': 'header-button'} %}
-  
-  {{ header.render_header(
-    title='Events',
-    buttons=[button1]
-  ) }}
-  
+  {{ header.render_header( title='Events', buttons=[button1] ) }}
+  <div class="cardscontainer">
   {{ event_card.render_event_cards_admin(events, user_role, minimum_cards=False) }}
+  </div>
 </section>
 {% endblock %}

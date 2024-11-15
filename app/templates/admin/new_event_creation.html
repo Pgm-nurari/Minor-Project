@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finsight Event Creation</title>
+    <title>New Event Creation</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -67,11 +67,29 @@
             color: red;
             font-size: 12px;
         }
+        .back-button {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            color: #555;
+        }
+
+        .back-button:hover {
+            color: #333;
+        }
+
+        .back-button:focus {
+            outline: none;
+        }
     </style>
 </head>
 <body>
-
     <div class="container">
+        <button class="back-button" onclick="window.history.back();">&larr; Back</button>
         <h2>Event Creation</h2>
         <form id="eventForm">
             <!-- Event Category -->
@@ -159,28 +177,16 @@
             <button type="submit">Add Event</button>
         </form>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const eventTypeSelection = document.getElementById('eventTypeSelection');
-            const financeManagerGroup = document.getElementById('financeManagerGroup');
-            const eventManagerGroup = document.getElementById('eventManagerGroup');
-            const subEventCountGroup = document.getElementById('subEventCountGroup');
-            const subEventContainer = document.getElementById('subEventContainer');
-            const addSubEventsButton = document.getElementById('addSubEventsButton');
-            const form = document.getElementById('eventForm');
+            // Disable previous dates for event and sub-event date inputs
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('eventDate').setAttribute('min', today);
     
-            // Show/Hide Finance Manager based on Single/Multiple Event Selection
-            eventTypeSelection.addEventListener('change', function() {
-                if (eventTypeSelection.value === 'single' || eventTypeSelection.value === 'multiple') {
-                    financeManagerGroup.style.display = 'block';  // Always show Finance Manager for both event types
-                    eventDateGroup.style.display = 'block';    // Show Event Date for both
-                    subEventCountGroup.style.display = eventTypeSelection.value === 'multiple' ? 'block' : 'none'; // Show Sub Event Count for Multiple Events
-                    subEventContainer.innerHTML = '';          // Clear Sub Events Container if switching to single
-                }
-            });
+            const subEventContainer = document.getElementById('subEventContainer');
     
             // Add sub-event forms dynamically
+            const addSubEventsButton = document.getElementById('addSubEventsButton');
             addSubEventsButton.addEventListener('click', function() {
                 const subEventCount = document.getElementById('subEventCount').value;
                 if (isNaN(subEventCount) || subEventCount <= 0 || subEventCount > 10) {
@@ -188,12 +194,12 @@
                     return;
                 }
     
-                subEventContainer.innerHTML = '';  // Clear existing sub-event forms
+                subEventContainer.innerHTML = ''; // Clear existing sub-event forms
     
                 for (let i = 0; i < subEventCount; i++) {
                     const subEventForm = document.createElement('div');
                     subEventForm.className = 'sub-event-form';
-                    subEventForm.innerHTML = `   
+                    subEventForm.innerHTML = `
                         <h4>Sub-Event ${i + 1}</h4>
                         <div class="form-group">
                             <label for="subEventName${i}">Sub-Event Name</label>
@@ -219,7 +225,7 @@
                         </div>
                         <div class="form-group">
                             <label for="subEventDate${i}">Sub-Event Date</label>
-                            <input type="date" id="subEventDate${i}" name="subEventDate${i}" required>
+                            <input type="date" id="subEventDate${i}" name="subEventDate${i}" min="${today}" required>
                         </div>
                         <div class="form-group">
                             <label for="subEventTime${i}">Sub-Event Time</label>
@@ -230,6 +236,16 @@
                 }
             });
     
+            // Remaining logic for event type selection and form submission
+            // Show/Hide Finance Manager based on Single/Multiple Event Selection
+            eventTypeSelection.addEventListener('change', function() {
+                if (eventTypeSelection.value === 'single' || eventTypeSelection.value === 'multiple') {
+                    financeManagerGroup.style.display = 'block';  // Always show Finance Manager for both event types
+                    eventDateGroup.style.display = 'block';    // Show Event Date for both
+                    subEventCountGroup.style.display = eventTypeSelection.value === 'multiple' ? 'block' : 'none'; // Show Sub Event Count for Multiple Events
+                    subEventContainer.innerHTML = '';          // Clear Sub Events Container if switching to single
+                }
+            });
             // Form Submission
             form.addEventListener('submit', function(event) {
                 event.preventDefault();
@@ -265,6 +281,7 @@
                     alert('An error occurred: ' + error);
                 });
             });
+
         });
     </script>
 </body>

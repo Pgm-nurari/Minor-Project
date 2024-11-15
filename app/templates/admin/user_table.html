@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
+
 {% import 'components/table_component.html' as table %}
 {% import 'components/header_with_button.html' as header %}
 {% import 'admin/header_bar.html' as admin_header %}
 {% import 'components/userauthcard.html' as user_auth_card %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}Users - Admin{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
@@ -18,29 +19,23 @@
 
 {% block content %}
 <section id="Authentication">
-  <!-- Render New User button with header component -->
   {% set button1 = {'text': 'New User', 'action': url_for('admin.new_user'), 'class': 'header-button'} %}
   {{ header.render_header(title='User Authentication', buttons=[button1]) }}
-  
-  <!-- Include the user authentication card -->
-  <div>
-    <div class="cardscontainer">
-      {% if data | selectattr("verified", "equalto", 0) | list %}
-        {% for card_data in data if card_data.verified == 0 %}
-          {{ user_auth_card.render_user_auth_card(card_data) }}
-        {% endfor %}
-      {% else %}
-        <p>No unauthorized users found. <a href="{{ url_for('admin.new_user') }}" style="text-decoration: none;">Create New User</a></p>
-      {% endif %}
-    </div>
+
+  <div class="cardscontainer">
+    {% if data | selectattr("verified", "equalto", 0) | list %}
+      {% for card_data in data if card_data.verified == 0 %}
+        {{ user_auth_card.render_user_auth_card(card_data) }}
+      {% endfor %}
+    {% else %}
+      <p>No unauthorized users found. <a href="{{ url_for('admin.new_user') }}" style="text-decoration: none;">Create New User</a></p>
+    {% endif %}
   </div>
 </section>
 
 <section id="UsersTable">
-  {% set button1 = {'text': 'New User', 'action': url_for('admin.new_user'), 'class': 'header-button'} %}
-  {{ header.render_header(title='User Table', buttons=[button1]) }}
+  {{ header.render_header(title='User Table', buttons=[]) }}
 
-  <!-- Table Section: Sorting, Filtering and Actions -->
   <div>
     {{ table.render_table(
       users_table, 

@@ -20,15 +20,12 @@
 
 {% block content %}
   <section id="Events">
-    <!-- Render New Event and View Events buttons with header component -->
-    <!-- {% set button1 = {'text': 'View Events', 'action': url_for('admin.view_events'), 'class': 'header-button'} %} -->
-    {{ section_header.render_header(title='Events', buttons=[]) }}
+    {% set button1 = {'text': 'View Events', 'action': url_for('event_manager.view_events', user_id=user_id), 'class': 'header-button'} %}
+    {{ section_header.render_header(title='Events', buttons=[button1]) }}
 
-    <!-- Check if there are events to display, otherwise prompt to create new events -->
     <div class="cardscontainer">
       {% if events %}
         {{ event_card.render_event_cards_event_manager(events, user_role, minimum_cards=True, user_id=user_id) }}
-
       {% else %}
         <p>No events assigned to you. Please contact the admin for a new event.</p>
       {% endif %}
