@@ -1,4 +1,19 @@
-/* index.css */
+/* Reset margin and padding for body and main sections */
+body, .features, .about, .contact {
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+}
+
+.container, header, .hero {
+    margin: 0;
+    padding: 0;
+}
 
 /* Hero Section */
 .hero {
@@ -8,122 +23,97 @@
     background-position: center;
     color: white;
     text-align: center;
-    padding: 100px 20px;
-    transition: all 0.5s;
+    margin-top: 0;
+    padding-top: 0;
+    padding: 80px 20px;
+    box-sizing: border-box;
     opacity: 0.9;
+    margin: 0; /* Remove margin to avoid any gap */
 }
 
+.mb-0, .mt-0 {
+    margin: 0 !important;
+}
+
+/* Hero Heading */
 .hero h1 {
     font-size: 3em;
-    margin-bottom: 10px;
-    animation: slide-in 1s ease-out;
+    margin: 0; /* Ensure no extra spacing */
 }
 
+/* Hero Paragraph */
 .hero p {
     font-size: 1.2em;
-    margin-bottom: 20px;
-    animation: fade-in 1s ease-in-out;
-}
-
-/* Call to Action Button */
-.cta-button {
-    background-color: #38a169;
-    color: white;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.2em;
-    transition: background-color 0.3s;
-}
-
-.cta-button:hover {
-    background-color: #2f855a;
+    margin: 0;
 }
 
 /* Features Section */
 .features {
     display: flex;
     justify-content: space-around;
-    padding: 60px 20px;
-    background-color: #f0fff4;
-    animation: fade-in 1s ease-out;
+    padding: 40px 20px;
+    gap: 15px;
 }
 
+/* Feature Boxes */
 .feature {
     width: 22%;
     text-align: center;
     background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 15px;
+    border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out;
 }
 
 .feature:hover {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
 }
 
 /* About Section */
 .about {
-    padding: 0px px;
-    text-align: start;
     background-color: #62796b;
     color: white;
-    border-radius: 10px;
-    margin: 20px;
-    animation: fade-in 1.5s ease-in;
+    margin: 0;
 }
 
 .about-content {
     position: relative;
-    padding: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
+    padding: 60px 40px;
 }
 
-/* Watermark background image styling */
 .watermark {
     position: absolute;
-    top: .5px;
-    left: 0.5px;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    z-index: auto;
-    opacity: 0.4; /* Adjust opacity for watermark effect */
+    opacity: 0.25;
 }
 
 .watermark img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 10px;
 }
 
-/* Text styling */
+/* Watermark Text */
 .watermark-text {
     position: relative;
-    z-index: 1; /* Keeps text on top of watermark */
+    z-index: 1;
     font-size: 1em;
-    line-height: 3.6;
+    line-height: 1.5;
 }
-
-
 
 /* Contact Section */
 .contact {
-    padding: 60px 20px;
+    padding: 40px 20px;
     text-align: center;
-    background-color: #48bb78;
+    background-color: #b5e2c8;
     color: white;
-    border-radius: 10px;
-    margin: 20px;
-    animation: fade-in 1.5s ease-in;
+    margin: 0;
 }
 
-/* Social Links */
 .social-link {
     color: #2c3e50;
     text-decoration: none;

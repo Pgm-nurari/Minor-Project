@@ -9,12 +9,12 @@
 
 {% block header %}
 <div class="container">
-    <header class="d-flex flex-wrap align-items-center justify-content-between py-3 mb-4 border-bottom">
+    <header class="d-flex flex-wrap align-items-center justify-content-between py-3 mb-0 border-bottom">
         <!-- Header Name Section -->
         <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
             <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
             <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
-          </a>
+        </a>
 
         <!-- Navigation Section -->
         <nav class="col-md-6">
@@ -38,7 +38,6 @@
         </div>
     </header>
 </div>
-
 {% endblock %}
 
 {% block content %}
@@ -67,7 +66,6 @@
 </section>
 
 <section id="about" class="about">
-    
     <div class="about-content">
         <div class="watermark">
             <img src="{{ url_for('static', filename='images/About_us.webp') }}" alt="About Us Image" />
@@ -76,7 +74,7 @@
             <b>
                 <div style="text-align: center;">
                 <h2>About Us</h2></div>
-                <p style="font-family: Brush Script MT, cursive; font-size: 16px;">
+                <p style="font-family: URW Chancery L, cursive; font-size: 20px;">
                     Welcome to FinSight, an Event Finance Manager and Visualizer, your one-stop solution for seamless, 
                     event-specific finance management. Designed to streamline and simplify financial tasks 
                     during event organization, our app centralizes all financial data, enabling real-time 
@@ -94,11 +92,6 @@
         </div>
     </div>
 </section>
-
-        <!-- Background image is handled in CSS, so this img tag can be removed -->
-    </div>
-</section>
-
 
 <section id="contact" class="contact">
     <h2>Contact Us</h2>
