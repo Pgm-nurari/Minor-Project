@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 
+{% import 'components/table_component.html' as table %}
+{% import 'components/header_with_button.html' as header %}
+{% import 'admin/event_cards.html' as event_card %}
+{% import 'components/userauthcard.html' as user_auth_card %}
+{% import 'admin/header_bar.html' as admin_header %}
+
 {% block title %}Event Details{% endblock %}
 
 {% block extra_css %}
@@ -7,27 +13,7 @@
 {% endblock %}
 
 {% block header %}
-<header class="p-3 mb-3 border-bottom" style="background-color: #66b775;">
-    <div class="d-flex align-items-center justify-content-between w-100">
-        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-            <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
-            <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
-        </a>
-
-        <ul class="nav mb-2 justify-content-center mb-md-0 flex-grow-1">
-            <li><a href="{{ url_for('admin.admin_dashboard') }}" class="nav-link px-2 link-secondary">Dashboard</a></li>
-        </ul>
-
-        <div class="dropdown text-end">
-            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="https://github.com/mdo.png" alt="User" width="32" height="32" class="rounded-circle">
-            </a>
-            <ul class="dropdown-menu text-small">
-                <li><a class="dropdown-item" href="#">Sign out</a></li>
-            </ul>
-        </div>
-    </div>
-</header>
+{{ admin_header.header() }}
 {% endblock %}
 
 {% block content %}
@@ -58,13 +44,11 @@
 <!-- Display sub-events if available -->
 {% if sub_events %}
     <h3>Sub-Events</h3>
-    <ul>
-        {% for sub_event in sub_events %}
-            <li>
-                <strong>{{ sub_event.Name }}</strong> - {{ sub_event.Date.strftime('%Y-%m-%d') }}
-            </li>
-        {% endfor %}
-    </ul>
+    {% for sub_event in sub_events %}
+            {{ sub_event }}
+    {% endfor %}
+    
+
 {% else %}
     <p>No sub-events available for this event.</p>
 {% endif %}

@@ -3,6 +3,7 @@ from . import db
 from .modules.models import Department, Role, User, EventType, Event, SubEvent
 from .modules.db_queries import *
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import asc, desc
 from sqlalchemy import func
 from datetime import datetime, date
 from .test_data import test_user_data, test_event_data
@@ -13,9 +14,7 @@ admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 @admin_bp.route('/')
 def admin_dashboard():
     # Retrieve all users
-    users = filter_data(User)  # Fetch all users
-
-    # Prepare structured data for each user by calling get_user_info for each one
+    users = filter_data(User)
     user_data = [get_user_info(user) for user in users]
 
     # Render the template with the structured user data
@@ -99,9 +98,9 @@ def new_user():
         user_data = {
             'Username': username,
             'Email': email,
-            'Role': role.Role_ID,  # Assuming Role_ID is the ID you need
-            'Dept_ID': department.Dept_ID,  # Assuming Dept_ID is the ID you need
-            'Password': ''  # Setting password as blank
+            'Role': role.Role_ID,  
+            'Dept_ID': department.Dept_ID,  
+            'Password': ''  
         }
 
         # Add the new user to the database using the create_entry function
@@ -254,21 +253,18 @@ def create_multiple_events():
     db.session.commit()
     flash("Multiple Events and Sub-Events Created Successfully!")
     return redirect(url_for('admin.new_event'))
-    
-@admin_bp.route('/view_events')
-def view_events():
-    return render_template('admin/view_events.html', events=get_event_data())
 
 def get_event_data():
     """
-    This function returns a list of dictionaries containing event data.
-    The dictionary will be named event_card_data and it will have the following keys:
+    This function returns a dictionary containing events grouped by their status.
+    The dictionary will have the following keys: "Upcoming", "Ongoing", and "Completed",
+    each containing a list of event data (dictionaries).
+    Each event dictionary will have the following keys:
         "id", "event_name", "status", "type", "department", "event_manager"
-    The status will be either "Upcoming", "Ongoing", or "Completed" based on the event's date.
     """
-    
-    # Initialize the data list
-    event_card_data = []
+
+    # Initialize the dictionary to store events by status
+    grouped_event_data = {'Upcoming': [], 'Ongoing': [], 'Completed': []}
 
     # Get the current date
     current_date = date.today()
@@ -299,17 +295,20 @@ def get_event_data():
         # Get the event manager using the User model
         event_manager = next((user.Username for user in users if user.User_ID == event.Event_Manager), "Unknown")
 
-        # Build the event card data
-        event_card_data.append({
+        # Build the event card data dictionary
+        event_data = {
             "id": event.Event_ID,
             "event_name": event.Name,
             "status": status,
             "type": event_type,
             "department": department,
-            "event_manager": event_manager
-        })
-    
-    return event_card_data
+            "event_manager": event_manager,
+        }
+
+        # Append the event data to the appropriate status list in the dictionary
+        grouped_event_data[status].append(event_data)
+
+    return grouped_event_data
     
 def get_user_info(user):
     """Fetch and structure data for a single user, including related roles, departments."""
@@ -334,38 +333,9 @@ def get_user_info(user):
         "department": departments_dict.get(user.Dept_ID, "No Department Assigned"),
         "verified": user.Verified  # Ensure Verified data is passed
     }
-    print(user_info)
+    #User Info Display....
+    # print(user_info)
     return user_info
-
-def get_user_table_data():
-    # Fetch filtered data
-    users = filter_data(User, None, ['User_ID', 'Username', 'Email', 'Role', 'Dept_ID'])
-    depts = filter_data(Department, None, ['Dept_ID', 'Name'])
-    roles = filter_data(Role, None, ['Role_ID', 'Role_Name'])
-    
-    # Create a mapping for quick lookup
-    dept_dict = {dept.Dept_ID: dept.Name for dept in depts}
-    role_dict = {role.Role_ID: role.Role_Name for role in roles}
-
-    user_table_data = []
-    for user in users:
-        # Lookup department and role names
-        department_name = dept_dict.get(user.Dept_ID, "N/A")
-        role_name = role_dict.get(user.Role, "N/A")
-
-        # Add user data to table
-        row = {
-            'user_id': user.User_ID,
-            'Full Name': user.Username.title(),
-            'Email': user.Email,
-            'Role': role_name,
-            'Department': department_name
-        }
-        user_table_data.append(row)
-
-    # Print data for verification
-    print(user_table_data)
-    return user_table_data
 
 @admin_bp.route('/view_user/<int:user_id>', methods=['GET'])
 def view_user(user_id):
@@ -422,11 +392,94 @@ def delete_user(user_id):
     else:
         return redirect(url_for('admin.admin_dashboard'))
 
+@admin_bp.route('/view_events')
+def view_events():
+    return render_template('admin/view_events.html', events=get_event_data())
+
 @admin_bp.route('/users')
 def users_table():
-    # Retrieve all users
-    users = filter_data(User)  # Fetch all users
+    # Get parameters for sorting and filtering from the request
+    sort_key = request.args.get('sort_key', 'username')  # Default sorting by 'username'
+    sort_order = request.args.get('sort_order', 'asc')  # Default sorting order is ascending
 
-    # Prepare structured data for each user by calling get_user_info for each one
+    # Filter parameters (role, department, username)
+    filter_role = request.args.get('filter_role', '')
+    filter_department = request.args.get('filter_department', '')
+    filter_username = request.args.get('filter_username', '')
+
+    # Get the filtered and sorted user data from the database
+    user_table_data = get_user_table_data(
+        sort_key=sort_key,
+        sort_order=sort_order,
+        filter_role=filter_role,
+        filter_department=filter_department,
+        filter_username=filter_username
+    )
+    users = filter_data(User)
     user_data = [get_user_info(user) for user in users]
-    return render_template('admin/user_table.html',data=user_data, users_table = get_user_table_data())
+
+    # Pass the filters as part of the context so they can be included in the URLs for sorting
+    return render_template('admin/user_table.html', 
+                           users_table=user_table_data,
+                           filter_role=filter_role,
+                           filter_department=filter_department,
+                           filter_username=filter_username,
+                           sort_key=sort_key,
+                           sort_order=sort_order,data=user_data)
+
+
+def get_user_table_data(sort_key='username', sort_order='asc', filter_role='', filter_department='', filter_username=''):
+    query = db.session.query(User.User_ID, User.Username, User.Email, User.Role, User.Dept_ID)
+    
+    # Apply filters if specified
+    if filter_role:
+        query = query.filter(User.Role == filter_role)
+    if filter_department:
+        query = query.filter(User.Dept_ID == filter_department)
+    if filter_username:
+        query = query.filter(User.Username.ilike(f'%{filter_username}%'))
+
+    # Apply sorting (consider descending order if specified)
+    if sort_order == 'desc':
+        sort_func = desc
+    else:
+        sort_func = asc
+
+    # Dynamically apply sorting based on the sort_key
+    if sort_key == 'username':
+        query = query.order_by(sort_func(User.Username))
+    elif sort_key == 'email':
+        query = query.order_by(sort_func(User.Email))
+    elif sort_key == 'role':
+        query = query.order_by(sort_func(User.Role))
+    elif sort_key == 'department':
+        query = query.order_by(sort_func(User.Dept_ID))
+
+    # Execute query and fetch the results
+    users = query.all()
+
+    # Fetch departments and roles for lookup
+    depts = filter_data(Department, None, ['Dept_ID', 'Name'])
+    roles = filter_data(Role, None, ['Role_ID', 'Role_Name'])
+
+    # Create dictionaries for quick lookup
+    dept_dict = {dept.Dept_ID: dept.Name for dept in depts}
+    role_dict = {role.Role_ID: role.Role_Name for role in roles}
+
+    user_table_data = []
+    for user in users:
+        # Lookup department and role names using the dictionaries
+        department_name = dept_dict.get(user.Dept_ID, "N/A")
+        role_name = role_dict.get(user.Role, "N/A")
+
+        # Add user data to table
+        row = {
+            'user_id': user.User_ID,
+            'Full Name': user.Username.title(),
+            'Email': user.Email,
+            'Role': role_name,
+            'Department': department_name
+        }
+        user_table_data.append(row)
+
+    return user_table_data

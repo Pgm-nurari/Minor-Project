@@ -1,22 +1,22 @@
 /* Styling for individual event cards */
 .eventcard {
-  width: 220px; /* Reduced width */
-  height: auto; /* Set to auto to fit content */
+  width: 300px; /* Fixed width for consistency */
+  height: auto; /* Automatically adjusts based on content */
   background: white;
   box-shadow: 4px 10px 4px rgba(0, 0, 0, 0.25);
   border-radius: 15px;
   overflow: hidden;
-  border: 3px #afd46e solid;
+  border: 3px solid #afd46e;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px; /* Reduced padding */
+  padding: 12px; /* Reduced padding for more compact layout */
+  transition: transform 0.3s ease; /* Smooth transition for hover effect */
 }
 
 /* Hover effect on the event card */
 .eventcard:hover {
-  transform: translateY(-5px); /* Lift effect on hover */
-  transition: transform 0.3s ease;
+  transform: translateY(-5px); /* Slightly lift the card on hover */
 }
 
 /* Layout inside the card */
@@ -43,7 +43,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 200px; /* Ensure no wrapping occurs */
+  max-width: 250px; /* Prevent text wrapping */
 }
 
 /* Styling for list items inside the card */
@@ -71,13 +71,13 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 200px; /* Ensures text doesn't overflow */
+  max-width: 250px; /* Prevent overflow of text */
 }
 
 /* Button Styling */
 .cardbutton {
-  width: 160px; /* Slightly smaller button width */
-  height: 36px; /* Slightly reduced height */
+  width: 160px; /* Adjusted width for the button */
+  height: 36px; /* Adjusted height */
   background: #afd46e;
   border-radius: 8px;
   display: flex;
@@ -85,7 +85,7 @@
   align-items: center;
   border: 1px solid #2c2c2c;
   cursor: pointer;
-  margin-top: 8px; /* Small margin to separate button from content */
+  margin-top: 8px; /* Small margin to separate button */
 }
 
 .cardbutton:hover {
@@ -94,7 +94,7 @@
 
 .cardbuttontext {
   color: white;
-  font-size: 14px; /* Smaller font size for button text */
+  font-size: 14px; /* Smaller text size for buttons */
   text-align: center;
 }
 
@@ -103,9 +103,79 @@ a {
   text-decoration: none;
 }
 
+/* Layout for the cards container */
 .cardscontainer {
-  display: flex;
-  flex-wrap: wrap;
+  display: flex; /* Use flex layout for the cards container */
+  flex-wrap: wrap; /* Allow wrapping of cards to the next row */
   gap: 16px; /* Adjust space between cards */
+  justify-content: flex-start; /* Ensure cards align to the left */
+  align-items: flex-start; /* Ensure cards align to the top */
+  padding: 16px; /* Add padding around the container */
+}
+
+/* Layout for the events container (sections stacked vertically) */
+.events-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between status sections */
+}
+
+/* Ensure the sections (status groups) stack correctly */
+.status-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Space between header and card container */
+  padding: 10px;
+  border-bottom: 2px solid #eee; /* Optional: to separate sections visually */
+}
+
+.status-section h4 {
+  font-size: 20px;
+  color: #2c2c2c;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+/* "View More" button styling for each status section */
+.view-more-button {
+  width: 150px; /* Reduced width for a smaller button */
+  height: 35px; /* Reduced height */
+  background: #afd46e;
+  border-radius: 20px; /* More rounded corners */
+  display: flex;
   justify-content: center;
+  align-items: center;
+  margin: 0 auto; /* Center horizontally */
+  position: relative;
+  top: 50%; /* Position at mid-height */
+  transform: translateY(-50%); /* Adjust to truly center vertically */
+  cursor: pointer;
+  border: none;
+}
+
+.view-more-button:hover {
+  background-color: #8bc34a;
+}
+
+.view-more-button .cardbuttontext {
+  font-size: 14px; /* Adjust text size in the view more button */
+}
+
+/* Styling for empty message when no events are present */
+.no-events-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-style: italic;
+  font-size: 18px; /* Slightly larger text for better readability */
+  color: #666; /* Slightly darker color for better contrast */
+  background-color: #f9f9f9; /* Light background for a subtle highlight */
+  border: 1px solid #ddd; /* Thin border for definition */
+  border-radius: 10px; /* Rounded corners for a polished look */
+  padding: 15px; /* Added padding for spacing */
+  margin-top: 20px; /* Maintain margin */
+  margin-bottom: 10px; /* Slight spacing from next section */
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
 }

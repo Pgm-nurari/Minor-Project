@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% import 'components/table_component.html' as table %}
 {% import 'components/header_with_button.html' as header %}
-{% import 'components/event_card_macro.html' as event_card %}
+{% import 'admin/event_cards.html' as event_card %}
 {% import 'admin/header_bar.html' as admin_header %}
 
 {% block title %}Admin Dashboard{% endblock %}
@@ -25,6 +25,6 @@
     buttons=[button1]
   ) }}
   
-  {{ event_card.render_event_cards(events, user_role='admin', minimum_cards=7) }}
+  {{ event_card.render_event_cards_admin(events, user_role, minimum_cards=False) }}
 </section>
 {% endblock %}

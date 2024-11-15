@@ -1,9 +1,15 @@
 {% extends 'base.html' %}
 
+{% import 'components/header_with_button.html' as section_header %}
+{% import 'finance_manager/event_cards.html' as event_card %}
+
+{% import 'finance_manager/header_bar.html' as finance_header %}
+
 {% block title %}Finance Manager Dashboard{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{url_for('static',filename='css/common.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
 <style>
   .hover-pill {
     padding: 8px 16px;

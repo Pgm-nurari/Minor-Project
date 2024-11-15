@@ -1,21 +1,37 @@
-<link rel="stylesheet" href="{{url_for('static',filename='css/tablecomponent.css')}}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tablecomponent.css') }}">
 
-{% macro render_table(data, actions=True, table_classes="table table-striped table-hover table-bordered", action_buttons=None, identifier_key='id', url_patterns=None) %}
+{% macro render_table(data, filters={}, sort_key=None, sort_order='asc', actions=True, table_classes="table table-striped table-hover table-bordered", action_buttons=None, identifier_key='id', url_patterns=None) %}
   <div class="container mt-5 table-responsive">
+
+    <!-- Table Controls -->
+    <div class="d-flex justify-content-between mb-4">
+      <div class="input-group w-25">
+        <input type="text" class="form-control" placeholder="Search..." id="tableSearch" oninput="applySearch()" value="{{ filters.get('search', '') }}">
+        <button class="btn btn-primary" onclick="applySearch()">Search</button>
+      </div>
+    </div>
+
     {% if data %}
       <table class="{{ table_classes }} custom-table-card">
         <thead class="table-primary">
-          <tr>
-            {% for key in data[0].keys() %}
-              <th class="text-center">{{ key | title }}</th>
-            {% endfor %}
-            {% if actions %}
-              <th class="text-center">Actions</th>
-            {% endif %}
-          </tr>
-        </thead>
+  <tr>
+    {% for key in data[0].keys() %}
+      <th class="text-center">
+        <a href="?sort_key={{ key }}&sort_order={{ 'desc' if sort_key == key and sort_order == 'asc' else 'asc' }}{% for field, value in filters.items() %}&filter_{{ field }}={{ value }}{% endfor %}">
+          {{ key | title }}
+          {% if sort_key == key %}
+            <span>{% if sort_order == 'asc' %}▲{% else %}▼{% endif %}</span>
+          {% endif %}
+        </a>
+      </th>
+    {% endfor %}
+    {% if actions %}
+      <th class="text-center">Actions</th>
+    {% endif %}
+  </tr>
+</thead>
 
-        <tbody>
+        <tbody id="tableBody">
           {% for row in data %}
             <tr>
               {% for key, value in row.items() %}
@@ -28,9 +44,8 @@
                       {% for button in action_buttons %}
                         <a 
                           href="{{ url_for(url_patterns[button['endpoint']], **{identifier_key: row[identifier_key]}) }}" 
-                          class="btn btn-clean btn-clean-{{ button['type'] }} me-2"
-                          {% if button.get('title') %} title="{{ button['title'] }}" {% endif %}
-                        >
+                          class="btn btn-clean btn-clean-{{ button['class'] }} me-2"
+                          {% if button.get('title') %} title="{{ button['title'] }}" {% endif %}>
                           {{ button['label'] }}
                         </a>
                       {% endfor %}
@@ -62,4 +77,22 @@
       <p class="text-center mt-4">No data available to display.</p>
     {% endif %}
   </div>
+
+  <!-- JavaScript for Search and Dynamic Filtering -->
+  <script>
+    function applySearch() {
+      const searchValue = document.getElementById('tableSearch').value.toLowerCase();
+      const rows = document.querySelectorAll('#tableBody tr');
+      
+      rows.forEach(row => {
+        let isMatch = false;
+        row.querySelectorAll('td').forEach(cell => {
+          if (cell.textContent.toLowerCase().includes(searchValue)) {
+            isMatch = true;
+          }
+        });
+        row.style.display = isMatch ? '' : 'none';
+      });
+    }
+  </script>
 {% endmacro %}

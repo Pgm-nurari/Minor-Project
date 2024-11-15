@@ -36,23 +36,31 @@
   </div>
 </section>
 
-<section id="Users table">
-  <!-- Render New User button with header component -->
+<section id="UsersTable">
   {% set button1 = {'text': 'New User', 'action': url_for('admin.new_user'), 'class': 'header-button'} %}
   {{ header.render_header(title='User Table', buttons=[button1]) }}
 
+  <!-- Table Section: Sorting, Filtering and Actions -->
   <div>
-    <!-- Render the users table with Edit and Delete options -->
     {{ table.render_table(
       users_table, 
-      actions=True, 
-      identifier_key='user_id', 
+      filters={
+        'role': request.args.get('filter_role', ''),
+        'department': request.args.get('filter_department', ''),
+        'username': request.args.get('filter_username', '')
+      },
+      sort_key=request.args.get('sort_key', 'username'),
+      sort_order=request.args.get('sort_order', 'asc'),
+      actions=True,
+      table_classes="table table-striped table-hover table-bordered",
       action_buttons=[
         {'endpoint': 'edit', 'label': 'Edit', 'class': 'warning'},
         {'endpoint': 'delete', 'label': 'Delete', 'class': 'danger'}
       ],
+      identifier_key='user_id',
       url_patterns={'edit': 'admin.edit_user', 'delete': 'admin.delete_user'}
     ) }}
   </div>
 </section>
 {% endblock %}
+

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% import 'components/table_component.html' as table %}
 {% import 'components/header_with_button.html' as header %}
-{% import 'components/event_card_macro.html' as event_card %}
+{% import 'admin/event_cards.html' as event_card %}
 {% import 'components/userauthcard.html' as user_auth_card %}
 {% import 'admin/header_bar.html' as admin_header %}
 
@@ -11,6 +11,9 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/userauthcard.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
+<style>
+  
+</style>
 {% endblock %}
 
 {% block header %}
@@ -27,7 +30,7 @@
   <!-- Check if there are events to display, otherwise prompt to create new events -->
   <div class="cardscontainer">
     {% if events %}
-      {{ event_card.render_event_cards(events, user_role='admin', minimum_cards=7) }}
+      {{ event_card.render_event_cards_admin(events, user_role, minimum_cards=True) }}
     {% else %}
       <p>No events found. <a style="text-decoration:none;" href="{{ url_for('admin.new_event') }}">Create a new event</a> to get started.</p>
     {% endif %}

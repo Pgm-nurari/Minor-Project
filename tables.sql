@@ -39,6 +39,7 @@ CREATE TABLE Event (
     Date DATE NOT NULL,
     Days INT NOT NULL,
     Dept_ID INT,
+    Budget DECIMAL(10, 2) DEFAULT NULL,  -- Added budget column
     modified_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (Finance_Manager) REFERENCES User(User_ID),  
     FOREIGN KEY (Event_Manager) REFERENCES User(User_ID),
@@ -56,11 +57,13 @@ CREATE TABLE Sub_Event (
     Time TIME NOT NULL,
     Dept_ID INT,
     Event_ID INT,
+    Budget DECIMAL(10, 2) DEFAULT NULL,  -- Added budget column
     modified_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (Sub_Event_Manager) REFERENCES User(User_ID),
     FOREIGN KEY (Event_Type_ID) REFERENCES Event_Type(Event_Type_ID),
     FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID),
-    FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID)
+    FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID),
+    CONSTRAINT fk_sub_event_budget CHECK (Budget <= (SELECT Budget FROM Event WHERE Event_ID = Event_ID))  -- Ensure sub-event budget is <= event budget
 );
 
 -- 7. Transaction_Nature Table

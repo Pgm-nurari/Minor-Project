@@ -1,0 +1,46 @@
+{% macro user_header(user_id) %}
+<style>
+    .hover-pill {
+      padding: 8px 16px;
+      border-radius: 50px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+  
+    .hover-pill:hover {
+        background-color: #AFD46E; /* Light green background on hover */
+        color: white;              /* White text on hover */
+        text-decoration: none;     /* Remove underline */
+    }
+  </style>
+
+<header class="p-3 mb-3 border-bottom" style="background-color: #66b775;">
+    <div class="container d-flex align-items-center justify-content-between w-100">
+        
+        <!-- Logo and Brand Name -->
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+            <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
+            <span class="fs-4 fw-bold" style="color: #AFD46E;">FinSight</span>
+        </a>
+
+        <!-- Centered Navigation Links -->
+        <ul class="nav mb-2 justify-content-center mb-md-0 flex-grow-1">
+            <li><a href="{{ url_for('event_manager.event_manager', user_id=user_id) }}" class="nav-link px-2 link-body-emphasis hover-pill">Dashboard</a></li>
+            <li><a href="{{ url_for('event_manager.view_events', user_id=user_id) }}" class="nav-link px-2 link-body-emphasis hover-pill">Events</a></li>
+        </ul>
+
+        <!-- User Dropdown Menu -->
+        <div class="dropdown text-end">
+            <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://github.com/mdo.png" alt="User" width="32" height="32" class="rounded-circle">
+            </a>
+            <ul class="dropdown-menu text-small">
+                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{{ url_for('home.index') }}">Sign out</a></li>
+            </ul>
+        </div>
+        
+    </div>
+</header>
+{% endmacro %}
