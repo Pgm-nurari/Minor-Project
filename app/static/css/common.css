@@ -91,3 +91,30 @@ header .header-button a:hover {
     background-color: #8bc34a;
     transform: scale(1.05);
 }
+
+.back-home-btn {
+    position: fixed;
+    top: 10px; /* Distance from the top */
+    left: 10px; /* Distance from the left */
+    width: 50px; /* Width of the button */
+    height: 50px; /* Height of the button */
+    background-color: white; /* White background */
+    border-radius: 8px; /* Rounded corners for a box-like appearance */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    font-size: 24px; /* Icon size */
+    color: #333; /* Icon color */
+    text-decoration: none; /* Removes underline */
+    display: flex; /* Flexbox for centering the icon */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    transition: all 0.2s ease-in-out;
+    z-index: 1000; /* Ensures it's above other elements */
+}
+
+.back-home-btn:hover {
+    background-color: #f8f9fa; /* Slightly darker on hover */
+    transform: scale(1.1); /* Grows slightly on hover */
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+

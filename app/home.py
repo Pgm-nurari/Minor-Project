@@ -39,11 +39,14 @@ def login():
             errors["general"] = "Invalid credentials. Please check your email and password."
             return render_template("home/login.html", errors=errors, email=email, password=password)
 
-        # Check the role of the user
+        # Check if the user is verified
         current_user = user[0]
-        print(current_user)
+        if current_user.Verified == 0:  # User is not verified
+            errors["general"] = "Not a verified user, contact Admin."
+            return render_template("home/login.html", errors=errors, email=email, password=password)
+
+        # Check the role of the user
         role = current_user.role.Role_Name  # Assuming the role is an object and has a 'Role_Name' attribute
-        print(role)
 
         # Redirect based on role
         if role == 'Event Manager':
