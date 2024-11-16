@@ -3,286 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Event Creation</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            margin: auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #6cba5e;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button[type="submit"], button[type="button"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #6cba5e;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        button[type="submit"]:hover, button[type="button"]:hover {
-            background-color: #5aa850;
-        }
-        .sub-event-form {
-            background-color: #f9f9f9;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        .sub-event-form h4 {
-            margin-bottom: 10px;
-            color: #6cba5e;
-        }
-        .error-message {
-            color: red;
-            font-size: 12px;
-        }
-        .back-button {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            color: #555;
-        }
-
-        .back-button:hover {
-            color: #333;
-        }
-
-        .back-button:focus {
-            outline: none;
-        }
-    </style>
+    <title>Create Event</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <button class="back-button" onclick="window.history.back();">&larr; Back</button>
-        <h2>Event Creation</h2>
-        <form id="eventForm">
-            <!-- Event Category -->
-            <div class="form-group">
-                <label for="eventTypeSelection">Event Category</label>
-                <select id="eventTypeSelection" name="eventTypeSelection" required>
-                    <option value="">Select Event Type</option>
-                    <option value="single">Single Event</option>
-                    <option value="multiple">Multiple Events</option>
-                </select>
-                <span class="error-message" id="eventTypeSelectionError"></span>
-            </div>
+    <div class="container mt-5">
+        <h2>Create New Event</h2>
 
-            <!-- Event Details -->
+        <!-- Toggle Buttons -->
+        <div class="btn-group mb-4" role="group" aria-label="Event Type Toggle">
+            <button type="button" class="btn btn-primary" id="showSingleEventForm">Single Event</button>
+            <button type="button" class="btn btn-secondary" id="showMultipleEventForm">Multiple Events</button>
+        </div>
+
+        <!-- Single Event Form -->
+        <form action="{{ url_for('admin.create_single_event') }}" method="POST" id="singleEventForm">
             <div class="form-group">
                 <label for="eventName">Event Name</label>
-                <input type="text" id="eventName" name="eventName" placeholder="Enter Event Name" required maxlength="100" pattern="[a-zA-Z0-9\s]{1,100}">
-                <span class="error-message" id="eventNameError"></span>
+                <input type="text" class="form-control" id="eventName" name="eventName" required>
             </div>
-
             <div class="form-group">
                 <label for="eventType">Event Type</label>
-                <select id="eventType" name="eventType" required>
+                <select class="form-control" id="eventType" name="eventType" required>
                     <option value="">Select Event Type</option>
                     {% for event_type in event_types %}
                         <option value="{{ event_type.Event_Type_ID }}">{{ event_type.Event_Type_Name }}</option>
                     {% endfor %}
                 </select>
-                <span class="error-message" id="eventTypeError"></span>
             </div>
-
-            <!-- Event Date -->
-            <div class="form-group" id="eventDateGroup">
+            <div class="form-group">
                 <label for="eventDate">Event Date</label>
-                <input type="date" id="eventDate" name="eventDate" required>
-                <span class="error-message" id="eventDateError"></span>
+                <input type="date" class="form-control" id="eventDate" name="eventDate" required>
             </div>
-
-            <!-- Finance Manager -->
-            <div class="form-group" id="financeManagerGroup">
-                <label for="FinMan">Finance Manager</label>
-                <select id="FinMan" name="FinMan" required>
-                    <option value="">Select Finance Manager</option>
-                    {% for user in finance_managers %}
-                        <option value="{{ user.User_ID }}">{{ user.Username }}</option>
-                    {% endfor %}
-                </select>
-                <span class="error-message" id="FinManError"></span>
-            </div>
-
-            <!-- Event Manager -->
-            <div class="form-group" id="eventManagerGroup">
-                <label for="EveMan">Event Manager</label>
-                <select id="EveMan" name="EveMan" required>
-                    <option value="">Select Event Manager</option>
-                    {% for user in event_managers %}
-                        <option value="{{ user.User_ID }}">{{ user.Username }}</option>
-                    {% endfor %}
-                </select>
-                <span class="error-message" id="EveManError"></span>
-            </div>
-
             <div class="form-group">
                 <label for="department">Department</label>
-                <select id="department" name="department" required>
+                <select class="form-control" id="department" name="department" required>
                     <option value="">Select Department</option>
                     {% for department in departments %}
                         <option value="{{ department.Dept_ID }}">{{ department.Name }}</option>
                     {% endfor %}
                 </select>
-                <span class="error-message" id="departmentError"></span>
+            </div>
+            <div class="form-group">
+                <label for="EveMan">Event Manager</label>
+                <select class="form-control" id="EveMan" name="EveMan" required>
+                    <option value="">Select Event Manager</option>
+                    {% for manager in event_managers %}
+                        <option value="{{ manager.User_ID }}">{{ manager.Username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="FinMan">Finance Manager</label>
+                <select class="form-control" id="FinMan" name="FinMan" required>
+                    <option value="">Select Finance Manager</option>
+                    {% for manager in finance_managers %}
+                        <option value="{{ manager.User_ID }}">{{ manager.Username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Single Event</button>
+        </form>
+
+        <!-- Multiple Events Form -->
+        <form action="{{ url_for('admin.create_multiple_events') }}" method="POST" id="multipleEventForm" style="display: none;">
+            <div class="form-group">
+                <label for="eventName">Main Event Name</label>
+                <input type="text" class="form-control" id="eventName" name="eventName" required>
+            </div>
+            <div class="form-group">
+                <label for="eventType">Event Type</label>
+                <select class="form-control" id="eventType" name="eventType" required>
+                    <option value="">Select Event Type</option>
+                    {% for event_type in event_types %}
+                        <option value="{{ event_type.Event_Type_ID }}">{{ event_type.Event_Type_Name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="eventDate">Start Date</label>
+                <input type="date" class="form-control" id="eventDate" name="eventDate" required>
+            </div>
+            <div class="form-group">
+                <label for="department">Department</label>
+                <select class="form-control" id="department" name="department" required>
+                    <option value="">Select Department</option>
+                    {% for department in departments %}
+                        <option value="{{ department.Dept_ID }}">{{ department.Name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="EveMan">Event Manager</label>
+                <select class="form-control" id="EveMan" name="EveMan" required>
+                    <option value="">Select Event Manager</option>
+                    {% for manager in event_managers %}
+                        <option value="{{ manager.User_ID }}">{{ manager.Username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="FinMan">Finance Manager</label>
+                <select class="form-control" id="FinMan" name="FinMan" required>
+                    <option value="">Select Finance Manager</option>
+                    {% for manager in finance_managers %}
+                        <option value="{{ manager.User_ID }}">{{ manager.Username }}</option>
+                    {% endfor %}
+                </select>
             </div>
 
-            <!-- Sub-Event Count -->
-            <div class="form-group" id="subEventCountGroup" style="display: none;">
-                <label for="subEventCount">Number of Sub-Events</label>
-                <input type="number" id="subEventCount" name="subEventCount" min="1" max="10">
-                <span class="error-message" id="subEventCountError"></span>
-                <button type="button" id="addSubEventsButton" style="margin-top: 10px;">Add Sub-Events</button>
-            </div>
-
-            <!-- Sub-Event Forms Container -->
+            <!-- Sub-event section -->
             <div id="subEventContainer"></div>
-
-            <button type="submit">Add Event</button>
+            <button type="button" class="btn btn-secondary" id="addSubEvent">Add Sub-Event</button>
+            <button type="submit" class="btn btn-primary">Create Multiple Events</button>
         </form>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Disable previous dates for event and sub-event date inputs
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('eventDate').setAttribute('min', today);
-    
-            const subEventContainer = document.getElementById('subEventContainer');
-    
-            // Add sub-event forms dynamically
-            const addSubEventsButton = document.getElementById('addSubEventsButton');
-            addSubEventsButton.addEventListener('click', function() {
-                const subEventCount = document.getElementById('subEventCount').value;
-                if (isNaN(subEventCount) || subEventCount <= 0 || subEventCount > 10) {
-                    document.getElementById('subEventCountError').innerText = 'Please enter a valid number of sub-events (between 1 and 10).';
-                    return;
-                }
-    
-                subEventContainer.innerHTML = ''; // Clear existing sub-event forms
-    
-                for (let i = 0; i < subEventCount; i++) {
-                    const subEventForm = document.createElement('div');
-                    subEventForm.className = 'sub-event-form';
-                    subEventForm.innerHTML = `
-                        <h4>Sub-Event ${i + 1}</h4>
-                        <div class="form-group">
-                            <label for="subEventName${i}">Sub-Event Name</label>
-                            <input type="text" id="subEventName${i}" name="subEventName${i}" placeholder="Enter Sub-Event Name" required maxlength="100">
-                        </div>
-                        <div class="form-group">
-                            <label for="subEventType${i}">Sub-Event Type</label>
-                            <select id="subEventType${i}" name="subEventType${i}" required>
-                                <option value="">Select Event Type</option>
-                                {% for type in event_types %}
-                                    <option value="{{ type.Event_Type_ID }}">{{ type.Event_Type_Name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="subEventManager${i}">Sub-Event Manager</label>
-                            <select id="subEventManager${i}" name="subEventManager${i}" required>
-                                <option value="">Select Sub-Event Manager</option>
-                                {% for user in event_managers %}
-                                    <option value="{{ user.User_ID }}">{{ user.Username }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="subEventDate${i}">Sub-Event Date</label>
-                            <input type="date" id="subEventDate${i}" name="subEventDate${i}" min="${today}" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="subEventTime${i}">Sub-Event Time</label>
-                            <input type="time" id="subEventTime${i}" name="subEventTime${i}" required>
-                        </div>
-                    `;
-                    subEventContainer.appendChild(subEventForm);
-                }
-            });
-    
-            // Remaining logic for event type selection and form submission
-            // Show/Hide Finance Manager based on Single/Multiple Event Selection
-            eventTypeSelection.addEventListener('change', function() {
-                if (eventTypeSelection.value === 'single' || eventTypeSelection.value === 'multiple') {
-                    financeManagerGroup.style.display = 'block';  // Always show Finance Manager for both event types
-                    eventDateGroup.style.display = 'block';    // Show Event Date for both
-                    subEventCountGroup.style.display = eventTypeSelection.value === 'multiple' ? 'block' : 'none'; // Show Sub Event Count for Multiple Events
-                    subEventContainer.innerHTML = '';          // Clear Sub Events Container if switching to single
-                }
-            });
-            // Form Submission
-            form.addEventListener('submit', function(event) {
-                event.preventDefault();
-    
-                // Proceed with form submission logic
-                const eventType = document.getElementById('eventTypeSelection').value;
-                let url = '';
-                if (eventType === 'single') {
-                    url = '/admin/create_single_event';  // For Single Event
-                } else if (eventType === 'multiple') {
-                    url = '/admin/create_multiple_events';  // For Multiple Events
-                } else {
-                    alert('Please select an event type');
-                    return;
-                }
-    
-                // Create form data object
-                const formData = new FormData(form);
-    
-                // Submit the form data using Fetch API
-                fetch(url, {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = '/admin/new_event';  // Redirect after successful form submission
-                    } else {
-                        alert('Failed to create event. Please try again.');
-                    }
-                })
-                .catch(error => {
-                    alert('An error occurred: ' + error);
-                });
-            });
 
+    <script>
+        $(document).ready(function () {
+            // Toggle between forms
+            $("#showSingleEventForm").on("click", function () {
+                $("#singleEventForm").show();
+                $("#multipleEventForm").hide();
+                $(this).removeClass("btn-secondary").addClass("btn-primary");
+                $("#showMultipleEventForm").removeClass("btn-primary").addClass("btn-secondary");
+            });
+        
+            $("#showMultipleEventForm").on("click", function () {
+                $("#multipleEventForm").show();
+                $("#singleEventForm").hide();
+                $(this).removeClass("btn-secondary").addClass("btn-primary");
+                $("#showSingleEventForm").removeClass("btn-primary").addClass("btn-secondary");
+            });
+        
+            // Add sub-event functionality
+            let subEventCount = 0;
+            $("#addSubEvent").on("click", function () {
+                const subEventHTML = `
+                <div class="sub-event mt-4 border p-3">
+                    <h5>Sub-Event ${subEventCount + 1}</h5>
+                    <div class="form-group">
+                        <label for="subEventName${subEventCount}">Sub-Event Name</label>
+                        <input type="text" class="form-control" name="subEventName${subEventCount}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subEventType${subEventCount}">Sub-Event Type</label>
+                        <select class="form-control" name="subEventType${subEventCount}" required>
+                            <option value="">Select Sub-Event Type</option>
+                            {% for event_type in event_types %}
+                                <option value="{{ event_type.Event_Type_ID }}">{{ event_type.Event_Type_Name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subEventDate${subEventCount}">Sub-Event Date</label>
+                        <input type="date" class="form-control" name="subEventDate${subEventCount}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subEventTime${subEventCount}">Sub-Event Time</label>
+                        <input type="time" class="form-control" name="subEventTime${subEventCount}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subEventManager${subEventCount}">Sub-Event Manager</label>
+                        <select class="form-control" name="subEventManager${subEventCount}" required>
+                            <option value="">Select Sub-Event Manager</option>
+                            {% for manager in event_managers %}
+                                <option value="{{ manager.User_ID }}">{{ manager.Username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>`;
+                $("#subEventContainer").append(subEventHTML);
+                subEventCount++;
+            });
+        
+            // Form submission handling
+            function handleFormSubmission(formId, url) {
+                $(formId).on("submit", function (e) {
+                    e.preventDefault(); // Prevent the default form submission
+                    const formData = $(this).serialize();
+        
+                    $.post(url, formData, function (response) {
+                        if (response.status === "success") {
+                            alert(response.message);
+                            $(formId)[0].reset(); // Reset the form
+                            if (formId === "#multipleEventForm") {
+                                $("#subEventContainer").empty(); // Clear sub-event fields
+                            }
+                            window.location.reload(); // Optional: reload to update the view
+                        } else {
+                            alert("Failed to create events: " + response.message);
+                        }
+                    }).fail(function () {
+                        alert("An error occurred while submitting the form.");
+                    });
+                });
+            }
+        
+            // Handle the form submission for single event
+            handleFormSubmission("#singleEventForm", "{{ url_for('admin.create_single_event') }}");
+        
+            // Handle the form submission for multiple events
+            handleFormSubmission("#multipleEventForm", "{{ url_for('admin.create_multiple_events') }}");
+        
         });
+            
     </script>
 </body>
 </html>

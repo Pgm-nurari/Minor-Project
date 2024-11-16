@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Event Financial Visualizations{% endblock %}
+
+{% block extra_css %}
+<style>
+    .visualization-container {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    img {
+        max-width: 100%;
+        height: auto;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Financial Visualizations for Event ID: {{ event_id }}</h2>
+
+    <div class="visualization-container">
+        <h4>Transactions by Payment Mode</h4>
+        <img src="{{ plots['payment_mode'] }}" alt="Transactions by Payment Mode">
+    </div>
+
+    <div class="visualization-container">
+        <h4>Transactions by Category</h4>
+        <img src="{{ plots['transaction_category'] }}" alt="Transactions by Category">
+    </div>
+
+    <div class="visualization-container">
+        <h4>Budget Allocation vs Utilization</h4>
+        <img src="{{ plots['budget_comparison'] }}" alt="Budget Allocation vs Utilization">
+    </div>
+
+    <a href="{{ url_for('finance_manager.event_details', user_id=user_id, event_id=event_id) }}" class="btn btn-secondary">
+        Back to Event Details
+    </a>
+</div>
+{% endblock %}
+    

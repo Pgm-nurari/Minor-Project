@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block content %}
+
 <div class="container mt-4">
     <h2>All Transactions for Event</h2>
 
@@ -21,6 +22,7 @@
                     <th>Transaction Nature</th>
                     <th>Payment Mode</th>
                     <th>Category</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,11 +35,108 @@
                     <td>{{ transaction.nature }}</td>
                     <td>{{ transaction.payment_mode }}</td>
                     <td>{{ transaction.category }}</td>
+                    <td>
+                        <!-- Button to open modal for transaction items -->
+                        <button class="btn btn-info btn-sm" data-toggle="modal" data-target="#transactionModal-{{ loop.index }}">
+                            View Items
+                        </button>
+                    </td>
                 </tr>
+
+                <!-- Modal for Viewing Transaction Items -->
+                <div class="modal fade" id="transactionModal-{{ loop.index }}" tabindex="-1" role="dialog" aria-labelledby="transactionModalLabel-{{ loop.index }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="transactionModalLabel-{{ loop.index }}">Transaction Items for {{ transaction.bill_no }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Display Transaction Items in the Modal -->
+                                {% if transaction.transaction_items %}
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Description</th>
+                                            <th>Amount</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in transaction.transaction_items %}
+                                        <tr>
+                                            <td>{{ item.Description }}</td>
+                                            <td>{{ item.Amount }}</td>
+                                            <td>
+                                                <!-- Edit Button -->
+                                                <button class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editItemModal-{{ loop.index }}-{{ loop.index0 }}">
+                                                    Edit
+                                                </button>
+                                                <!-- Delete Button -->
+                                                <a href="{{ url_for('event_manager.delete_transaction_item', user_id=user_id, item_id=item.TransactionItem_ID) }}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this item?')">Delete</a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                {% else %}
+                                <p>No transaction items found for this transaction.</p>
+                                {% endif %}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal for Editing Transaction Item (separate modal for each item) -->
+                {% for item in transaction.transaction_items %}
+                <div class="modal fade" id="editItemModal-{{ loop.index }}-{{ loop.index0 }}" tabindex="-1" role="dialog" aria-labelledby="editItemModalLabel-{{ loop.index }}-{{ loop.index0 }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editItemModalLabel-{{ loop.index }}-{{ loop.index0 }}">Edit Transaction Item for {{ item.Description }}</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST" action="{{ url_for('event_manager.edit_transaction_item', user_id=user_id, item_id=item.TransactionItem_ID) }}">
+                                    <!-- Edit form inputs for Description and Amount -->
+                                    <div class="form-group">
+                                        <label for="description">Description</label>
+                                        <input type="text" class="form-control" id="description" name="description" value="{{ item.Description }}" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="amount">Amount</label>
+                                        <input type="number" class="form-control" id="amount" name="amount" value="{{ item.Amount }}" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                <!-- Script to close the previous modal when a new one opens -->
+                <script type="text/javascript">
+                    $('#transactionModal-{{ loop.index }}').on('show.bs.modal', function () {
+                        // Close all other open modals when a new one opens
+                        $('.modal').not(this).modal('hide');
+                    });
+                </script>
                 {% endfor %}
             </tbody>
         </table>
-            
     </div>
 </div>
+
 {% endblock %}
+

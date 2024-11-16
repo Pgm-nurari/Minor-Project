@@ -352,12 +352,11 @@ def create_transaction(user_id, event_id):
 @event_manager_bp.route('/event_transactions/<int:event_id>', methods=['GET'])
 def view_all_transactions(user_id, event_id):
     try:
-        # Check if the given event_id belongs to an Event
+        # Fetch the Event or SubEvent based on the user ID
         event = db.session.query(Event).filter_by(Event_ID=event_id, Event_Manager=user_id).first()
         transactions = []
 
         if event:
-            # Fetch transactions directly linked to the Event
             transactions = (
                 db.session.query(Transaction)
                 .filter_by(Event_ID=event_id)
@@ -365,14 +364,10 @@ def view_all_transactions(user_id, event_id):
                 .all()
             )
         else:
-            # Check if the event_id belongs to a SubEvent
             sub_event = db.session.query(SubEvent).filter_by(Sub_Event_ID=event_id, Sub_Event_Manager=user_id).first()
 
             if sub_event:
-                # Fetch parent Event_ID of the SubEvent
                 parent_event_id = sub_event.Event_ID
-
-                # Fetch transactions linked to both the parent event and the sub-event
                 transactions = (
                     db.session.query(Transaction)
                     .filter(
@@ -386,13 +381,18 @@ def view_all_transactions(user_id, event_id):
                 flash("Event or Sub-Event not found or you don't have permission to access it.", "danger")
                 return redirect(url_for('event_manager.view_events', user_id=user_id))
 
-        # Prepare transaction data for rendering
         transaction_data = []
         for transaction in transactions:
-            # Fetch transaction items and calculate the total amount
-            transaction_items = db.session.query(TransactionItem).filter_by(Transaction_ID=transaction.Transaction_ID).all()
+            # Fetch related transaction items using the relationship defined in the model
+            transaction_items = transaction.items  # Use the backref 'items' from the relationship
+
+            # If no items are found, set the transaction_items to an empty list
+            if not transaction_items:
+                transaction_items = []
+
             total_amount = sum(item.Amount for item in transaction_items)
 
+            # Create a dictionary for each transaction with its associated items
             transaction_data.append({
                 "bill_no": transaction.Bill_No,
                 "party_name": transaction.Party_Name,
@@ -401,18 +401,53 @@ def view_all_transactions(user_id, event_id):
                 "nature": transaction.transaction_nature.Nature_Name,
                 "payment_mode": transaction.payment_mode.Mode_Name,
                 "category": transaction.transaction_category.Category_Name,
+                "transaction_items": transaction_items  # Pass transaction items to template
             })
 
-        return render_template(
-            'event_manager/all_transactions.html',
-            transactions=transaction_data,  # Pass processed transaction data
-            event_id=event_id,
-            user_id=user_id
-        )
+    except Exception as e:
+        print(f"Unexpected error occurred: {e}")
+        flash("An unexpected error occurred.", "danger")
+    finally:
+        # Ensure that the session is closed even if an error occurs
+        db.session.close()
+    print(transaction_data)
+    return render_template(
+        'event_manager/all_transactions.html',
+        transactions=transaction_data,  # Pass processed transaction data
+        event_id=event_id,
+        user_id=user_id
+    )
 
-    except SQLAlchemyError as e:
-        flash("An error occurred while fetching transactions.", "danger")
-        print(f"Error fetching transactions: {e}")
-        return redirect(url_for('event_manager.view_events', user_id=user_id))
+
+@event_manager_bp.route('/delete_transaction_item/<int:item_id>', methods=['GET'])
+def delete_transaction_item(user_id, item_id):
+    item = TransactionItem.query.get_or_404(item_id)
+    try:
+        db.session.delete(item)
+        db.session.commit()
+        flash('Transaction item deleted successfully', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting item: {e}', 'danger')
+    return redirect(request.referrer)
+
+
+@event_manager_bp.route('/edit_transaction_item/<int:item_id>', methods=['POST'])
+def edit_transaction_item(user_id, item_id):
+    item = TransactionItem.query.get_or_404(item_id)
+    description = request.form['description']
+    amount = request.form['amount']
+    
+    try:
+        item.Description = description
+        item.Amount = amount
+        db.session.commit()
+        flash('Transaction item updated successfully', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error updating item: {e}', 'danger')
+    
+    return redirect(request.referrer)
+
 
 

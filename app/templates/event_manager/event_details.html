@@ -115,6 +115,19 @@
     margin-top: 30px;
 }
 
+/* Button for Adding New Transaction */
+.add-transaction-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.add-transaction-btn:hover {
+    background-color: #218838;
+}
 </style>
 {% endblock %}
 
@@ -216,6 +229,10 @@
             </a> to make a transaction.
         </p>
     {% endif %}
+
+    <!-- Add New Transaction Button -->
+    <a href="{{ url_for('event_manager.create_transaction', user_id=user_id, event_id=event['id']) }}" class="add-transaction-btn">Add New Transaction</a>
 </div>
 
 {% endblock %}
+

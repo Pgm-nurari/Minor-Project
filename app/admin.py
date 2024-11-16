@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, flash, url_for, get_flashed_messages, session   
+from flask import Blueprint, render_template, redirect, request, flash, url_for, get_flashed_messages, session, jsonify  
 from . import db
 from .modules.models import *
 from .modules.db_queries import *
@@ -66,144 +66,130 @@ def event_details(event_id):
 @admin_bp.route('/view_events')
 def view_events():
     return render_template('admin/view_events.html', events=get_event_data())
-
 @admin_bp.route('/new_event', methods=['GET'])
 def new_event():
-    # Query the database for departments, users for Event Manager/Finance Manager, and event types
+    # Query database for required data
     departments = Department.query.all()
     event_types = EventType.query.all()
-    
-    # Filter users based on roles
     event_managers = User.query.join(Role).filter(Role.Role_Name == 'Event Manager').all()
     finance_managers = User.query.join(Role).filter(Role.Role_Name == 'Finance Manager').all()
     
-    return render_template('admin/new_event_creation.html', 
-                           departments=departments, 
-                           event_managers=event_managers, 
-                           finance_managers=finance_managers,
-                           event_types=event_types)
+    print(event_managers)
+
+    return render_template(
+        'admin/new_event_creation.html',
+        departments=departments,
+        event_managers=event_managers,
+        finance_managers=finance_managers,
+        event_types=event_types
+    )
+
 
 @admin_bp.route('/create_single_event', methods=['POST'])
 def create_single_event():
-    event_name = request.form.get('eventName')
-    event_type = request.form.get('eventType')
-    event_date = request.form.get('eventDate')
-    department_id = request.form.get('department')
-    event_manager_id = request.form.get('EveMan')  
-    finance_manager_id = request.form.get('FinMan')  
-
-    # Validate required fields
-    if not event_name or not event_type or not event_date or not event_manager_id or not finance_manager_id:
-        flash("Please fill in all required fields.")
-        return redirect(url_for('admin.new_event'))
-
     try:
-        event_date = datetime.strptime(event_date, "%Y-%m-%d")  # Convert to datetime object
-    except ValueError:
-        flash("Invalid date format. Please use YYYY-MM-DD.")
-        return redirect(url_for('admin.new_event'))
+        event_name = request.form.get('eventName')
+        event_type = request.form.get('eventType')
+        event_date = request.form.get('eventDate')
+        department_id = request.form.get('department')
+        event_manager_id = request.form.get('EveMan')
+        finance_manager_id = request.form.get('FinMan')
 
-    # Create and save the event
-    new_event = Event(
-        Name=event_name,
-        Event_Type_ID=event_type,
-        Date=event_date,
-        Days=1,  # Default duration of 1 day for single event
-        Dept_ID=department_id,
-        Event_Manager=event_manager_id,
-        Finance_Manager=finance_manager_id
-    )
-    db.session.add(new_event)
-    db.session.commit()
+        # Validate required fields
+        if not all([event_name, event_type, event_date, department_id, event_manager_id, finance_manager_id]):
+            return jsonify({"status": "error", "message": "All fields are required!"}), 400
 
-    flash("Single Event Created Successfully!")
-    return redirect(url_for('admin.new_event'))
+        # Parse date
+        event_date = datetime.strptime(event_date, "%Y-%m-%d")
+
+        # Create and save the event
+        new_event = Event(
+            Name=event_name,
+            Event_Type_ID=event_type,
+            Date=event_date,
+            Days=1,  # Default duration for single events
+            Dept_ID=department_id,
+            Event_Manager=event_manager_id,
+            Finance_Manager=finance_manager_id
+        )
+        db.session.add(new_event)
+        db.session.commit()
+        return jsonify({"status": "success", "message": "Single event created successfully!"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": f"Error creating single event: {e}"}), 500
 
 @admin_bp.route('/create_multiple_events', methods=['POST'])
 def create_multiple_events():
-    from datetime import datetime
-
-    # Main Event Details
-    event_name = request.form.get('eventName')
-    event_type = request.form.get('eventType')
-    event_start_date = request.form.get('eventDate')
-    department_id = request.form.get('department')
-    event_manager_id = request.form.get('EveMan')
-    finance_manager_id = request.form.get('FinMan')
-    sub_event_count = request.form.get('subEventCount')
-
-    # Validate main event data
-    if not all([event_name, event_type, event_start_date, sub_event_count]):
-        flash("Please fill in all required fields.")
-        return redirect(url_for('admin.new_event'))
-
     try:
-        event_start_date = datetime.strptime(event_start_date, "%Y-%m-%d")
-    except ValueError:
-        flash("Invalid start date format. Please use YYYY-MM-DD.")
-        return redirect(url_for('admin.new_event'))
+        event_name = request.form.get('eventName')
+        event_type = request.form.get('eventType')
+        event_start_date = request.form.get('eventDate')
+        department_id = request.form.get('department')
+        event_manager_id = request.form.get('EveMan')
+        finance_manager_id = request.form.get('FinMan')
+        sub_event_count = int(request.form.get('subEventCount', 0))
 
-    # Collect unique sub-event dates
-    unique_dates = set()
-    for i in range(int(sub_event_count)):
-        sub_event_date = request.form.get(f'subEventDate{i}')
-        try:
+        # Validate main event fields
+        if not all([event_name, event_type, event_start_date]) or sub_event_count < 1:
+            return jsonify({"status": "error", "message": "All fields are required!"}), 400
+
+        # Parse main event start date
+        event_start_date = datetime.strptime(event_start_date, "%Y-%m-%d")
+
+        # Collect sub-event dates
+        unique_dates = set()
+        sub_events = []
+        for i in range(sub_event_count):
+            sub_event_name = request.form.get(f'subEventName{i}')
+            sub_event_type = request.form.get(f'subEventType{i}')
+            sub_event_date = request.form.get(f'subEventDate{i}')
+            sub_event_time = request.form.get(f'subEventTime{i}')
+            sub_event_manager_id = request.form.get(f'subEventManager{i}')
+
+            if not all([sub_event_name, sub_event_type, sub_event_date, sub_event_time, sub_event_manager_id]):
+                return jsonify({"status": "error", "message": f"Sub-event {i+1} is missing required fields!"}), 400
+
+            # Parse sub-event date
             sub_event_date = datetime.strptime(sub_event_date, "%Y-%m-%d").date()
             unique_dates.add(sub_event_date)
-        except ValueError:
-            flash(f"Invalid date format for Sub-event {i+1}. Please use YYYY-MM-DD.")
-            return redirect(url_for('admin.new_event'))
 
-    # Set the 'Days' for the main event as the number of unique sub-event dates
-    event_duration = len(unique_dates)
+            sub_events.append(SubEvent(
+                Name=sub_event_name,
+                Event_Type_ID=sub_event_type,
+                Date=sub_event_date,
+                Time=sub_event_time,
+                Dept_ID=department_id,
+                Sub_Event_Manager=sub_event_manager_id
+            ))
 
-    # Check if the sub-event dates cover the specified number of unique days
-    if len(unique_dates) != event_duration:
-        flash(f"The sub-event dates must cover exactly {event_duration} unique days.")
-        return redirect(url_for('admin.new_event'))
+        # Main event duration
+        event_duration = len(unique_dates)
 
-    # Create the main event
-    new_event = Event(
-        Name=event_name,
-        Event_Type_ID=event_type,
-        Date=event_start_date,
-        Days=event_duration,  
-        Dept_ID=department_id,
-        Event_Manager=event_manager_id,
-        Finance_Manager=finance_manager_id
-    )
-    db.session.add(new_event)
-    db.session.commit()
-
-    # Create sub-events
-    for i in range(int(sub_event_count)):
-        sub_event_name = request.form.get(f'subEventName{i}')
-        sub_event_type = request.form.get(f'subEventType{i}')
-        sub_event_date = request.form.get(f'subEventDate{i}')
-        sub_event_time = request.form.get(f'subEventTime{i}')
-        sub_event_manager_id = request.form.get(f'subEventManager{i}')
-
-        if not all([sub_event_name, sub_event_type, sub_event_date, sub_event_time]):
-            flash(f"Sub-event {i+1} is missing required information.")
-            continue
-
-        sub_event_date = datetime.strptime(sub_event_date, "%Y-%m-%d").date()
-        
-        # Create the sub-event
-        sub_event = SubEvent(
-            Name=sub_event_name,
-            Event_Type_ID=sub_event_type,
-            Date=sub_event_date,
-            Time=sub_event_time,
+        # Create main event
+        new_event = Event(
+            Name=event_name,
+            Event_Type_ID=event_type,
+            Date=event_start_date,
+            Days=event_duration,
             Dept_ID=department_id,
-            Event_ID=new_event.Event_ID,
-            Sub_Event_Manager=sub_event_manager_id
+            Event_Manager=event_manager_id,
+            Finance_Manager=finance_manager_id
         )
-        db.session.add(sub_event)
+        db.session.add(new_event)
+        db.session.commit()
 
-    db.session.commit()
-    flash("Multiple Events and Sub-Events Created Successfully!")
-    return redirect(url_for('admin.new_event'))
+        # Associate sub-events with the main event
+        for sub_event in sub_events:
+            sub_event.Event_ID = new_event.Event_ID
+            db.session.add(sub_event)
+        db.session.commit()
+
+        return jsonify({"status": "success", "message": "Multiple events and sub-events created successfully!"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": f"Error creating multiple events: {e}"}), 500
+
 
 @admin_bp.route('/new_user', methods=['POST', 'GET'])
 def new_user():
@@ -364,12 +350,12 @@ def authorize_user(user_id):
         user = User.query.get(user_id)
         if not user:
             flash("User not found.", "error")
-            return redirect(url_for('admin.admin_dashboard'))
+            return redirect(url_for('admin.users_table'))
         
         # Check if the user is already authorized
         if user.Verified == 1:
             flash("User is already authorized.", "info")
-            return redirect(url_for('admin.admin_dashboard'))
+            return redirect(url_for('admin.users_table'))
         
         # Update the Verified status
         user.Verified = 1
