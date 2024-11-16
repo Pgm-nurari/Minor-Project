@@ -26,6 +26,13 @@
         color: #999;
         font-style: italic;
     }
+    .modal-content {
+        max-width: 600px;
+        margin: auto;
+    }
+    .event-details, .budget-section {
+        margin-bottom: 16px;
+    }
 </style>
 {% endblock %}
 
@@ -37,31 +44,79 @@
 <div class="container">
     <h2 class="mb-4">Event Details: {{ event.Name }}</h2>
 
-    <!-- Event Details -->
-    <ul class="list-group mb-4">
-        <li class="list-group-item"><strong>Event Name:</strong> {{ event.Name }}</li>
-        <li class="list-group-item"><strong>Event Type:</strong> 
-            {{ event.event_type.Event_Type_Name if event.event_type else "N/A" }}
-        </li>
-        <li class="list-group-item"><strong>Department:</strong> 
-            {{ event.department.Name if event.department else "N/A" }}
-        </li>
-        <li class="list-group-item"><strong>Date:</strong> 
-            {{ event.Date.strftime('%Y-%m-%d') if event.Date else "N/A" }}
-        </li>
-        <li class="list-group-item"><strong>Duration (Days):</strong> 
-            {{ event.Days if event.Days else "N/A" }}
-        </li>
-        <li class="list-group-item"><strong>Event Manager:</strong> 
-            {{ event.event_manager.Username if event.event_manager else "N/A" }}
-        </li>
-        <li class="list-group-item"><strong>Finance Manager:</strong> 
-            {{ event.finance_manager.Username if event.finance_manager else "N/A" }}
-        </li>
-    </ul>
+    <div class="row">
+        <!-- Event Details Column -->
+        <div class="col-md-8 event-details">
+            <ul class="list-group mb-4">
+                <li class="list-group-item"><strong>Event Name:</strong> {{ event.Name }}</li>
+                <li class="list-group-item"><strong>Event Type:</strong> 
+                    {{ event.event_type.Event_Type_Name if event.event_type else "N/A" }}
+                </li>
+                <li class="list-group-item"><strong>Department:</strong> 
+                    {{ event.department.Name if event.department else "N/A" }}
+                </li>
+                <li class="list-group-item"><strong>Date:</strong> 
+                    {{ event.Date.strftime('%Y-%m-%d') if event.Date else "N/A" }}
+                </li>
+                <li class="list-group-item"><strong>Duration (Days):</strong> 
+                    {{ event.Days if event.Days else "N/A" }}
+                </li>
+                <li class="list-group-item"><strong>Event Manager:</strong> 
+                    {{ event.event_manager.Username if event.event_manager else "N/A" }}
+                </li>
+                <li class="list-group-item"><strong>Finance Manager:</strong> 
+                    {{ event.finance_manager.Username if event.finance_manager else "N/A" }}
+                </li>
+            </ul>
 
-    <!-- Edit Event Button -->
-    <a href="{{ url_for('admin.edit_event', event_id=event.Event_ID) }}" class="btn btn-warning">Edit Event</a>
+            <!-- Edit Event Button -->
+            <a href="{{ url_for('admin.edit_event', event_id=event.Event_ID) }}" class="btn btn-warning">Edit Event</a>
+        </div>
+
+        <!-- Budget Column -->
+        <div class="col-md-4 budget-section">
+            <h3 class="mb-3">Budget Allocation</h3>
+
+            {% if budget %}
+                <div class="card">
+                    <h5>Budget Amount: ${{ budget.Amount }}</h5>
+                    <p><strong>Notes:</strong> {{ budget.Notes or "No notes available" }}</p>
+                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#budgetModal">Edit Budget</a>
+                </div>
+            {% else %}
+                <p class="no-data">No budget allocated for this event.</p>
+                <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#budgetModal">Allocate Budget</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Budget Modal -->
+    <div class="modal fade" id="budgetModal" tabindex="-1" aria-labelledby="budgetModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="budgetModalLabel">{{ 'Allocate Budget' if not budget else 'Edit Budget' }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="amount" class="form-label">Budget Amount</label>
+                            <input type="number" class="form-control" id="amount" name="amount" value="{{ budget.Amount if budget else '' }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="notes" name="notes">{{ budget.Notes if budget else '' }}</textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">{{ 'Allocate Budget' if not budget else 'Save Changes' }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Sub-Events Section -->
     <h3 class="mb-3">Sub-Events</h3>

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, request, flash, url_for, get_flashed_messages, session   
 from . import db
-from .modules.models import Department, Role, User, EventType, Event, SubEvent
+from .modules.models import *
 from .modules.db_queries import *
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import asc, desc
@@ -19,7 +19,7 @@ def admin_dashboard():
     # Render the template with the structured user data
     return render_template('admin/admin_dash.html', data=user_data, users_table = get_user_table_data(), events=get_event_data())
 
-@admin_bp.route('/event_details/<int:event_id>')
+@admin_bp.route('/event_details/<int:event_id>', methods=['GET', 'POST'])
 def event_details(event_id):
     # Fetch the event from the database
     event = Event.query.get(event_id)
@@ -27,20 +27,42 @@ def event_details(event_id):
     if event is None:
         return "Event not found", 404  # Return 404 if event doesn't exist
 
-    # Get the event manager and finance manager, assuming they are linked
+    # Get the event manager and finance manager
     event_manager = event.event_manager if event.event_manager else None
     finance_manager = event.finance_manager if event.finance_manager else None
 
-    # Fetch the related sub-events, if any
+    # Fetch the related sub-events
     sub_events = SubEvent.query.filter_by(Event_ID=event_id).all()
+    
+    # Fetch the budget for the event
+    budget = Budget.query.filter_by(Event_ID=event_id).first()
+
+    if request.method == 'POST':
+        # Handle form submission for budget allocation or update
+        budget_amount = request.form.get('amount')
+        budget_notes = request.form.get('notes')
+
+        if budget:  # Update budget
+            updated_budget = update_entry(Budget, 
+                                          filters={'Event_ID': event_id}, 
+                                          updates={'Amount': budget_amount, 'Notes': budget_notes})
+        else:  # Create new budget entry
+            updated_budget = create_entry(Budget, 
+                                          Amount=budget_amount, 
+                                          Notes=budget_notes, 
+                                          Event_ID=event_id)
+
+        # Redirect to the same page after creating or updating the budget
+        return redirect(url_for('admin.event_details', event_id=event_id))
     
     # Pass all the data to the template
     return render_template('admin/event_details.html', 
                            event=event,
                            event_manager=event_manager,
                            finance_manager=finance_manager,
-                           sub_events=sub_events)
-    
+                           sub_events=sub_events,
+                           budget=budget)
+
 @admin_bp.route('/view_events')
 def view_events():
     return render_template('admin/view_events.html', events=get_event_data())
@@ -280,10 +302,27 @@ def delete_user(user_id):
     if not user:
         return redirect(url_for('admin.admin_dashboard'))
 
+    # Check if the user is associated with any event or sub-event
+    associated_event = Event.query.filter(
+        (Event.event_manager == user) | (Event.finance_manager == user)
+    ).first()
+
+    associated_sub_event = SubEvent.query.filter(
+        SubEvent.sub_event_manager == user
+    ).first()
+
+    if associated_event or associated_sub_event:
+        # If the user is associated with an event or sub-event, prevent deletion
+        flash("This user cannot be deleted as they are linked to an event or sub-event.", "warning")
+        return redirect(url_for('admin.admin_dashboard'))
+
+    # If no association, proceed with deletion
     filters = {'User_ID': user_id}
     if delete_entry(User, filters):
+        flash("User deleted successfully.", "success")
         return redirect(url_for('admin.admin_dashboard'))
     else:
+        flash("There was an issue deleting the user. Please try again.", "danger")
         return redirect(url_for('admin.admin_dashboard'))
 
 @admin_bp.route('/users')
