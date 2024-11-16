@@ -1,30 +1,221 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 
-{% import 'components/table_component.html' as table %}
 {% import 'components/header_with_button.html' as section_header %}
-{% import 'components/event_card_macro.html' as event_card %}
-
 {% import 'event_manager/header_bar.html' as user_header %}
 
-{% block title %}Event Detail - Event Manager{% endblock %} 
+{% block title %}Event Detail - Event Manager{% endblock %}
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{{url_for('static', filename='css/common.css')}}">
-{% endblock %} 
-    
-{% block header %}
-  {{ user_header.user_header(user_id) }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<style>
+/* Container for centering content */
+.event-detail-container {
+    max-width: 1200px;
+    margin: 0 auto; /* Centers the container */
+    padding: 20px;
+}
+
+/* Card Styling */
+.event-detail-card {
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Center text inside the card */
+.event-detail-card-body {
+    text-align: left;
+    margin-left: 20px;
+    padding: 20px;
+}
+
+/* Transaction Table */
+.table-responsive-event {
+    margin-top: 20px;
+    overflow-x: auto; /* Makes the table scrollable on smaller screens */
+}
+
+.event-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px; /* Adds spacing between table and other elements */
+}
+
+.event-table th, .event-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Table header styles */
+.event-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Table row hover effect */
+.event-table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Transaction Button for View All */
+.view-all-btn-info {
+    background-color: #5bc0de; /* Bootstrap default info button color */
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.view-all-btn-info:hover {
+    background-color: #31b0d5; /* Darker shade on hover */
+}
+
+/* Button for Edit and Save */
+.edit-event-btn, .cancel-event-btn {
+    margin-top: 10px;
+}
+
+.edit-event-btn {
+    background-color: #AFD46E; /* Light green background */
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.cancel-event-btn {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.edit-event-btn:hover, .cancel-event-btn:hover {
+    opacity: 0.8;
+}
+
+/* Transaction Section (Additional Margin) */
+.transaction-section {
+    margin-top: 30px;
+    text-align: center;
+}
+
+/* Styling for Table and Pagination Section */
+.event-table-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the table */
+    margin-top: 30px;
+}
+
+</style>
 {% endblock %}
 
+{% block header %}
+{{ user_header.user_header(user_id) }}
+{% endblock %}
 
 {% block content %}
-{% for event in events %}
-    {{ event }}
-{% endfor %}
+<div class="event-detail-container mt-4">
+    <h2>Event Details</h2>
+    <div class="event-detail-card my-4">
+        <div class="event-detail-card-body">
+            <h5 class="card-title">Event Name: {{ event['event_name'] }}</h5>
+            <p class="card-text">
+                <strong>Type:</strong> {{ event['type'] }} <br>
+                <strong>Status:</strong> {{ event['status'] }} <br>
+                <strong>Department:</strong> {{ event['department'] }} <br>
+                <strong>Date:</strong> {{ event['date'] }} <br>
+                {% if event['time'] %}
+                    <strong>Time:</strong> {{ event['time'] }} <br>
+                {% endif %}
+                
+                {% if event['main_event_name'] %}
+                    <strong>Main Event:</strong> {{ event['main_event_name'] }} <br>
+                {% endif %}
+            </p>
 
+            <!-- Editable form (hidden by default) -->
+            <form method="POST" action="{{ url_for('event_manager.update_event', user_id=user_id, event_id=event['id']) }}" class="edit-form" style="display: none;">
+                <div class="mb-3">
+                    <label for="event_type" class="form-label">Event Type</label>
+                    <select id="event_type" name="event_type" class="form-select" required>
+                        {% for etype in event_types %}
+                        <option value="{{ etype.Event_Type_ID }}" {% if etype.Event_Type_ID == event['Event_Type_ID'] %} selected {% endif %}>
+                            {{ etype.Event_Type_Name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="date" class="form-label">Date</label>
+                    <input type="date" id="date" name="date" class="form-control" value="{{ event['date'] }}" required>
+                </div>
 
-{% if transactions %}
-  <p>Transaction table to be shown here...</p>
-{% else %}
-  <p>No transactions were made for this event. Click here to <a href="{{ url_for('event_manager.transaction_form',user_id=user_id, event_id=events[0].id) }}" style="text-decoration:none">Add Transaction</a></p>
-{% endif %}
+                {% if event['time'] %}
+                <div class="mb-3">
+                    <label for="time" class="form-label">Time</label>
+                    <input type="time" id="time" name="time" class="form-control" value="{{ event['time'] }}">
+                </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+                <button type="button" class="btn btn-secondary cancel-event-btn">Cancel</button>
+            </form>
+
+            <!-- Edit button -->
+            <button type="button" class="btn btn-outline-primary edit-event-btn">Edit</button>
+        </div>
+    </div>
+</div>
+
+<!-- Transactions Section -->
+<div class="transaction-section">
+    <h3>Transactions</h3>
+    {% if transactions %}
+        <div class="event-table-container">
+            <div class="table-responsive-event">
+                <table class="event-table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th>Bill No</th>
+                            <th>Party Name</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transaction in transactions %}
+                        <tr>
+                            <td>{{ transaction['bill_no'] }}</td>
+                            <td>{{ transaction['party_name'] }}</td>
+                            <td>{{ transaction['amount'] }}</td>
+                            <td>{{ transaction['date'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Link to full transactions -->
+            <p>
+                <a href="{{ url_for('event_manager.view_all_transactions', event_id=event['id'], user_id=user_id) }}" class="view-all-btn-info">View All Transactions</a>
+            </p>
+        </div>
+    {% else %}
+        <p>No transactions were made for this event. 
+            <a href="{{ url_for('event_manager.create_transaction', user_id=user_id, event_id=event['id']) }}">
+                Click here
+            </a> to make a transaction.
+        </p>
+    {% endif %}
+</div>
+
 {% endblock %}

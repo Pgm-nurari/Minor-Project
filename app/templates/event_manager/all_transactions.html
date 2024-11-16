@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}All Transactions - Event Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>All Transactions for Event</h2>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Bill No</th>
+                    <th>Party Name</th>
+                    <th>Total Amount</th>
+                    <th>Date</th>
+                    <th>Transaction Nature</th>
+                    <th>Payment Mode</th>
+                    <th>Category</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaction in transactions %}
+                <tr>
+                    <td>{{ transaction.bill_no }}</td>
+                    <td>{{ transaction.party_name }}</td>
+                    <td>{{ transaction.amount }}</td>
+                    <td>{{ transaction.date }}</td>
+                    <td>{{ transaction.nature }}</td>
+                    <td>{{ transaction.payment_mode }}</td>
+                    <td>{{ transaction.category }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+            
+    </div>
+</div>
+{% endblock %}
