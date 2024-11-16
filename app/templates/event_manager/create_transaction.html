@@ -1,0 +1,247 @@
+<style>
+/* Overall card styling - wider card */
+.card {
+    max-width: 800px; /* Increased width for the card */
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Card header styling */
+  .card-header {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+  
+  /* Card footer styling */
+  .card-footer {
+    background-color: #f8f9fa;
+    padding: 10px 20px;
+    border-top: 1px solid #ddd;
+    text-align: right;
+  }
+  
+  /* Form group styling */
+  .form-group {
+    margin-bottom: 0.75rem;
+  }
+  
+  /* Compact design for input fields */
+  .form-control {
+    height: 35px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Styling for select dropdown */
+  select.form-control {
+    height: 35px;
+  }
+  
+  /* Make the input fields and dropdowns inline */
+  .row {
+    display: flex;
+    justify-content: space-between; /* Distribute space between form items */
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  
+  /* Make the bill_no and party_name fields inline */
+  .row .form-group {
+    flex: 1;
+    min-width: 180px; /* Ensures the inputs don't become too small */
+  }
+  
+  /* Make the dropdowns stay inline */
+  #transaction_nature, #payment_mode, #transaction_category {
+    flex: 1;
+    min-width: 180px;
+  }
+  
+  /* Styling for the Add Item section to stay inline */
+  #item_list {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  #item_list input[type="text"],
+  #item_list input[type="number"] {
+    flex: 1;
+    max-width: 200px; /* Limit max width of inputs */
+  }
+  
+  #add_item {
+    height: 35px;
+    padding: 5px 10px;
+    cursor: pointer;
+  }
+  
+  /* Styling for the added items list */
+  #added_items_list {
+    margin-top: 15px;
+  }
+  
+  .list-group-item {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 12px;
+    margin-bottom: 8px;
+  }
+  
+  /* Buttons in the footer to stay inline */
+  .card-footer .btn {
+    margin: 0 10px; /* Space between buttons */
+    display: inline-block;
+  }
+  
+  /* Submit button styling */
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    padding: 8px 20px;
+  }
+  
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+  }
+  
+  /* Close button styling */
+  .btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    border-radius: 4px;
+    padding: 6px 15px;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+  }
+  
+</style>
+<form method="POST" action="{{ url_for('event_manager.create_transaction', user_id=user_id, event_id=event_id) }}">
+    <div class="card">
+      <div class="card-header">
+        <h4>Create Transaction</h4>
+      </div>
+      <div class="card-body">
+        <!-- Bill No and Party Name fields on same row -->
+        <div class="row">
+          <div class="form-group">
+            <label for="bill_no">Bill No.</label>
+            <input type="text" class="form-control" id="bill_no" name="bill_no" value="{{ bill_no }}">
+          </div>
+  
+          <div class="form-group">
+            <label for="party_name">Party Name</label>
+            <input type="text" class="form-control" id="party_name" name="party_name" value="{{ party_name }}">
+          </div>
+        </div>
+  
+        <!-- Transaction Nature, Mode, Category in a single line -->
+        <div class="row">
+          <div class="form-group">
+            <label for="transaction_nature">Transaction Nature</label>
+            <select class="form-control" id="transaction_nature" name="transaction_nature" required>
+              {% for nature in transaction_natures %}
+                <option value="{{ nature.Nature_ID }}" {% if nature.Nature_ID == transaction_nature %} selected {% endif %}>{{ nature.Nature_Name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+  
+          <div class="form-group">
+            <label for="payment_mode">Payment Mode</label>
+            <select class="form-control" id="payment_mode" name="payment_mode" required>
+              {% for mode in payment_modes %}
+                <option value="{{ mode.Mode_ID }}" {% if mode.Mode_ID == payment_mode %} selected {% endif %}>{{ mode.Mode_Name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+  
+          <div class="form-group">
+            <label for="transaction_category">Transaction Category</label>
+            <select class="form-control" id="transaction_category" name="transaction_category" required>
+              {% for category in transaction_categories %}
+                <option value="{{ category.Transaction_Category_ID }}" {% if category.Transaction_Category_ID == transaction_category %} selected {% endif %}>{{ category.Category_Name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+  
+        <!-- Item List in a single line -->
+        <div id="item_list" class="form-group">
+          <label for="description">Item Name (Description)</label>
+          <input type="text" class="form-control" id="description" name="description" required>
+  
+          <label for="amount">Amount</label>
+          <input type="number" class="form-control" id="amount" name="amount" step="0.01" required>
+  
+          <button type="button" class="btn btn-info mt-2" id="add_item">Add Item</button>
+        </div>
+  
+        <!-- Display added items -->
+        <ul id="added_items_list" class="list-group mt-3">
+          <!-- Dynamically added items will appear here -->
+        </ul>
+  
+        <!-- Hidden field to store the dynamic items -->
+        <input type="hidden" id="added_items" name="added_items">
+  
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary mt-3">Submit Transaction</button>
+      </div>
+      <div class="card-footer text-right">
+        <!-- Close Button -->
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </form>
+  
+  
+  <!-- JavaScript to handle adding items dynamically -->
+  <script>
+    document.getElementById('add_item').addEventListener('click', function() {
+      var description = document.getElementById('description').value;
+      var amount = document.getElementById('amount').value;
+  
+      // Check if both fields are filled
+      if (description && amount) {
+        // Create new list item
+        var listItem = document.createElement('li');
+        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+        listItem.innerHTML = `Item: ${description}, Amount: ${amount}`;
+  
+        // Append to the added items list
+        document.getElementById('added_items_list').appendChild(listItem);
+  
+        // Prepare the dynamic items as an array of objects
+        var addedItems = [];
+        document.querySelectorAll('#added_items_list li').forEach(function(item) {
+          var parts = item.innerHTML.split(',');
+          var desc = parts[0].split(':')[1].trim();
+          var amt = parts[1].split(':')[1].trim();
+          addedItems.push({description: desc, amount: amt});
+        });
+  
+        // Update the hidden input with the JSON string of added items
+        document.getElementById('added_items').value = JSON.stringify(addedItems);
+  
+        // Clear the fields for new entry
+        document.getElementById('description').value = '';
+        document.getElementById('amount').value = '';
+      } else {
+        alert('Please enter both description and amount');
+      }
+    });
+  </script>
+  
