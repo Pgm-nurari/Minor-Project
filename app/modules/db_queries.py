@@ -18,14 +18,11 @@ def read_entries(model, filters=None, columns=None):
     """Read entries from the specified model with optional filters and selected columns."""
     try:
         query = db.session.query(model)
-        
         if columns:
             query = query.with_entities(*[getattr(model, col) for col in columns])
-        
         if filters:
             filter_conditions = [getattr(model, key) == value for key, value in filters.items()]
             query = query.filter(and_(*filter_conditions))
-        
         return query.all()
     except SQLAlchemyError as e:
         print("Error reading entries:", e)
@@ -35,10 +32,8 @@ def update_entry(model, filters, updates):
     """Update an entry in the specified model based on filters and provided updates."""
     try:
         query = db.session.query(model)
-        
         filter_conditions = [getattr(model, key) == value for key, value in filters.items()]
         entry = query.filter(and_(*filter_conditions)).first()
-        
         if entry:
             for key, value in updates.items():
                 setattr(entry, key, value)
@@ -56,10 +51,8 @@ def delete_entry(model, filters):
     """Delete an entry from the specified model based on filters."""
     try:
         query = db.session.query(model)
-        
         filter_conditions = [getattr(model, key) == value for key, value in filters.items()]
         entry = query.filter(and_(*filter_conditions)).first()
-        
         if entry:
             db.session.delete(entry)
             db.session.commit()

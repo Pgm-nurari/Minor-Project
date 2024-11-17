@@ -241,13 +241,26 @@ def get_budget(event_id):
 def create_transaction(user_id, event_id):
     try:
         if request.method == 'POST':
+            # Fetch form data
             bill_no = request.form.get('bill_no')
             party_name = request.form.get('party_name')
             transaction_nature = request.form.get('transaction_nature')
             payment_mode = request.form.get('payment_mode')
             transaction_category = request.form.get('transaction_category')
+            transaction_date = request.form.get('transaction_date')  # Fetch the selected date
             added_items = request.form.get('added_items')  # Get the dynamic items from hidden input
-            date = datetime.today().date()
+
+            # Validate the transaction date
+            if not transaction_date:
+                flash("Transaction date is required.", "danger")
+                return redirect(url_for('event_manager.create_transaction', user_id=user_id, event_id=event_id))
+            
+            try:
+                # Convert the date from the form to a Python date object
+                transaction_date = datetime.strptime(transaction_date, "%Y-%m-%d").date()
+            except ValueError:
+                flash("Invalid date format. Please select a valid date.", "danger")
+                return redirect(url_for('event_manager.create_transaction', user_id=user_id, event_id=event_id))
 
             # Ensure added_items is not empty
             if added_items:
@@ -275,7 +288,7 @@ def create_transaction(user_id, event_id):
                     'Nature_ID': transaction_nature,
                     'Mode_ID': payment_mode,
                     'Transaction_Category_ID': transaction_category,
-                    'Date': date,
+                    'Date': transaction_date,  # Use the date from the form
                 }
             else:
                 # If event_id does not exist in the Event table, check the Sub_Event table
@@ -295,7 +308,7 @@ def create_transaction(user_id, event_id):
                     'Nature_ID': transaction_nature,
                     'Mode_ID': payment_mode,
                     'Transaction_Category_ID': transaction_category,
-                    'Date': date,
+                    'Date': transaction_date,  # Use the date from the form
                 }
 
             # Create the transaction entry in the database
@@ -303,7 +316,7 @@ def create_transaction(user_id, event_id):
 
             if transaction_entry:
                 try:
-                    # Now that the transaction is created, we add the items to the TransactionItem table
+                    # Add the items to the TransactionItem table
                     for item in items:
                         item_data = {
                             'Transaction_ID': transaction_entry.Transaction_ID,  # Reference the created transaction
@@ -323,7 +336,7 @@ def create_transaction(user_id, event_id):
                     print(f"Error adding items: {e}")
 
             else:
-                flash('Failed to create transaction.', 'danger')
+                flash('Failed to create transaction.', "danger")
 
             # Redirect to the event details page after successful creation
             return redirect(url_for('event_manager.event_details', event_id=event_id, user_id=user_id))
@@ -346,7 +359,7 @@ def create_transaction(user_id, event_id):
         # Handle any errors
         flash("An error occurred while creating the transaction.", "danger")
         print(f"Error creating transaction: {e}")
-        return redirect(url_for('event_manager.view_events', user_id=user_id))
+        return redirect(url_for('event_manager.event_details', event_id=event_id, user_id=user_id))
 
 
 @event_manager_bp.route('/event_transactions/<int:event_id>', methods=['GET'])

@@ -1,0 +1,30 @@
+<div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-between py-3 mb-0 border-bottom">
+        <!-- Header Name Section -->
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
+            <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
+            <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
+        </a>
+
+        <!-- Navigation Section -->
+        <nav class="col-md-6">
+            <ul class="nav justify-content-center">
+                <li><a href="#home" class="nav-link px-2 link-secondary">Home</a></li>
+                <li><a href="#about" class="nav-link px-2">About Us</a></li>
+                <li><a href="#contact" class="nav-link px-2">Contact Us</a></li>
+            </ul>
+        </nav>
+
+        <!-- Header Button Section (Login/Signup) -->
+        <div class="col-md-3 text-end header-button">
+            {% if request.endpoint == 'home.index' %}
+                <a href="{{ url_for('home.login') }}"><button>Login</button></a>
+                <a href="{{ url_for('home.signup') }}"><button>Signup</button></a>
+            {% elif request.endpoint.startswith('admin.') %}
+                <a href="{{ url_for('home.index') }}"><button>Logout</button></a>
+            {% else %}
+                <a href="{{ url_for('home.index') }}"><button>Logout</button></a>
+            {% endif %}
+        </div>
+    </header>
+</div>

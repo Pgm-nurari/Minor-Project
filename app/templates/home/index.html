@@ -3,7 +3,7 @@
 {% block title %}Home - FinSight{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/trialindex.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
 {% endblock %}
 
@@ -42,62 +42,131 @@
 
 {% block content %}
 <section id="home" class="hero">
-    <h1>Event Finance Management Software</h1>
-    <p>Streamline your events and manage them with ease.</p>
+    <div class="container">
+        <h1>Event Finance Management Software</h1>
+        <p>Streamline your events and manage them with ease.</p>
+        <a href="#about" class="cta-button">Learn More</a>
+    </div>
 </section>
 
+<!-- Features Section -->
 <section id="features" class="features">
-    <div class="feature">
-        <h3>Secure</h3>
-        <p>Your data is encrypted using TLS protocols for maximum security.</p>
-    </div>
-    <div class="feature">
-        <h3>Easy-to-use</h3>
-        <p>Simplified onboarding and a comprehensive knowledge base.</p>
-    </div>
-    <div class="feature">
-        <h3>All-in-one</h3>
-        <p>Manage all event data seamlessly from one platform.</p>
-    </div>
-    <div class="feature">
-        <h3>Customizable</h3>
-        <p>Adapt Finsight to meet the needs of your business.</p>
+
+        <div class="feature">
+            <h3>Secure</h3>
+            <p>Your data is encrypted using TLS protocols for maximum security.</p>
+        </div>
+        <div class="feature">
+            <h3>Easy-to-use</h3>
+            <p>Simplified onboarding and a comprehensive knowledge base.</p>
+        </div>
+        <div class="feature">
+            <h3>All-in-one</h3>
+            <p>Manage all event data seamlessly from one platform.</p>
+        </div>
+        <div class="feature">
+            <h3>Customizable</h3>
+            <p>Adapt FinSight to meet the needs of your business.</p>
+        </div>
     </div>
 </section>
 
+<!-- About Us Section -->
 <section id="about" class="about">
-    <div class="about-content">
-        <div class="watermark">
-            <img src="{{ url_for('static', filename='images/About_us.webp') }}" alt="About Us Image" />
-        </div>
-        <div class="watermark-text">
-            <b>
-                <div style="text-align: center;">
-                <h2>About Us</h2></div>
-                <p style="font-family: URW Chancery L, cursive; font-size: 20px;">
-                    Welcome to FinSight, an Event Finance Manager and Visualizer, your one-stop solution for seamless, 
-                    event-specific finance management. Designed to streamline and simplify financial tasks 
-                    during event organization, our app centralizes all financial data, enabling real-time 
-                    tracking, analysis, and visualization. Whether you're an event manager, accountant, or 
-                    finance enthusiast, our platform empowers you with tools to manage expenses, create 
-                    and manage multiple events, generate reports, and much more.
+<div class="about-content container">
+    <div class="about-image">
+        <img src="images/About_us.webp" alt="About Us Image">
+    </div>
+    <div class="about-text">
+        <h1>About Us</h1>
+        <p>
+            "Welcome to FinSight, your trusted Event Finance Management and Visualization platform! Developed with passion and innovation, FinSight simplifies the complex financial tasks associated with organizing events. Our platform empowers users with real-time expense tracking, budget allocation, financial reporting, and seamless data visualization—all in one easy-to-use application."
+        </p>
+        <p>
+            <strong>Why Choose FinSight?</strong><br>
+            Whether you're an event manager, accountant, or finance enthusiast, FinSight is tailored to streamline the challenges of managing event finances. From handling single events to overseeing multiple projects, our platform adapts to your needs with its customizable features and secure environment.
+        </p>
+        <p>
+            <strong>Our Story:</strong><br>
+            FinSight is the brainchild of a talented team of four students from Amrita School of Computing, Kochi. Combining a shared vision for innovation and a deep understanding of financial complexities, we designed this software to address the gaps in event financial management. With a strong focus on usability and data security, we aim to make event finance management simpler, more efficient, and stress-free for everyone.
+        </p>
+        <p>
+            <strong>Our Commitment:</strong><br>
+            At FinSight, we are dedicated to empowering users with the tools and insights they need to make informed financial decisions. With advanced features, seamless integration, and user-centric design, we ensure every event you plan becomes a financial success.
+        </p>
+    </div>
+</div>
+</section>
 
-                    Our intuitive interface ensures that tracking transactions across different departments 
-                    or event stages is easy, organized, and accessible to everyone involved. With built-in 
-                    data visualization and export options, you can review financial insights through graphs and charts,
-                    all tailored to support informed decision-making. FinSight is here to take the stress out of 
-                    financial management, letting you focus on creating impactful and memorable events.
-                </p>
-            </b>
+<!-- Users Section -->
+<section id="users" class="users">
+<div class="users-content container">
+    <div class="users-text">
+        <h1>Our Users</h1>
+        <p>
+            FinSight is designed to cater to the unique needs of three primary user roles:
+        </p>
+        <p>
+            <strong>1. Admin:</strong><br>
+            The Admin manages the overall platform, oversees user accounts, sets permissions, and ensures the smooth functioning of the system.
+        </p>
+        <p>
+            <strong>2. Finance Manager:</strong><br>
+            The Finance Manager tracks budgets, oversees financial reporting, manages transactions, and ensures all finances are aligned with organizational goals.
+        </p>
+        <p>
+            <strong>3. Event Manager:</strong><br>
+            The Event Manager focuses on planning and managing event-related tasks, keeping a close eye on expenditures, and ensuring the event stays within budget.
+        </p>
+        <p>
+            Each user role is equipped with tailored features and permissions, ensuring a seamless experience for managing events and finances effectively.
+        </p>
+    </div>
+    <div class="users-image">
+        <img src="images/Users.webp" alt="Users in FinSight">
+    </div>
+</div>
+</section>
+
+
+
+<!-- Contact Us Section -->
+<section id="contact" class="contact">
+    <div class="container">
+        <h2>Contact Us</h2>
+        <p>Follow us on social media or reach out via email:</p>
+        <div class="social-links">
+            <a href="https://www.instagram.com" target="_blank">Instagram</a>
+            <a href="https://www.facebook.com" target="_blank">Facebook</a>
+            <a href="mailto:info@finsight.com">Gmail</a>
         </div>
     </div>
 </section>
 
-<section id="contact" class="contact">
-    <h2>Contact Us</h2>
-    <p>Follow us on social media or reach out via email:</p>
-    <a href="https://www.instagram.com" target="_blank" class="social-link">Instagram</a>
-    <a href="https://www.facebook.com" target="_blank" class="social-link">Facebook</a>
-    <a href="mailto:info@finsight.com" class="social-link">Gmail</a>
-</section>
+<!-- Footer -->
+<footer class="main-footer">
+    <div class="container">
+        <p>&copy; 2024 FinSight. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- Scroll to Top Button -->
+<button id="scroll-to-top" class="scroll-to-top-btn">↑</button>
+
+<script>
+    // Scroll-to-top functionality
+    const scrollToTopBtn = document.getElementById('scroll-to-top');
+
+    window.onscroll = function () {
+        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+            scrollToTopBtn.style.display = 'block';
+        } else {
+            scrollToTopBtn.style.display = 'none';
+        }
+    };
+
+    scrollToTopBtn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+</script>
 {% endblock %}
