@@ -1,7 +1,6 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 
 {% import 'components/header_with_button.html' as section_header %}
-{% import 'finance_manager/event_cards.html' as event_card %}
 {% import 'finance_manager/header_bar.html' as finance_header %}
 
 {% block title %}Event Details - Finance Manager{% endblock %} 
@@ -15,24 +14,87 @@
 {{ finance_header.finance_header(user_id) }}
 {% endblock %}
 
-
 {% block content %}
 <h3>Event Financial Overview</h3>
-<p>Revenue: ₹{{ revenue }}</p>
-<p>Expenses: ₹{{ expenses }}</p>
 
-<h4>Totals by Transaction Category</h4>
-<ul>
-    {% for category_id, total in category_totals.items() %}
-        <li>Category {{ category_id }}: ₹{{ total }}</li>
-    {% endfor %}
-</ul>
+<div class="event-details-card card mb-4">
+  <div class="card-body">
+    <h4 class="card-title">Event Details</h4>
+    <p><strong>Event:</strong> {{ event_details.name }}</p>
+    <p><strong>Date:</strong> {{ event_details.date }}</p>
+    <p><strong>Location:</strong> {{ event_details.location }}</p>
+    <p><strong>Department:</strong> {{ event_details.department }}</p>
+    <p><strong>Event Type:</strong> {{ event_details.event_type }}</p>
+    <p><strong>Finance Manager:</strong> {{ event_details.finance_manager }}</p>
+    <p><strong>Event Manager:</strong> {{ event_details.event_manager }}</p>
+  </div>
+</div>
 
-<h4>Totals by Payment Mode</h4>
-<ul>
-    {% for mode_id, total in mode_totals.items() %}
-        <li>Mode {{ mode_id }}: ₹{{ total }}</li>
-    {% endfor %}
-</ul>
+{% if revenue > 0 or expenses > 0 %}
+<div class="financial-summary card mb-4">
+  <div class="card-body">
+    <h4 class="card-title">Revenue and Expenses</h4>
+    {% if revenue > 0 %}
+    <p><strong>Revenue:</strong> ₹{{ revenue }}</p>
+    {% endif %}
+    {% if expenses > 0 %}
+    <p><strong>Expenses:</strong> ₹{{ expenses }}</p>
+    {% endif %}
+  </div>
+</div>
+{% endif %}
+
+{% if category_totals %}
+<div class="category-totals card mb-4">
+  <div class="card-body">
+    <h4 class="card-title">Totals by Transaction Category</h4>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Category Name</th>
+          <th>Total Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for category_name, total in category_totals.items() %}
+          {% if total > 0 %}
+          <tr>
+            <td>{{ category_name }}</td>
+            <td>₹{{ total }}</td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% if mode_totals %}
+<div class="payment-mode-totals card mb-4">
+  <div class="card-body">
+    <h4 class="card-title">Totals by Payment Mode</h4>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>Payment Mode</th>
+          <th>Total Amount (₹)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for mode_name, total in mode_totals.items() %}
+          {% if total > 0 %}
+          <tr>
+            <td>{{ mode_name }}</td>
+            <td>₹{{ total }}</td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
 
 {% endblock %}
+

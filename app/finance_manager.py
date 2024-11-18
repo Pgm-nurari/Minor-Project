@@ -12,15 +12,7 @@ from io import BytesIO
 import base64
 from datetime import datetime, date
 from .test_data import test_user_data, test_event_data
-from .modules.transaction_utils import (
-    get_revenue_total,
-    get_expense_total,
-    get_category_total,
-    get_mode_total,
-    get_transaction_ids,
-    get_all_transaction_category_ids,
-    get_all_payment_mode_ids
-)
+from .modules.transaction_utils import *
 
 finance_manager_bp = Blueprint('finance_manager', __name__, url_prefix='/finmng/<int:user_id>')
 
@@ -49,15 +41,19 @@ def event_details(user_id, event_id):
         revenue = get_revenue_total(event_id)
         expenses = get_expense_total(event_id)
 
-        # Fetch category and mode totals
-        category_totals = {
-            category_id: get_category_total(event_id, category_id)
-            for category_id in get_all_transaction_category_ids()
-        }
-        mode_totals = {
-            mode_id: get_mode_total(event_id, mode_id)
-            for mode_id in get_all_payment_mode_ids()
-        }
+        # Fetch category and mode totals with names
+        category_totals = {}
+        for category_id in get_all_transaction_category_ids():
+            category_name = get_category_name(category_id)  # Fetch the name for the category ID
+            category_totals[category_name] = get_category_total(event_id, category_id)
+
+        mode_totals = {}
+        for mode_id in get_all_payment_mode_ids():
+            mode_name = get_mode_name(mode_id)  # Fetch the name for the mode ID
+            mode_totals[mode_name] = get_mode_total(event_id, mode_id)
+
+        # Fetch event details for the selected event (name, date, etc.)
+        event_details = get_event_details(event_id)
 
         # Render the template with calculated data
         return render_template(
@@ -67,11 +63,13 @@ def event_details(user_id, event_id):
             revenue=revenue,
             expenses=expenses,
             category_totals=category_totals,
-            mode_totals=mode_totals
+            mode_totals=mode_totals,
+            event_details=event_details  # Pass event details to the template
         )
     except Exception as e:
         print(f"Error fetching event details: {e}")
         return redirect(url_for('finance_manager.view_events', user_id=user_id))
+
 
 # Fetch Events Helper Function
 def get_events(user_id):
@@ -116,4 +114,27 @@ def determine_status(event_date):
         return "Ongoing"
     else:
         return "Completed"
+
+def get_event_details(event_id):
+    """Fetch details of an event based on Event ID."""
+    event = Event.query.filter_by(Event_ID=event_id).first()
+    if event:
+        # Fetch related department and event type names from their respective models
+        department_name = event.department.Name if event.department else "Unknown Department"
+        event_type_name = event.event_type.Event_Type_Name if event.event_type else "Unknown Event Type"
+        
+        # Fetch finance and event managers' names
+        finance_manager_name = event.finance_manager.Username if event.finance_manager else "No Finance Manager"
+        event_manager_name = event.event_manager.Username if event.event_manager else "No Event Manager"
+
+        return {
+            "name": event.Name,                     # Event Name
+            "date": event.Date,                     # Event Date
+            "department": department_name,          # Department Name
+            "event_type": event_type_name,          # Event Type Name
+            "days": event.Days,                     # Event Days
+            "finance_manager": finance_manager_name,  # Finance Manager Name
+            "event_manager": event_manager_name     # Event Manager Name
+        }
+    return {}
 

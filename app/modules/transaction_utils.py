@@ -158,3 +158,16 @@ def get_all_payment_mode_ids():
     except SQLAlchemyError as e:
         print("Error fetching payment modes:", e)
         return []
+
+
+def get_category_name(category_id):
+    """Fetch Category Name based on Transaction Category ID."""
+    category = filter_data(TransactionCategory, filters={"Transaction_Category_ID": category_id}, columns=["Category_Name"])
+    return category[0].Category_Name if category else "Unknown Category"
+
+def get_mode_name(mode_id):
+    """Fetch Payment Mode Name based on Mode ID."""
+    mode = filter_data(PaymentMode, filters={"Mode_ID": mode_id}, columns=["Mode_Name"])
+    return mode[0].Mode_Name if mode else "Unknown Mode"
+
+
