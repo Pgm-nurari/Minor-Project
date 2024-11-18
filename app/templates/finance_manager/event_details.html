@@ -17,5 +17,22 @@
 
 
 {% block content %}
-  <h1>Event Detail Page of Finance Manager...!</h1>
+<h3>Event Financial Overview</h3>
+<p>Revenue: ₹{{ revenue }}</p>
+<p>Expenses: ₹{{ expenses }}</p>
+
+<h4>Totals by Transaction Category</h4>
+<ul>
+    {% for category_id, total in category_totals.items() %}
+        <li>Category {{ category_id }}: ₹{{ total }}</li>
+    {% endfor %}
+</ul>
+
+<h4>Totals by Payment Mode</h4>
+<ul>
+    {% for mode_id, total in mode_totals.items() %}
+        <li>Mode {{ mode_id }}: ₹{{ total }}</li>
+    {% endfor %}
+</ul>
+
 {% endblock %}
