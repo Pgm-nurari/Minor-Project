@@ -26,6 +26,8 @@
     <p><strong>Event Type:</strong> {{ event_details.event_type }}</p>
     <p><strong>Finance Manager:</strong> {{ event_details.finance_manager }}</p>
     <p><strong>Event Manager:</strong> {{ event_details.event_manager }}</p>
+
+    <a href="{{ url_for('finance_manager.event_visualization',event_id=event_details.id, user_id=user_id) }}" class="btn btn-primary">Visualize Event Data</a>
   </div>
 </div>
 

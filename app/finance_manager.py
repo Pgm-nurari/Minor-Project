@@ -10,6 +10,8 @@ from sqlalchemy import func
 import matplotlib.pyplot as plt
 from io import BytesIO
 import base64
+import plotly.graph_objects as go
+import plotly.express as px
 from datetime import datetime, date
 from .test_data import test_user_data, test_event_data
 from .modules.transaction_utils import *
@@ -128,6 +130,7 @@ def get_event_details(event_id):
         event_manager_name = event.event_manager.Username if event.event_manager else "No Event Manager"
 
         return {
+            "id": event_id,
             "name": event.Name,                     # Event Name
             "date": event.Date,                     # Event Date
             "department": department_name,          # Department Name
@@ -138,3 +141,68 @@ def get_event_details(event_id):
         }
     return {}
 
+
+@finance_manager_bp.route('/event_visualization/<int:event_id>')
+def event_visualization(user_id, event_id):
+    try:
+        # Fetch revenue and expense data
+        revenue = get_revenue_total(event_id)
+        expense = get_expense_total(event_id)
+
+        # Fetch category totals
+        categories = get_all_transaction_category_ids()
+        category_totals = []
+        for category_id in categories:
+            category_total = get_category_total(event_id, category_id)
+            if category_total > 0:
+                category_name = get_category_name(category_id)
+                category_totals.append({'name': category_name, 'total': category_total})
+                
+        # print(category_totals)
+
+        # Fetch mode totals
+        modes = get_all_payment_mode_ids()
+        mode_totals = []
+        for mode_id in modes:
+            mode_total = get_mode_total(event_id, mode_id)
+            if mode_total > 0:
+                mode_name = get_mode_name(mode_id)
+                mode_totals.append({'name': mode_name, 'total': mode_total})
+
+        # Generate Pie Chart JSON (avoid issues with empty data)
+        if category_totals:
+            category_fig = px.pie(
+                names=[cat['name'] for cat in category_totals],
+                values=[cat['total'] for cat in category_totals],
+                title='Transaction Totals by Category'
+            ).to_json()
+        else:
+            category_fig = None
+
+        if mode_totals:
+            mode_fig = px.pie(
+                names=[mode['name'] for mode in mode_totals],
+                values=[mode['total'] for mode in mode_totals],
+                title='Transaction Totals by Payment Mode'
+            ).to_json()
+        else:
+            mode_fig = None
+
+        # Revenue vs Expense Bar Chart
+        revenue_expense_fig = go.Figure()
+        revenue_expense_fig.add_trace(go.Bar(x=['Revenue', 'Expenses'], y=[revenue, expense]))
+        revenue_expense_fig.update_layout(title='Revenue vs Expenses', xaxis_title='Type', yaxis_title='Amount (₹)', template='plotly_dark')
+        revenue_expense_fig_json = revenue_expense_fig.to_json()
+
+        # Render template
+        return render_template(
+            'finance_manager/event_visualization.html',
+            revenue_expense_fig=revenue_expense_fig_json,
+            category_fig=category_fig,
+            mode_fig=mode_fig,
+            user_id=user_id,
+            event_id=event_id
+        )
+    except Exception as e:
+        print(f"Error in visualization: {e}")
+        return redirect(url_for('finance_manager.view_events', user_id=user_id))

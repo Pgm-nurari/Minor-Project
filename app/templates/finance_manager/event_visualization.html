@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% import 'components/header_with_button.html' as section_header %}
+{% import 'finance_manager/header_bar.html' as finance_header %}
+
+{% block title %}Event Visualization - Finance Manager{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+
+{% block header %}
+  {{ finance_header.finance_header(user_id) }}
+{% endblock %}
+
+{% block content %}
+  <h1>Event Visualization for Event ID: {{ event_id }}</h1>
+
+  <!-- Include Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+  <!-- Debugging: Check the data passed to JavaScript -->
+  <div id="revenue_expense_chart" style="width: 100%; height: 400px;"></div>
+    <div id="category_chart" style="width: 100%; height: 400px;"></div>
+    <div id="mode_chart" style="width: 100%; height: 400px;"></div>
+
+    <script>
+        // Revenue vs Expense Bar Chart
+        var revenueExpenseFig = {{ revenue_expense_fig | safe }};
+        Plotly.newPlot('revenue_expense_chart', revenueExpenseFig.data, revenueExpenseFig.layout);
+
+        // Pie Chart for Categories
+        {% if category_fig %}
+            var categoryFig = {{ category_fig | safe }};
+            Plotly.newPlot('category_chart', categoryFig.data, categoryFig.layout);
+        {% else %}
+            document.getElementById('category_chart').innerHTML = "<p>No category data available.</p>";
+        {% endif %}
+
+        // Pie Chart for Modes
+        {% if mode_fig %}
+            var modeFig = {{ mode_fig | safe }};
+            Plotly.newPlot('mode_chart', modeFig.data, modeFig.layout);
+        {% else %}
+            document.getElementById('mode_chart').innerHTML = "<p>No payment mode data available.</p>";
+        {% endif %}
+    </script>
+{% endblock %}
