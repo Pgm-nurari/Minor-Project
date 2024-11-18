@@ -6,45 +6,94 @@
 {% block title %}Event Visualization - Finance Manager{% endblock %}
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<style>
+    .card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-bottom: 30px;
+        background-color: #ffffff;
+    }
+    .card-header {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #2c3e50;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 5px;
+    }
+    .breaker {
+        width: 100%;
+        height: 2px;
+        background-color: #ddd;
+        margin: 20px 0;
+    }
+    .chart-container {
+        width: 100%;
+        height: 400px;
+        margin-top: 10px;
+    }
+    h1, h2 {
+        color: #2c3e50;
+    }
+</style>
 {% endblock %}
 
 {% block header %}
-  {{ finance_header.finance_header(user_id) }}
+{{ finance_header.finance_header(user_id) }}
 {% endblock %}
 
 {% block content %}
-  <h1>Event Visualization for Event ID: {{ event_id }}</h1>
+<div class="container">
+    <h1>Event Visualization for "{{ event_name }}"</h1>
+    <hr class="breaker">
 
-  <!-- Include Plotly.js -->
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Revenue vs Expense Bar Chart -->
+    <div class="card">
+        <div class="card-header">Revenue vs Expenses</div>
+        <div id="revenue_expense_chart" class="chart-container"></div>
+    </div>
 
-  <!-- Debugging: Check the data passed to JavaScript -->
-  <div id="revenue_expense_chart" style="width: 100%; height: 400px;"></div>
-    <div id="category_chart" style="width: 100%; height: 400px;"></div>
-    <div id="mode_chart" style="width: 100%; height: 400px;"></div>
-
-    <script>
-        // Revenue vs Expense Bar Chart
-        var revenueExpenseFig = {{ revenue_expense_fig | safe }};
-        Plotly.newPlot('revenue_expense_chart', revenueExpenseFig.data, revenueExpenseFig.layout);
-
-        // Pie Chart for Categories
+    <!-- Pie Chart for Categories -->
+    <div class="card">
+        <div class="card-header">Transaction Totals by Category</div>
         {% if category_fig %}
-            var categoryFig = {{ category_fig | safe }};
-            Plotly.newPlot('category_chart', categoryFig.data, categoryFig.layout);
+            <div id="category_chart" class="chart-container"></div>
         {% else %}
-            document.getElementById('category_chart').innerHTML = "<p>No category data available.</p>";
+            <p>No category data available.</p>
         {% endif %}
+    </div>
 
-        // Pie Chart for Modes
+    <!-- Pie Chart for Payment Modes -->
+    <div class="card">
+        <div class="card-header">Transaction Totals by Payment Mode</div>
         {% if mode_fig %}
-            var modeFig = {{ mode_fig | safe }};
-            Plotly.newPlot('mode_chart', modeFig.data, modeFig.layout);
+            <div id="mode_chart" class="chart-container"></div>
         {% else %}
-            document.getElementById('mode_chart').innerHTML = "<p>No payment mode data available.</p>";
+            <p>No payment mode data available.</p>
         {% endif %}
-    </script>
+    </div>
+</div>
+
+<script>
+    // Revenue vs Expense Bar Chart
+    var revenueExpenseFig = {{ revenue_expense_fig | safe }};
+    Plotly.newPlot('revenue_expense_chart', revenueExpenseFig.data, revenueExpenseFig.layout);
+
+    // Pie Chart for Categories
+    {% if category_fig %}
+        var categoryFig = {{ category_fig | safe }};
+        Plotly.newPlot('category_chart', categoryFig.data, categoryFig.layout);
+    {% endif %}
+
+    // Pie Chart for Modes
+    {% if mode_fig %}
+        var modeFig = {{ mode_fig | safe }};
+        Plotly.newPlot('mode_chart', modeFig.data, modeFig.layout);
+    {% endif %}
+</script>
 {% endblock %}

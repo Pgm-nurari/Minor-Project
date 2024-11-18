@@ -145,6 +145,9 @@ def get_event_details(event_id):
 @finance_manager_bp.route('/event_visualization/<int:event_id>')
 def event_visualization(user_id, event_id):
     try:
+        event_name = get_event_name(event_id)
+        print(event_name)
+        
         # Fetch revenue and expense data
         revenue = get_revenue_total(event_id)
         expense = get_expense_total(event_id)
@@ -201,8 +204,13 @@ def event_visualization(user_id, event_id):
             category_fig=category_fig,
             mode_fig=mode_fig,
             user_id=user_id,
-            event_id=event_id
+            event_id=event_id,
+            event_name=event_name,
         )
     except Exception as e:
         print(f"Error in visualization: {e}")
         return redirect(url_for('finance_manager.view_events', user_id=user_id))
+    
+def get_event_name(event_id):
+    event = db.session.query(Event).filter_by(Event_ID=event_id).first()
+    return event.Name if event else "Unknown Event"    
