@@ -216,27 +216,6 @@ def get_events(user_id):
         print("Error fetching events:", e)
         return {}
 
-def get_all_transactions(user_id):
-    pass
-
-def get_transactions_of_event(event_id):
-    """
-    Get the transactions as a list of dictionaries for a given event.
-    Each row will have the following keys: transaction_id, amount, transaction_nature, payment_mode,
-    date, bill_no, party_name, transaction_category, and account_category.
-    This function joins the transaction table with other related foreign key tables.
-    """
-    
-    pass
-
-def get_budget(event_id):
-    """
-    Here, the budget will be gained for the respective events.
-    The event_id will be checked in both the event_id and the sub_event_id. columns of the budget table.
-    """
-        
-    pass
-
 @event_manager_bp.route('/create_transaction/<int:event_id>', methods=['GET', 'POST'])
 def create_transaction(user_id, event_id):
     try:
@@ -407,6 +386,7 @@ def view_all_transactions(user_id, event_id):
 
             # Create a dictionary for each transaction with its associated items
             transaction_data.append({
+                "id":transaction.Transaction_ID,
                 "bill_no": transaction.Bill_No,
                 "party_name": transaction.Party_Name,
                 "amount": total_amount,
@@ -430,6 +410,26 @@ def view_all_transactions(user_id, event_id):
         event_id=event_id,
         user_id=user_id
     )
+
+
+@event_manager_bp.route('/view_transaction/<int:transaction_id>', methods=['GET'])
+def view_individual_transaction(user_id,transaction_id):
+    try:
+        # Fetch the transaction details
+        transaction = Transaction.query.get_or_404(transaction_id)
+
+        # Fetch the associated transaction items, ensuring you're executing the query
+        items = TransactionItem.query.filter_by(Transaction_ID=transaction_id).all()  # Use .all() to get a list
+
+        # Prepare data for rendering
+        transaction_data = transaction.to_dict()
+        item_data = [{'TransactionItem_ID': item.TransactionItem_ID, 'Description': item.Description, 'Amount': item.Amount} for item in items]
+
+    except Exception as e:
+        print(f"Unexpected error occurred: {e}")
+        return render_template("error.html", message="An error occurred while fetching the transaction."), 500
+
+    return render_template("event_manager/view_transaction.html", transaction=transaction_data, user_id=user_id, items=item_data)
 
 
 @event_manager_bp.route('/delete_transaction_item/<int:item_id>', methods=['GET'])
@@ -461,6 +461,3 @@ def edit_transaction_item(user_id, item_id):
         flash(f'Error updating item: {e}', 'danger')
     
     return redirect(request.referrer)
-
-
-

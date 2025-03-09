@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% import 'components/header_with_button.html' as section_header %}
+{% import 'event_manager/header_bar.html' as user_header %}
+
+{% block title %}Transaction Details - {{ transaction.bill_no }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+{% endblock %}
+
+{% block header %}
+{{ user_header.user_header(user_id) }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Transaction Details</h1>
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Transaction Bill No: {{ transaction.bill_no }}</h5>
+            <p><strong>Party Name:</strong> {{ transaction.party_name }}</p>
+            <p><strong>Total Amount:</strong> ₹{{ transaction.amount }}</p>
+            <p><strong>Date:</strong> {{ transaction.date }}</p>
+            <p><strong>Nature:</strong> {{ transaction.nature }}</p>
+            <p><strong>Payment Mode:</strong> {{ transaction.payment_mode }}</p>
+            <p><strong>Category:</strong> {{ transaction.category }}</p>
+        </div>
+    </div>
+
+    <h2 class="mt-5">Items</h2>
+    <table class="table table-bordered mt-3">
+        <thead class="table-dark">
+            <tr>
+                <th>Description</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ item.description }}</td>
+                <td>₹{{ item.amount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

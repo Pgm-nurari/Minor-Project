@@ -192,8 +192,26 @@
 
 <!-- Transactions Section -->
 <div class="transaction-section">
-    <h3>Transactions</h3>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Transactions</h3>
+        <div>
+            <a href="{{ url_for('event_manager.view_all_transactions', event_id=event['id'], user_id=user_id) }}" class="view-all-btn-info me-2">View All Transactions</a>
+            <a href="{{ url_for('event_manager.create_transaction', user_id=user_id, event_id=event['id']) }}" class="add-transaction-btn">Add New Transaction</a>
+        </div>
+    </div>
+
     {% if transactions %}
+        <!-- Search and Filter Options -->
+        <div class="mb-3 d-flex justify-content-between">
+            <input type="text" id="transaction-search" class="form-control me-2" placeholder="Search by Party Name or Bill No" style="max-width: 300px;">
+            <select id="transaction-filter" class="form-select" style="max-width: 200px;">
+                <option value="all">All Dates</option>
+                <option value="last7">Last 7 Days</option>
+                <option value="last30">Last 30 Days</option>
+                <option value="thisMonth">This Month</option>
+            </select>
+        </div>
+
         <div class="event-table-container">
             <div class="table-responsive-event">
                 <table class="event-table table-bordered table-hover">
@@ -205,7 +223,7 @@
                             <th>Date</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="transaction-table-body">
                         {% for transaction in transactions %}
                         <tr>
                             <td>{{ transaction['bill_no'] }}</td>
@@ -217,10 +235,6 @@
                     </tbody>
                 </table>
             </div>
-            <!-- Link to full transactions -->
-            <p>
-                <a href="{{ url_for('event_manager.view_all_transactions', event_id=event['id'], user_id=user_id) }}" class="view-all-btn-info">View All Transactions</a>
-            </p>
         </div>
     {% else %}
         <p>No transactions were made for this event. 
@@ -229,10 +243,47 @@
             </a> to make a transaction.
         </p>
     {% endif %}
-
-    <!-- Add New Transaction Button -->
-    <a href="{{ url_for('event_manager.create_transaction', user_id=user_id, event_id=event['id']) }}" class="add-transaction-btn">Add New Transaction</a>
 </div>
+
+<script>
+    document.getElementById('transaction-search').addEventListener('input', function () {
+        const searchValue = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#transaction-table-body tr');
+
+        rows.forEach(row => {
+            const billNo = row.cells[0].textContent.toLowerCase();
+            const partyName = row.cells[1].textContent.toLowerCase();
+            if (billNo.includes(searchValue) || partyName.includes(searchValue)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    document.getElementById('transaction-filter').addEventListener('change', function () {
+        const filterValue = this.value;
+        const rows = document.querySelectorAll('#transaction-table-body tr');
+        const now = new Date();
+
+        rows.forEach(row => {
+            const dateCell = row.cells[3].textContent;
+            const transactionDate = new Date(dateCell);
+            let showRow = true;
+
+            if (filterValue === 'last7') {
+                showRow = (now - transactionDate) / (1000 * 60 * 60 * 24) <= 7;
+            } else if (filterValue === 'last30') {
+                showRow = (now - transactionDate) / (1000 * 60 * 60 * 24) <= 30;
+            } else if (filterValue === 'thisMonth') {
+                showRow = transactionDate.getMonth() === now.getMonth() && transactionDate.getFullYear() === now.getFullYear();
+            }
+
+            row.style.display = showRow || filterValue === 'all' ? '' : 'none';
+        });
+    });
+</script>
+
 
 {% endblock %}
 
