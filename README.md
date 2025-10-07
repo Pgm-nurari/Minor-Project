@@ -4,7 +4,7 @@ FinSight is a web application built with Flask to provide management dashboards 
 
 ## Project Structure
 
-```plaintext
+```
 FinSight/
 ├── app/
 │   ├── modules/              # Reusable Python modules (e.g., validations)
@@ -30,3 +30,11 @@ FinSight/
 ├── LICENSE                   # Project license
 ├── README.md                 # Documentation for project setup and usage
 └── requirements.txt          # List of Python dependencies
+```
+
+## Project Demo
+<p align="center">
+  <img src="https://github.com/Pgm-nurari/FinSight/blob/main/images/admin-dashboard_page.png" alt="Project Screenshot" width="500"/>
+  <br>
+  <sub><b>Fig 1:</b> Admin Dashboard Page</sub>
+</p>
