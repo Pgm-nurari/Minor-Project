@@ -5,7 +5,7 @@ class Config:
     """Base configuration with default settings."""
     SECRET_KEY = os.environ.get('SECRET_KEY', 'your_secret_key_here')
     # URL-encode the password to handle special characters
-    db_password = quote_plus('mysql123!@#MYSQL')
+    db_password = quote_plus('YourSecureP@ssw0rd!')
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         'DATABASE_URL', 
         f'mysql+pymysql://root:{db_password}@localhost/finsight_db'
