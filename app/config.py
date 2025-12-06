@@ -1,11 +1,14 @@
 import os
+from urllib.parse import quote_plus
 
 class Config:
     """Base configuration with default settings."""
     SECRET_KEY = os.environ.get('SECRET_KEY', 'your_secret_key_here')
+    # URL-encode the password to handle special characters
+    db_password = quote_plus('')
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         'DATABASE_URL', 
-        'mysql+pymysql://finsight_user:finsight10466266@localhost/finsight_db'
+        f'mysql+pymysql://root:{db_password}@localhost/finsight_db'
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False

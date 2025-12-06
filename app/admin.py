@@ -7,6 +7,7 @@ from sqlalchemy import asc, desc
 from sqlalchemy import func
 from datetime import datetime, date
 from .test_data import test_user_data, test_event_data
+from werkzeug.security import generate_password_hash
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -215,13 +216,14 @@ def new_user():
             flash('Role not found.', 'error')
             return redirect(url_for('admin.new_user'))
 
-        # Create a new user
+        # Create a new user with a default hashed password
+        default_password = generate_password_hash('ChangeMe@123')  # Default password that user must change
         user_data = {
             'Username': username,
             'Email': email,
             'Role': role.Role_ID,  
             'Dept_ID': department.Dept_ID,  
-            'Password': ''  
+            'Password': default_password
         }
 
         # Add the new user to the database using the create_entry function

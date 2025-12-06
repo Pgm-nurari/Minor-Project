@@ -3,6 +3,7 @@ from app.modules import validations
 from .modules.models import Department, Role, User
 from .modules.db_queries import filter_data, create_entry, update_entry
 from sqlalchemy.exc import SQLAlchemyError
+from werkzeug.security import generate_password_hash, check_password_hash
 
 home_bp = Blueprint('home', __name__, url_prefix='')
 
@@ -35,7 +36,7 @@ def login():
         # Now check if the email and password are correct, and fetch user
         user = filter_data(User, filters={"Email": email})
         
-        if not user or user[0].Password != password:  # If user doesn't exist or passwords don't match
+        if not user or not check_password_hash(user[0].Password, password):  # If user doesn't exist or passwords don't match
             errors["general"] = "Invalid credentials. Please check your email and password."
             return render_template("home/login.html", errors=errors, email=email, password=password)
 
@@ -49,7 +50,9 @@ def login():
         role = current_user.role.Role_Name  # Assuming the role is an object and has a 'Role_Name' attribute
 
         # Redirect based on role
-        if role == 'Event Manager':
+        if role == 'Admin':
+            return redirect(url_for('admin.admin_dashboard'))
+        elif role == 'Event Manager':
             return redirect(url_for('event_manager.event_manager', user_id=current_user.User_ID))
         elif role == 'Finance Manager':
             return redirect(url_for('finance_manager.finance_manager', user_id=current_user.User_ID))
@@ -57,12 +60,8 @@ def login():
         # If role is not found or any other case, redirect to a default page (home, for example)
         return redirect(url_for("home.index"))
     
-    # Pre-fill email and password fields if provided in query parameters
-    email = request.args.get("email", "")
-    password = request.args.get("password", "")
-    
-    # Render the login page with pre-filled values if any
-    return render_template("home/login.html", email=email, password=password)
+    # Render the login page for GET requests
+    return render_template("home/login.html")
 
 @home_bp.route("/forgot-password", methods=["GET", "POST"])
 def forgot_password():
@@ -128,12 +127,11 @@ def reset_password(user_id):
             user = filter_data(User, filters={'User_ID': user_id})
             
             if user:
-                # Since filter_data returns a list, we take the first user object
-                updated_user = user[0]  # Assumes only one user with the given ID
-                updated_user.Password = new_password
+                # Hash the new password before saving
+                hashed_password = generate_password_hash(new_password)
                 
-                # Now, use the db_queries update function to save the new password
-                updated_user = update_entry(User, {'User_ID': user_id}, {'Password': new_password})
+                # Use the db_queries update function to save the new password
+                updated_user = update_entry(User, {'User_ID': user_id}, {'Password': hashed_password})
 
                 if updated_user:
                     return redirect(url_for('home.login'))  # Redirect to the login page after successful password reset
@@ -197,11 +195,12 @@ def signup():
             error_messages["email"] = "Username or Email already exists. Please use a different one."
             return render_template("home/signup.html", error_messages=error_messages, departments=departments, roles=roles)
 
-        # Create new user entry
+        # Create new user entry with hashed password
+        hashed_password = generate_password_hash(password)
         new_user = {
             "Username": username,
             "Email": email,
-            "Password": password,
+            "Password": hashed_password,
             "Role": role_id,
             "Dept_ID": department_id,
             "Verified": 0  # Default unverified status
@@ -209,7 +208,7 @@ def signup():
 
         try:
             create_entry(User, **new_user)
-            return redirect(url_for('home.login', email=email, password=password))  # Redirect to login page after successful signup
+            return redirect(url_for('home.login'))  # Redirect to login page after successful signup
         except SQLAlchemyError:
             error_messages["general"] = "An error occurred while creating your account. Please try again."
             return render_template("home/signup.html", error_messages=error_messages, departments=departments, roles=roles)
