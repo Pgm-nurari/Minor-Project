@@ -20,7 +20,8 @@ class="back-home-btn d-flex align-items-center justify-content-center">
             {% if errors and errors.get("general") %} 
                 <div class="alert alert-danger" role="alert"> {{ errors["general"] }} </div>
             {% endif %}
-            <h2 class="login-heading">Login</h2>
+            <h2 class="login-heading">Welcome Back!</h2>
+            <p style="color: #7f8c8d; margin-bottom: 30px; font-size: 14px;">Sign in to access your FinSight dashboard</p>
             <img src="{{url_for('static', filename='images/loginillsutration.jpg')}}" alt="Login Illustration" class="illustration" />
 
             <div class="login-form">

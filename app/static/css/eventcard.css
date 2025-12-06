@@ -1,22 +1,35 @@
 /* Styling for individual event cards */
 .eventcard {
-  width: 300px; /* Fixed width for consistency */
-  height: auto; /* Automatically adjusts based on content */
+  width: 100%;
+  max-width: 320px;
+  height: auto;
   background: white;
-  box-shadow: 4px 10px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
   overflow: hidden;
-  border: 3px solid #afd46e;
+  border: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px; /* Reduced padding for more compact layout */
-  transition: transform 0.3s ease; /* Smooth transition for hover effect */
+  padding: 24px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.eventcard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
 }
 
 /* Hover effect on the event card */
 .eventcard:hover {
-  transform: translateY(-5px); /* Slightly lift the card on hover */
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
 }
 
 /* Layout inside the card */
@@ -37,13 +50,14 @@
 }
 
 .cardheading {
-  font-size: 18px;
-  font-weight: 600;
-  color: #1e1e1e;
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 250px; /* Prevent text wrapping */
+  max-width: 100%;
+  margin-bottom: 4px;
 }
 
 /* Styling for list items inside the card */
@@ -63,38 +77,43 @@
 }
 
 .cardlistitemtext {
-  color: #0b0a0a;
+  color: #5a6c7d;
   font-size: 14px;
-  font-family: "Times New Roman", Times, serif;
-  font-weight: 400;
-  line-height: 22.4px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 500;
+  line-height: 1.6;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  max-width: 250px; /* Prevent overflow of text */
+  max-width: 100%;
 }
 
 /* Button Styling */
 .cardbutton {
-  width: 160px; /* Adjusted width for the button */
-  height: 36px; /* Adjusted height */
-  background: #afd46e;
-  border-radius: 8px;
+  width: 100%;
+  height: auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #2c2c2c;
+  border: none;
   cursor: pointer;
-  margin-top: 8px; /* Small margin to separate button */
+  margin-top: 16px;
+  padding: 12px 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 .cardbutton:hover {
-  background-color: #8bc34a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .cardbuttontext {
   color: white;
-  font-size: 14px; /* Smaller text size for buttons */
+  font-size: 14px;
+  font-weight: 600;
   text-align: center;
 }
 

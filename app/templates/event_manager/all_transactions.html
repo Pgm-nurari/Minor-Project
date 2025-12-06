@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 
+{% import 'components/table_component.html' as table %}
 {% import 'components/header_with_button.html' as section_header %}
 {% import 'event_manager/header_bar.html' as user_header %}
 
@@ -7,6 +8,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tablecomponent.css') }}">
 {% endblock %}
 
 {% block header %}
@@ -15,43 +17,25 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1 class="text-center">Event Transactions</h1>
-    <table class="table table-striped table-bordered mt-4">
-        <thead class="table-dark">
-            <tr>
-                <th>Bill No</th>
-                <th>Party Name</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Nature</th>
-                <th>Payment Mode</th>
-                <th>Category</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for transaction in transactions %}
-            <tr>
-                <td>{{ transaction.bill_no }}</td>
-                <td>{{ transaction.party_name }}</td>
-                <td>{{ transaction.amount }}</td>
-                <td>{{ transaction.date }}</td>
-                <td>{{ transaction.nature }}</td>
-                <td>{{ transaction.payment_mode }}</td>
-                <td>{{ transaction.category }}</td>
-                <td>
-                    <a href="{{ url_for('event_manager.view_individual_transaction', transaction_id=transaction.id, user_id=user_id) }}" 
-                       class="btn btn-primary btn-sm">
-                        View
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h1 class="text-center mb-4">Event Transactions</h1>
+    
+    {% if transactions %}
+        {{ table.render_table(
+            transactions,
+            actions=True,
+            table_classes="table table-striped table-hover table-bordered",
+            action_buttons=[
+                {'endpoint': 'view', 'label': 'View', 'class': 'view'}
+            ],
+            identifier_key='id',
+            url_patterns={'view': 'event_manager.view_individual_transaction'}
+        ) }}
+    {% else %}
+        <div class="alert alert-info text-center">
+            <h4>No Transactions Found</h4>
+            <p>There are currently no transactions to display.</p>
+        </div>
+    {% endif %}
 </div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 
 {% endblock %}

@@ -10,18 +10,18 @@ html, body {
   }
   
   body {
-    font-family: "Helvetica Neue", sans-serif;
-    background-color: #f0fff4;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
     color: #2c3e50;
     scroll-behavior: smooth;
-    padding-top: 120px; /* Space for header */
-    flex-grow: 1; /* Allow the content area to grow and take up available space */
+    padding-top: 100px;
+    flex-grow: 1;
   }
   
   /* Header and Navbar Styles */
   header {
-    background-color: #66b775; /* Dark green background */
-    padding: 5px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 15px 30px;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -31,6 +31,7 @@ html, body {
     left: 0;
     right: 0;
     z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   }
   
   .header-content {
@@ -52,19 +53,22 @@ html, body {
   }
   
   .header-button a button {
-    color: #000100;
-    background-color: #AFD46E; /* Light green */
-    font-weight: bold;
-    padding: 8px 20px;
-    border: 0;
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+    padding: 10px 24px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
     border-radius: 25px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.3s ease;
     text-decoration: none;
+    backdrop-filter: blur(10px);
   }
   
   .header-button a button:hover {
-    background-color: #8bc34a;
-    transform: scale(1.05);
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
   }
   
   /* Navigation Styles */
@@ -113,20 +117,24 @@ html, body {
   
   /* Footer Styles */
 footer {
-    background-color: #8dbf6b;  /* Darker green background */
-    color: #fff;  /* White text */
-    padding: 0.5rem 0;  /* Reduced top and bottom padding */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    padding: 25px 0;
     position: relative;
     bottom: 0;
     width: 100%;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
   }
   
   footer .container {
     display: flex;
-    flex-direction: row;  /* Horizontal alignment */
-    align-items: center;  /* Center the items vertically */
-    justify-content: space-between;  /* Space between elements */
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     text-align: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
   }
   
   footer .footer-links {
@@ -139,25 +147,51 @@ footer {
   }
   
   footer .footer-links a {
-    color: #fff;
+    color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+  }
+  
+  footer .footer-links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 50%;
+    background-color: white;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
   }
   
   footer .footer-links a:hover {
-    color: #AFD46E;  /* Light green hover effect */
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+  
+  footer .footer-links a:hover::after {
+    width: 100%;
   }
   
   footer .footer-bottom {
-    display: flex;  /* Display in a row */
-    gap: 1rem;  /* Space between the two elements */
-    font-size: 0.875rem;  /* Slightly smaller font for copyright */
-    color: #fdfdfd;
+    display: flex;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: rgba(255, 255, 255, 0.8);
   }
   
   footer .footer-bottom a {
-    color: #2f3cf2;
+    color: #ffffff;
     text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  footer .footer-bottom a:hover {
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: underline;
   }
   
   footer .footer-bottom a:hover {

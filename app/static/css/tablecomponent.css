@@ -1,20 +1,37 @@
 /* Card-like Table Style */
 .custom-table-card {
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Light shadow */
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    border: 1px solid #ddd; /* Border around the entire table */
+    border: none;
+    background: white;
+    animation: fadeIn 0.5s ease-in;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
   
   /* Header Styling */
   .custom-table-card thead {
-    background-color: #007bff; /* Primary color for header */
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #ffffff;
+  }
+  
+  .custom-table-card thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    padding: 16px 12px;
   }
   
   /* Hover Effect for Rows */
   .custom-table-card tbody tr:hover {
-    background-color: #f0f0f0; /* Light background on hover */
+    background-color: #f8f9fa;
+    transform: scale(1.01);
+    transition: all 0.2s ease;
     cursor: pointer;
   }
   
@@ -22,57 +39,133 @@
 .btn-clean {
     border: none;
     color: #ffffff;
-    padding: 5px 12px;
-    font-weight: 500;
-    border-radius: 5px;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    padding: 8px 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-size: 13px;
   }
   
   /* Specific Button Colors */
   .btn-clean-edit {
-    background-color: #17a2b8; /* Bootstrap 'info' color */
+    background: linear-gradient(135deg, #36d1dc 0%, #5b86e5 100%);
   }
   
   .btn-clean-edit:hover {
-    background-color: #138496; /* Darker shade for hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(54, 209, 220, 0.4);
   }
   
   .btn-clean-delete {
-    background-color: #dc3545; /* Bootstrap 'danger' color */
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   }
   
   .btn-clean-delete:hover {
-    background-color: #c82333; /* Darker shade for hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(245, 87, 108, 0.4);
   }
   
   /* Optional additional buttons if needed */
   .btn-clean-view {
-    background-color: #28a745; /* Bootstrap 'success' color */
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
   }
   
   .btn-clean-view:hover {
-    background-color: #218838; /* Darker shade for hover */
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(79, 172, 254, 0.4);
   }
   
   
   /* Shadow Effect on Hover for Table */
   .custom-table-card:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Increase shadow on hover */
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
   }
   
   /* Striped effect for alternating rows */
   .custom-table-card tbody tr:nth-child(odd) {
-    background-color: #fafafa; /* Light gray for odd rows */
+    background-color: #ffffff;
   }
   
   .custom-table-card tbody tr:nth-child(even) {
-    background-color: #ffffff; /* White for even rows */
+    background-color: #f8f9fa;
   }
   
   /* Border styling for cells */
   .custom-table-card th, 
   .custom-table-card td {
-    border: 1px solid #ddd;
-    padding: 10px;
+    border: none;
+    border-bottom: 1px solid #e9ecef;
+    padding: 14px 12px;
+    font-size: 14px;
   }
+  
+  .custom-table-card td {
+    color: #5a6c7d;
+  }
+
+/* Search and filter controls */
+.input-group-text {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-size: 16px;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Accordion styling */
+.accordion-button {
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  font-size: 14px;
+}
+
+.accordion-button:not(.collapsed) {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: none;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+  border-color: #667eea;
+}
+
+.accordion-body {
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+
+/* Sort indicators */
+.sortable {
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.sortable:hover {
+  background-color: rgba(102, 126, 234, 0.1) !important;
+}
+
+.sort-indicator {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1;
+}
+
+.sort-arrow {
+  opacity: 0.3;
+  transition: all 0.3s ease;
+  font-size: 10px;
+  color: #ffffff;
+}
+
+.sort-arrow:hover {
+  opacity: 0.7;
+}
+  
   

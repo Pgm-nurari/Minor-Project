@@ -1,15 +1,21 @@
 .cardscontainer {
-    width: 100%; /* Make the container width responsive */
+    width: 100%;
     max-width: 1450px;
     height: auto;
     display: grid;
-    justify-content: start; /* Align items to the start (left side) */
-    align-items: start; /* Align items vertically to the top */
+    justify-content: start;
+    align-items: start;
     grid-auto-flow: row;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Ensure flexible card layout */
-    grid-gap: 16px; /* Gap between the grid items */
-    padding: 16px; /* Padding around the grid */
-    overflow-x: auto; /* Enable horizontal scrolling for additional cards */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-gap: 24px;
+    padding: 24px;
+    overflow-x: auto;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* Responsive styling for different screen sizes */
@@ -51,15 +57,17 @@
 #Events .header-button a,
 #Users\ table .header-button button,
 #Users\ table .header-button a {
-    color: #000100;
-    background-color: #AFD46E;
-    font-weight: bold;
-    padding: 4px 12px; /* Reduced padding for smaller button size */
-    font-size: 14px;  /* Reduced font size */
+    color: #ffffff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-weight: 600;
+    padding: 10px 24px;
+    font-size: 14px;
     border: 0;
     border-radius: 25px;
     text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    display: inline-block;
 }
 
 #Authentication .header-button button:hover,
@@ -68,47 +76,54 @@
 #Events .header-button a:hover,
 #Users\ table .header-button button:hover,
 #Users\ table .header-button a:hover {
-    background-color: #8bc34a;
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 /* Main header buttons should remain unaffected */
 header .header-button button,
 header .header-button a {
-    color: #000100;
-    background-color: #AFD46E;
-    font-weight: bold;
-    padding: 4px 12px;
-    font-size: 16px;  /* Default font size for main header */
+    color: #ffffff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-weight: 600;
+    padding: 10px 24px;
+    font-size: 16px;
     border: 0;
     border-radius: 25px;
     text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
 }
 
 header .header-button button:hover,
 header .header-button a:hover {
-    background-color: #8bc34a;
-    transform: scale(1.05);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
 }
 
 .back-home-btn {
     position: fixed;
-    top: 10px; /* Distance from the top */
-    left: 10px; /* Distance from the left */
-    width: 50px; /* Width of the button */
-    height: 50px; /* Height of the button */
-    background-color: white; /* White background */
-    border-radius: 8px; /* Rounded corners for a box-like appearance */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    font-size: 24px; /* Icon size */
-    color: #333; /* Icon color */
-    text-decoration: none; /* Removes underline */
-    display: flex; /* Flexbox for centering the icon */
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    transition: all 0.2s ease-in-out;
-    z-index: 1000; /* Ensures it's above other elements */
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    font-size: 24px;
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.back-home-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 12px 25px rgba(102, 126, 234, 0.5);
+    color: white;
 }
 
 .back-home-btn:hover {
