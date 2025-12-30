@@ -146,3 +146,37 @@ class Budget(db.Model, BaseMixin):
     # Relationships with Event and SubEvent
     event = db.relationship('Event', backref='budgets', lazy=True)
     sub_event = db.relationship('SubEvent', backref='budgets', lazy=True)
+
+
+class Notification(db.Model, BaseMixin):
+    __tablename__ = 'Notification'
+    Notification_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    User_ID = db.Column(db.Integer, db.ForeignKey('User.User_ID'), nullable=False)
+    Title = db.Column(db.String(200), nullable=False)
+    Message = db.Column(db.Text, nullable=False)
+    Type = db.Column(db.String(50), default='info')  # info, success, warning, danger
+    Is_Read = db.Column(db.Boolean, default=False)
+    Created_At = db.Column(db.DateTime, default=func.current_timestamp())
+    Related_Event_ID = db.Column(db.Integer, db.ForeignKey('Event.Event_ID'), nullable=True)
+    Related_Transaction_ID = db.Column(db.Integer, db.ForeignKey('transaction_table.Transaction_ID'), nullable=True)
+    
+    # Relationships
+    user = db.relationship('User', backref='notifications', lazy=True)
+    event = db.relationship('Event', backref='notifications', lazy=True)
+    transaction = db.relationship('Transaction', backref='notifications', lazy=True)
+
+
+class ActivityLog(db.Model, BaseMixin):
+    __tablename__ = 'Activity_Log'
+    Log_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    User_ID = db.Column(db.Integer, db.ForeignKey('User.User_ID'), nullable=False)
+    Action = db.Column(db.String(100), nullable=False)  # e.g., 'created', 'updated', 'deleted'
+    Entity_Type = db.Column(db.String(50), nullable=False)  # e.g., 'Event', 'Transaction', 'User'
+    Entity_ID = db.Column(db.Integer, nullable=True)  # ID of the affected entity
+    Description = db.Column(db.Text, nullable=False)
+    IP_Address = db.Column(db.String(45), nullable=True)
+    Timestamp = db.Column(db.DateTime, default=func.current_timestamp())
+    
+    # Relationship
+    user = db.relationship('User', backref='activity_logs', lazy=True)
+

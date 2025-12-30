@@ -1,0 +1,432 @@
+{% extends 'base.html' %}
+
+{% import 'event_manager/header_bar.html' as user_header %}
+
+{% block title %}{% if transaction %}Edit{% else %}Create{% endif %} Transaction - Event Manager{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<style>
+    .container-fluid {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .form-section h3 {
+        color: #667eea;
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-group label {
+        display: block;
+        color: #4a5568;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .items-section {
+        background: #f7fafc;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-top: 1.5rem;
+    }
+
+    .item-input-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr auto;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .add-item-btn {
+        padding: 0.75rem 1.5rem;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .add-item-btn:hover {
+        background: #059669;
+        transform: translateY(-2px);
+    }
+
+    .items-list {
+        margin-top: 1rem;
+    }
+
+    .item-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.2s ease;
+    }
+
+    .item-card:hover {
+        border-color: #667eea;
+        box-shadow: 0 2px 8px rgba(102, 126, 234, 0.1);
+    }
+
+    .item-details {
+        flex: 1;
+    }
+
+    .item-description {
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 0.25rem;
+    }
+
+    .item-amount {
+        color: #10b981;
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+
+    .remove-item-btn {
+        padding: 0.5rem 1rem;
+        background: #ef4444;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+    }
+
+    .remove-item-btn:hover {
+        background: #dc2626;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid #e2e8f0;
+    }
+
+    .btn {
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+
+    .no-items {
+        text-align: center;
+        padding: 2rem;
+        color: #a0aec0;
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+{{ user_header.user_header(user_id) }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2>{% if transaction %}✏️ Edit Transaction{% else %}➕ Create New Transaction{% endif %}</h2>
+    </div>
+
+    <!-- Transaction Form -->
+    <form method="POST" action="{% if transaction %}{{ url_for('event_manager.edit_transaction', user_id=user_id, transaction_id=transaction.Transaction_ID) }}{% else %}{{ url_for('event_manager.create_transaction', user_id=user_id, event_id=event_id) }}{% endif %}">
+        <div class="form-card">
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h3>📋 Transaction Details</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bill_no">Bill Number</label>
+                        <input type="text" class="form-control" id="bill_no" name="bill_no" 
+                               value="{{ transaction.Bill_No if transaction else '' }}" placeholder="Enter bill number">
+                    </div>
+                    <div class="form-group">
+                        <label for="party_name">Party Name</label>
+                        <input type="text" class="form-control" id="party_name" name="party_name" 
+                               value="{{ transaction.Party_Name if transaction else '' }}" placeholder="Enter party name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transaction_nature">Transaction Nature *</label>
+                        <select class="form-control" id="transaction_nature" name="transaction_nature" required>
+                            <option value="">Select Nature</option>
+                            {% for nature in transaction_natures %}
+                            <option value="{{ nature.Nature_ID }}" 
+                                    {% if transaction and transaction.Nature_ID == nature.Nature_ID %}selected{% endif %}>
+                                {{ nature.Nature_Name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="payment_mode">Payment Mode *</label>
+                        <select class="form-control" id="payment_mode" name="payment_mode" required>
+                            <option value="">Select Mode</option>
+                            {% for mode in payment_modes %}
+                            <option value="{{ mode.Mode_ID }}" 
+                                    {% if transaction and transaction.Mode_ID == mode.Mode_ID %}selected{% endif %}>
+                                {{ mode.Mode_Name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="transaction_category">Transaction Category *</label>
+                        <select class="form-control" id="transaction_category" name="transaction_category" required>
+                            <option value="">Select Category</option>
+                            {% for category in transaction_categories %}
+                            <option value="{{ category.Transaction_Category_ID }}" 
+                                    {% if transaction and transaction.Transaction_Category_ID == category.Transaction_Category_ID %}selected{% endif %}>
+                                {{ category.Category_Name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="transaction_date">Transaction Date *</label>
+                        <input type="date" class="form-control" id="transaction_date" name="transaction_date" 
+                               value="{{ transaction.Date.strftime('%Y-%m-%d') if transaction and transaction.Date else '' }}" required>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Items -->
+            <div class="form-section">
+                <h3>🛒 Transaction Items</h3>
+                <div class="items-section">
+                    <div class="item-input-row">
+                        <div class="form-group">
+                            <label for="description">Item Description</label>
+                            <input type="text" class="form-control" id="description" placeholder="Enter item description">
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Amount (₹)</label>
+                            <input type="number" class="form-control" id="amount" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label style="opacity: 0;">Add</label>
+                            <button type="button" class="add-item-btn" id="add_item">+ Add Item</button>
+                        </div>
+                    </div>
+
+                    <div class="items-list">
+                        <div id="added_items_list">
+                            {% if transaction and transaction.items %}
+                                {% for item in transaction.items %}
+                                <div class="item-card" data-description="{{ item.Description }}" data-amount="{{ item.Amount }}">
+                                    <div class="item-details">
+                                        <div class="item-description">{{ item.Description }}</div>
+                                        <div class="item-amount">₹{{ "{:,.2f}".format(item.Amount) }}</div>
+                                    </div>
+                                    <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                            <div class="no-items" id="no_items_msg">No items added yet. Add items above.</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <input type="hidden" id="added_items" name="added_items">
+                </div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancel</button>
+                <button type="submit" class="btn btn-primary">{% if transaction %}Update{% else %}Create{% endif %} Transaction</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Initialize items array from existing items
+    let items = [];
+    {% if transaction and transaction.items %}
+        {% for item in transaction.items %}
+            items.push({
+                description: "{{ item.Description }}",
+                amount: {{ item.Amount }}
+            });
+        {% endfor %}
+    {% endif %}
+
+    // Update hidden field
+    function updateHiddenField() {
+        document.getElementById('added_items').value = JSON.stringify(items);
+    }
+
+    // Add item handler
+    document.getElementById('add_item').addEventListener('click', function() {
+        const description = document.getElementById('description').value.trim();
+        const amount = parseFloat(document.getElementById('amount').value);
+
+        if (!description || !amount || amount <= 0) {
+            alert('Please enter valid item description and amount');
+            return;
+        }
+
+        // Add to items array
+        items.push({ description, amount });
+
+        // Create item card
+        const itemCard = document.createElement('div');
+        itemCard.className = 'item-card';
+        itemCard.setAttribute('data-description', description);
+        itemCard.setAttribute('data-amount', amount);
+        itemCard.innerHTML = `
+            <div class="item-details">
+                <div class="item-description">${description}</div>
+                <div class="item-amount">₹${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</div>
+            </div>
+            <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>
+        `;
+
+        // Hide "no items" message
+        const noItemsMsg = document.getElementById('no_items_msg');
+        if (noItemsMsg) noItemsMsg.remove();
+
+        // Add to list
+        document.getElementById('added_items_list').appendChild(itemCard);
+
+        // Clear inputs
+        document.getElementById('description').value = '';
+        document.getElementById('amount').value = '';
+
+        // Update hidden field
+        updateHiddenField();
+    });
+
+    // Remove item function
+    function removeItem(btn) {
+        const card = btn.closest('.item-card');
+        const description = card.getAttribute('data-description');
+        const amount = parseFloat(card.getAttribute('data-amount'));
+
+        // Remove from array
+        const index = items.findIndex(item => item.description === description && item.amount === amount);
+        if (index > -1) {
+            items.splice(index, 1);
+        }
+
+        // Remove card
+        card.remove();
+
+        // Show "no items" if empty
+        if (items.length === 0) {
+            const noItemsDiv = document.createElement('div');
+            noItemsDiv.className = 'no-items';
+            noItemsDiv.id = 'no_items_msg';
+            noItemsDiv.textContent = 'No items added yet. Add items above.';
+            document.getElementById('added_items_list').appendChild(noItemsDiv);
+        }
+
+        // Update hidden field
+        updateHiddenField();
+    }
+
+    // Initialize hidden field on page load
+    updateHiddenField();
+</script>
+{% endblock %}

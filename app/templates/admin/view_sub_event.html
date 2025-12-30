@@ -8,20 +8,92 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
 <style>
-    .card {
-        border: 1px solid #ccc;
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .page-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+    .page-header .sub-event-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    .section-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+    .section-card h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #667eea;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.2rem;
+    }
+    .info-item {
+        background: #f8f9fa;
+        padding: 1.2rem;
         border-radius: 8px;
-        padding: 16px;
-        margin: 20px 0;
-        background-color: #f9f9f9;
+        border-left: 3px solid #667eea;
     }
-    .card-header {
-        background-color: #e9ecef;
-        font-size: 18px;
-        font-weight: bold;
+    .info-item strong {
+        display: block;
+        color: #667eea;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
     }
-    .btn-group {
-        margin-top: 20px;
+    .info-item span {
+        color: #333;
+        font-size: 1.05rem;
+    }
+    .action-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.7rem 1.8rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 0.8rem;
+        margin-top: 1rem;
+    }
+    .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    .action-button.secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+    .action-button.secondary:hover {
+        background: #667eea;
+        color: white;
     }
 </style>
 {% endblock %}
@@ -31,33 +103,50 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2 class="mb-4">Sub-Event Details: {{ sub_event.Name }}</h2>
-
-    <div class="card">
-        <div class="card-header">Sub-Event Information</div>
-        <div class="card-body">
-            <p><strong>Name:</strong> {{ sub_event.Name }}</p>
-            <p><strong>Date:</strong> {{ sub_event.Date.strftime('%Y-%m-%d') if sub_event.Date else "N/A" }}</p>
-            <p><strong>Time:</strong> {{ sub_event.Time.strftime('%H:%M:%S') if sub_event.Time else "N/A" }}</p>
-            <p><strong>Event Type:</strong> 
-                {{ sub_event.event_type.Event_Type_Name if sub_event.event_type else "N/A" }}
-            </p>
-            <p><strong>Department:</strong> 
-                {{ sub_event.department.Name if sub_event.department else "N/A" }}
-            </p>
-            <p><strong>Manager:</strong> 
-                {{ sub_event.sub_event_manager.Username if sub_event.sub_event_manager else "N/A" }}
-            </p>
+<div class="container-fluid" style="max-width: 1200px; padding-top: 100px;">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2>{{ sub_event.Name }}</h2>
+        <div class="sub-event-badge">
+            {{ sub_event.event_type.Event_Type_Name if sub_event.event_type else "N/A" }}
         </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="btn-group">
-        <a href="{{ url_for('admin.edit_sub_event', sub_event_id=sub_event.Sub_Event_ID) }}" 
-           class="btn btn-secondary">Edit Sub-Event</a>
-        <a href="{{ url_for('admin.event_details', event_id=sub_event.Event_ID) }}" 
-           class="btn btn-primary">Back to Event</a>
+    <!-- Sub-Event Information -->
+    <div class="section-card">
+        <h3>📋 Sub-Event Information</h3>
+        <div class="info-grid">
+            <div class="info-item">
+                <strong>Sub-Event Name</strong>
+                <span>{{ sub_event.Name }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Event Type</strong>
+                <span>{{ sub_event.event_type.Event_Type_Name if sub_event.event_type else "N/A" }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Department</strong>
+                <span>{{ sub_event.department.Name if sub_event.department else "N/A" }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Date</strong>
+                <span>{{ sub_event.Date.strftime('%B %d, %Y') if sub_event.Date else "N/A" }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Time</strong>
+                <span>{{ sub_event.Time.strftime('%I:%M %p') if sub_event.Time else "N/A" }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Manager</strong>
+                <span>{{ sub_event.sub_event_manager.Username if sub_event.sub_event_manager else "N/A" }}</span>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(102, 126, 234, 0.1);">
+            <a href="{{ url_for('admin.edit_sub_event', sub_event_id=sub_event.Sub_Event_ID) }}" class="action-button">✏️ Edit Sub-Event</a>
+            <a href="{{ url_for('admin.event_details', event_id=sub_event.Event_ID) }}" class="action-button secondary">← Back to Event</a>
+        </div>
     </div>
 </div>
 {% endblock %}

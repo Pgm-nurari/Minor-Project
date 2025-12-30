@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+{% import 'event_manager/header_bar.html' as user_header %}
+
+{% block title %}Notifications - FinSight{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notifications-container {
+        max-width: 900px;
+        margin: 40px auto;
+    }
+    
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px 40px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .page-header h2 {
+        margin: 0;
+        font-weight: 700;
+    }
+    
+    .notification-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-left: 4px solid #667eea;
+        transition: all 0.3s ease;
+    }
+    
+    .notification-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transform: translateY(-2px);
+    }
+    
+    .notification-card.unread {
+        background: rgba(102, 126, 234, 0.05);
+        border-left-width: 6px;
+    }
+    
+    .notification-card.type-success {
+        border-left-color: #28a745;
+    }
+    
+    .notification-card.type-warning {
+        border-left-color: #ffc107;
+    }
+    
+    .notification-card.type-danger {
+        border-left-color: #dc3545;
+    }
+    
+    .notification-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 10px;
+    }
+    
+    .notification-title {
+        font-weight: 600;
+        color: #333;
+        font-size: 1.1rem;
+        margin: 0;
+    }
+    
+    .notification-time {
+        font-size: 0.85rem;
+        color: #999;
+        white-space: nowrap;
+    }
+    
+    .notification-message {
+        color: #666;
+        line-height: 1.6;
+        margin: 10px 0;
+    }
+    
+    .notification-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .badge-unread {
+        background: #667eea;
+        color: white;
+    }
+    
+    .badge-read {
+        background: #e9ecef;
+        color: #6c757d;
+    }
+    
+    .btn-mark-read {
+        background: none;
+        border: none;
+        color: #667eea;
+        font-size: 0.9rem;
+        cursor: pointer;
+        padding: 0;
+    }
+    
+    .btn-mark-read:hover {
+        text-decoration: underline;
+    }
+    
+    .btn-mark-all {
+        background: white;
+        color: #667eea;
+        border: 2px solid white;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-mark-all:hover {
+        background: rgba(255,255,255,0.9);
+        transform: translateY(-2px);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+    }
+    
+    .empty-state-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+{{ user_header.user_header(user_id) }}
+{% endblock %}
+
+{% block content %}
+<div class="notifications-container">
+    <div class="page-header">
+        <h2>🔔 Notifications</h2>
+        {% if unread_count > 0 %}
+        <form method="POST" action="{{ url_for('event_manager.mark_all_notifications_read', user_id=user_id) }}" style="margin: 0;">
+            <button type="submit" class="btn btn-mark-all">Mark All as Read</button>
+        </form>
+        {% endif %}
+    </div>
+    
+    {% if notifications %}
+        {% for notification in notifications %}
+        <div class="notification-card {% if not notification.Is_Read %}unread{% endif %} type-{{ notification.Type }}">
+            <div class="notification-header">
+                <div>
+                    <h5 class="notification-title">{{ notification.Title }}</h5>
+                    {% if not notification.Is_Read %}
+                        <span class="notification-badge badge-unread">New</span>
+                    {% endif %}
+                </div>
+                <span class="notification-time">{{ notification.Created_At.strftime('%b %d, %Y %I:%M %p') }}</span>
+            </div>
+            
+            <p class="notification-message">{{ notification.Message }}</p>
+            
+            {% if not notification.Is_Read %}
+            <form method="POST" action="{{ url_for('event_manager.mark_notification_read', user_id=user_id, notification_id=notification.Notification_ID) }}" style="margin: 0;">
+                <button type="submit" class="btn-mark-read">✓ Mark as read</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <h4>No notifications yet</h4>
+            <p>You're all caught up!</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,37 +1,93 @@
 {% macro header() %}
 <style>
-    .hover-pill {
-        padding: 8px 16px;
-        transition: background-color 0.3s ease, color 0.3s ease;
+    .app-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
     
-    .hover-pill:hover {
-        background-color: #AFD46E; 
-        color: white;             
-        border-radius: 50px;       
-        text-decoration: none;     
+    .brand-text {
+        font-weight: 700;
+        color: #ffffff;
+        font-size: 1.5rem;
+        letter-spacing: 0.5px;
     }
     
+    .nav-link-custom {
+        padding: 8px 20px;
+        border-radius: 25px;
+        color: rgba(255,255,255,0.9) !important;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin: 0 5px;
+    }
+    
+    .nav-link-custom:hover {
+        background-color: rgba(255,255,255,0.2);
+        color: #ffffff !important;
+        transform: translateY(-2px);
+    }
+    
+    .user-avatar {
+        border: 2px solid rgba(255,255,255,0.5);
+        transition: border-color 0.3s ease;
+    }
+    
+    .user-avatar:hover {
+        border-color: #ffffff;
+    }
+    
+    .notification-badge {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .notification-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #dc3545;
+        color: white;
+        border-radius: 10px;
+        padding: 2px 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        min-width: 18px;
+        text-align: center;
+    }
 </style>
-<header class="p-3 mb-3 border-bottom" style="background-color: #66b775;">
-    <div class="d-flex align-items-center justify-content-between w-100">
-      <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-        <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
-        <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
+<header class="p-3 mb-4 border-0 app-header">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      <a href="{{url_for('admin.admin_dashboard')}}" class="d-flex align-items-center text-decoration-none">
+        <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="40" class="me-2 rounded">
+        <span class="brand-text">FinSight</span>
+        <span class="badge bg-light text-primary ms-2">Admin</span>
       </a>
   
-      <ul class="nav mb-2 justify-content-center mb-md-0 flex-grow-1">
-        <li><a href="{{url_for('admin.admin_dashboard')}}" class="nav-link px-2 link-body-emphasis rounded-pill hover-pill">Dashboard</a></li>
-        <li><a href="{{url_for('admin.view_events')}}" class="nav-link px-2 link-body-emphasis rounded-pill hover-pill">Events</a></li>
-        <li><a href="{{url_for('admin.users_table')}}" class="nav-link px-2 link-body-emphasis rounded-pill hover-pill">Users</a></li>
+      <ul class="nav mb-0 justify-content-center flex-grow-1">
+        <li><a href="{{url_for('admin.admin_dashboard')}}" class="nav-link nav-link-custom">📊 Dashboard</a></li>
+        <li><a href="{{url_for('admin.view_events')}}" class="nav-link nav-link-custom">📅 Events</a></li>
+        <li><a href="{{url_for('admin.users_table')}}" class="nav-link nav-link-custom">👥 Users</a></li>
+        <li><a href="{{url_for('admin.activity_log')}}" class="nav-link nav-link-custom">📋 Activity Log</a></li>
       </ul>
   
-      <div class="dropdown text-end">
-        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+      <div class="d-flex align-items-center gap-3">
+        <a href="{{url_for('admin.notifications')}}" class="notification-badge text-white text-decoration-none">
+          <span style="font-size: 1.5rem;">🔔</span>
+          {# Uncomment when you have a way to get unread count #}
+          {# <span class="notification-count">3</span> #}
         </a>
-        <ul class="dropdown-menu text-small">
-          <li><a class="dropdown-item" href="{{ url_for('home.index') }}">Sign out</a></li>
+        <div class="dropdown">
+        <a href="#" class="d-block text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="https://github.com/mdo.png" alt="Admin" width="36" height="36" class="rounded-circle user-avatar">
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+          <li><h6 class="dropdown-header">Administrator</h6></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{{ url_for('admin.admin_profile') }}">👤 Profile</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('admin.notifications') }}">🔔 Notifications</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('admin.activity_log') }}">📋 Activity Log</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{{ url_for('home.index') }}">🚪 Sign out</a></li>
         </ul>
       </div>
     </div>

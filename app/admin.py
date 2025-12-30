@@ -2,12 +2,13 @@ from flask import Blueprint, render_template, redirect, request, flash, url_for,
 from . import db
 from .modules.models import *
 from .modules.db_queries import *
+from .modules.activity_logger import log_activity, create_notification
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import asc, desc
 from sqlalchemy import func
 from datetime import datetime, date
 
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -115,6 +116,34 @@ def create_single_event():
         )
         db.session.add(new_event)
         db.session.commit()
+        
+        # Notify Event Manager
+        create_notification(
+            user_id=event_manager_id,
+            title='New Event Assigned',
+            message=f'You have been assigned as Event Manager for "{event_name}" scheduled on {event_date.strftime("%B %d, %Y")}',
+            notification_type='success',
+            event_id=new_event.Event_ID
+        )
+        
+        # Notify Finance Manager
+        create_notification(
+            user_id=finance_manager_id,
+            title='New Event Assigned',
+            message=f'You have been assigned as Finance Manager for "{event_name}" scheduled on {event_date.strftime("%B %d, %Y")}',
+            notification_type='success',
+            event_id=new_event.Event_ID
+        )
+        
+        # Log activity
+        log_activity(
+            user_id=1,  # Admin user
+            action='created',
+            entity_type='Event',
+            entity_id=new_event.Event_ID,
+            description=f'Admin created event "{event_name}"'
+        )
+        
         return jsonify({"status": "success", "message": "Single event created successfully!"})
     except Exception as e:
         db.session.rollback()
@@ -185,6 +214,43 @@ def create_multiple_events():
             sub_event.Event_ID = new_event.Event_ID
             db.session.add(sub_event)
         db.session.commit()
+        
+        # Notify main Event Manager
+        create_notification(
+            user_id=event_manager_id,
+            title='New Multi-Day Event Assigned',
+            message=f'You have been assigned as Event Manager for "{event_name}" ({event_duration} days) with {len(sub_events)} sub-events',
+            notification_type='success',
+            event_id=new_event.Event_ID
+        )
+        
+        # Notify main Finance Manager
+        create_notification(
+            user_id=finance_manager_id,
+            title='New Multi-Day Event Assigned',
+            message=f'You have been assigned as Finance Manager for "{event_name}" ({event_duration} days) with {len(sub_events)} sub-events',
+            notification_type='success',
+            event_id=new_event.Event_ID
+        )
+        
+        # Notify each sub-event manager
+        for sub_event in sub_events:
+            create_notification(
+                user_id=sub_event.Sub_Event_Manager,
+                title='Sub-Event Assignment',
+                message=f'You have been assigned to manage sub-event "{sub_event.Name}" under "{event_name}"',
+                notification_type='info',
+                event_id=new_event.Event_ID
+            )
+        
+        # Log activity
+        log_activity(
+            user_id=1,  # Admin user
+            action='created',
+            entity_type='Event',
+            entity_id=new_event.Event_ID,
+            description=f'Admin created multi-day event "{event_name}" with {len(sub_events)} sub-events'
+        )
 
         return jsonify({"status": "success", "message": "Multiple events and sub-events created successfully!"})
     except Exception as e:
@@ -230,6 +296,24 @@ def new_user():
         new_user = create_entry(User, **user_data)
 
         if new_user:
+            # Send welcome notification to new user
+            from app.modules.activity_logger import create_notification, log_activity
+            create_notification(
+                user_id=new_user.User_ID,
+                title='Welcome to FinSight!',
+                message=f'Your account has been created. Username: {username}. Default password: ChangeMe@123. Please change your password after first login.',
+                notification_type='info'
+            )
+            
+            # Log activity
+            log_activity(
+                user_id=session.get('user_id', 1),
+                action='created',
+                entity_type='User',
+                entity_id=new_user.User_ID,
+                description=f'Created new user: {username} ({role.Role_Name})'
+            )
+            
             flash('New user created successfully!', 'success')
         else:
             flash('Error creating new user.', 'error')
@@ -249,15 +333,15 @@ def view_user(user_id):
         flash(f"User with ID {user_id} not found.", "error")
         return redirect(url_for('admin.admin_dashboard'))
     
-    user_info = get_user_info(user)  
-    return render_template('admin/view_user.html', user=user_info)
+    return render_template('admin/view_user.html', user=user)
 
 @admin_bp.route('/edit_user/<int:user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
     """Route to edit an existing user."""
     user = User.query.get(user_id)
     if not user:
-        return redirect(url_for('admin.admin_dashboard'))
+        flash('User not found.', 'error')
+        return redirect(url_for('admin.users_table'))
 
     if request.method == 'POST':
         username = request.form.get('username', user.Username)
@@ -266,22 +350,66 @@ def edit_user(user_id):
         dept_id = request.form.get('department')
 
         if not username or not email:
+            flash('Username and email are required.', 'error')
             return redirect(url_for('admin.edit_user', user_id=user_id))
 
+        # Check if role is being changed
+        role_changed = False
+        old_role = None
+        if role_id and int(role_id) != user.Role:
+            role_changed = True
+            old_role_obj = Role.query.get(user.Role)
+            new_role_obj = Role.query.get(role_id)
+            old_role = old_role_obj.Name if old_role_obj else "Unknown"
+            new_role = new_role_obj.Name if new_role_obj else "Unknown"
+            user.Role = role_id
+            user.Verified = 0  # Require re-authorization when role changes
+        
         user.Username = username
         user.Email = email
         user.modified_date = datetime.now()
-        if role_id:
-            user.Role = role_id
+        
         if dept_id:
             user.Dept_ID = dept_id
 
         db.session.commit()
-        return redirect(url_for('admin.admin_dashboard'))
+        
+        # Notify user if role changed
+        if role_changed:
+            from app.modules.activity_logger import create_notification, log_activity
+            create_notification(
+                user_id=user.User_ID,
+                title='Role Updated',
+                message=f'Your role has been changed from {old_role} to {new_role}. Please contact admin for re-authorization.',
+                notification_type='warning'
+            )
+            
+            # Log activity
+            log_activity(
+                user_id=session.get('user_id', 1),
+                action='updated',
+                entity_type='User',
+                entity_id=user.User_ID,
+                description=f'Changed role of {username} from {old_role} to {new_role}'
+            )
+            
+            flash('User updated successfully! Role change requires admin authorization.', 'warning')
+        else:
+            from app.modules.activity_logger import log_activity
+            log_activity(
+                user_id=session.get('user_id', 1),
+                action='updated',
+                entity_type='User',
+                entity_id=user.User_ID,
+                description=f'Updated user {username}'
+            )
+            flash('User updated successfully!', 'success')
+            
+        return redirect(url_for('admin.view_user', user_id=user_id))
 
     roles = Role.query.all()
     departments = Department.query.all()
-    return render_template('admin/edit_user.html', user=user, roles=roles, departments=departments)
+    return render_template('admin/new_user.html', user=user, roles=roles, departments=departments)
 
 @admin_bp.route('/delete_user/<int:user_id>', methods=['POST', 'GET'])
 def delete_user(user_id):
@@ -517,62 +645,313 @@ def view_sub_event(sub_event_id):
         return "Sub-Event not found", 404
     return render_template('admin/view_sub_event.html', sub_event=sub_event)
 
+@admin_bp.route('/create_sub_event/<int:event_id>', methods=['GET', 'POST'])
+def create_sub_event(event_id):
+    parent_event = Event.query.get(event_id)
+    if not parent_event:
+        flash("Event not found.", "error")
+        return redirect(url_for('admin.view_events'))
+    
+    if request.method == 'POST':
+        name = request.form.get('name')
+        date = request.form.get('date')
+        time = request.form.get('time')
+        
+        if name and date and time:
+            new_sub_event = SubEvent(
+                Name=name,
+                Date=datetime.strptime(date, '%Y-%m-%d').date(),
+                Time=datetime.strptime(time, '%H:%M').time(),
+                Event_ID=event_id
+            )
+            db.session.add(new_sub_event)
+            db.session.commit()
+            
+            flash("Sub-event created successfully!", "success")
+            return redirect(url_for('admin.event_details', event_id=event_id))
+        else:
+            flash("All fields are required.", "error")
+    
+    return render_template('admin/new_sub_event.html', parent_event=parent_event)
+
 @admin_bp.route('/edit_sub_event/<int:sub_event_id>', methods=['GET', 'POST'])
 def edit_sub_event(sub_event_id):
     sub_event = SubEvent.query.get(sub_event_id)
     if not sub_event:
-        return "Sub-Event not found", 404
+        flash("Sub-Event not found.", "error")
+        return redirect(url_for('admin.view_events'))
     
     if request.method == 'POST':
-        # Process form data to update the sub-event
-        sub_event.Name = request.form['name']
-        sub_event.Date = request.form['date']
-        sub_event.Time = request.form['time']
-        db.session.commit()
-        return redirect(url_for('admin.event_details', event_id=sub_event.Event_ID))
+        name = request.form.get('name')
+        date = request.form.get('date')
+        time = request.form.get('time')
+        
+        if name and date and time:
+            sub_event.Name = name
+            sub_event.Date = datetime.strptime(date, '%Y-%m-%d').date()
+            sub_event.Time = datetime.strptime(time, '%H:%M').time()
+            db.session.commit()
+            
+            flash("Sub-event updated successfully!", "success")
+            return redirect(url_for('admin.event_details', event_id=sub_event.Event_ID))
+        else:
+            flash("All fields are required.", "error")
     
-    return render_template('admin/edit_sub_event.html', sub_event=sub_event)
+    return render_template('admin/new_sub_event.html', sub_event=sub_event)
 
 @admin_bp.route('/edit_event/<int:event_id>', methods=['GET', 'POST'])
 def edit_event(event_id):
     event = Event.query.get(event_id)
     if not event:
-        return "Event not found", 404
+        flash("Event not found.", "error")
+        return redirect(url_for('admin.view_events'))
 
     # Check for sub-events
     sub_events = SubEvent.query.filter_by(Event_ID=event_id).all()
 
     if request.method == 'POST':
-        if sub_events:
-            flash("Please update the dates of all sub-events before editing this event.", "warning")
-            return redirect(url_for('admin.event_details', event_id=event_id))
-
         # Update fields
-        event.Event_Type_ID = request.form.get('event_type') or event.Event_Type_ID
-        event.Event_Manager = request.form.get('event_manager') or event.Event_Manager
-        event.Finance_Manager = request.form.get('finance_manager') or event.Finance_Manager
+        event_type = request.form.get('eventType')
+        event_manager = request.form.get('EveMan')
+        finance_manager = request.form.get('FinMan')
+        department = request.form.get('department')
+        event_date = request.form.get('eventDate')
 
-        # Handle the date options
-        date_option = request.form.get('date_option')
-        if date_option == 'current':
-            event.Date = datetime.utcnow().date()
-        elif date_option == 'older':
-            new_date = datetime.strptime(request.form.get('date'), '%Y-%m-%d')
-            event.Date = new_date
+        # Track changes for notifications
+        manager_changed = False
+        old_event_manager = event.Event_Manager
+        old_finance_manager = event.Finance_Manager
+        
+        if event_type:
+            event.Event_Type_ID = event_type
+        if event_manager and int(event_manager) != event.Event_Manager:
+            manager_changed = True
+            event.Event_Manager = event_manager
+        if finance_manager and int(finance_manager) != event.Finance_Manager:
+            manager_changed = True
+            event.Finance_Manager = finance_manager
+        if department:
+            event.Dept_ID = department
+        
+        # Only update date if no sub-events exist
+        if event_date and not sub_events:
+            event.Date = datetime.strptime(event_date, '%Y-%m-%d').date()
+        elif event_date and sub_events:
+            flash("Event date cannot be changed when sub-events exist.", "warning")
 
+        event.modified_date = datetime.now()
         db.session.commit()
+
+        # Send notifications if managers changed
+        if manager_changed:
+            from app.modules.activity_logger import create_notification, log_activity
+            
+            # Notify old managers they were removed
+            if old_event_manager and old_event_manager != event.Event_Manager:
+                create_notification(
+                    user_id=old_event_manager,
+                    title='Event Manager Assignment Removed',
+                    message=f'You have been removed as Event Manager from event "{event.Name}"',
+                    notification_type='warning',
+                    event_id=event_id
+                )
+            
+            if old_finance_manager and old_finance_manager != event.Finance_Manager:
+                create_notification(
+                    user_id=old_finance_manager,
+                    title='Finance Manager Assignment Removed',
+                    message=f'You have been removed as Finance Manager from event "{event.Name}"',
+                    notification_type='warning',
+                    event_id=event_id
+                )
+            
+            # Notify new managers they were added
+            if event_manager and int(event_manager) != old_event_manager:
+                create_notification(
+                    user_id=int(event_manager),
+                    title='New Event Assignment',
+                    message=f'You have been assigned as Event Manager for event "{event.Name}"',
+                    notification_type='success',
+                    event_id=event_id
+                )
+            
+            if finance_manager and int(finance_manager) != old_finance_manager:
+                create_notification(
+                    user_id=int(finance_manager),
+                    title='New Event Assignment',
+                    message=f'You have been assigned as Finance Manager for event "{event.Name}"',
+                    notification_type='success',
+                    event_id=event_id
+                )
+            
+            # Log activity
+            log_activity(
+                user_id=session.get('user_id', 1),
+                action='updated',
+                entity_type='Event',
+                entity_id=event_id,
+                description=f'Updated managers for event "{event.Name}"'
+            )
 
         flash("Event updated successfully!", "success")
         return redirect(url_for('admin.event_details', event_id=event_id))
 
-    # Fetch all event types, managers, and finance managers for dropdowns
+    # Fetch all required data for dropdowns
+    departments = Department.query.all()
     event_types = EventType.query.all()
-    managers = User.query.filter_by(Role=102).all()  # Role=1 assumed to be 'Event Manager'
-    finance_managers = User.query.filter_by(Role=103).all()  # Role=2 assumed to be 'Finance Manager'
+    event_managers = User.query.join(Role).filter(Role.Role_Name == 'Event Manager').all()
+    finance_managers = User.query.join(Role).filter(Role.Role_Name == 'Finance Manager').all()
 
-    return render_template('admin/edit_event.html', 
-                           event=event, 
-                           event_types=event_types, 
-                           managers=managers, 
-                           finance_managers=finance_managers, 
-                           sub_events=sub_events)
+    return render_template('admin/new_event_creation.html', 
+                           event=event,
+                           sub_events=sub_events,
+                           departments=departments,
+                           event_types=event_types,
+                           event_managers=event_managers,
+                           finance_managers=finance_managers)
+
+
+@admin_bp.route('/profile')
+def admin_profile():
+    """Display admin profile page"""
+    try:
+        # For now, assuming admin user_id is 1 or can be retrieved from session
+        # You should modify this to get the actual logged-in admin user ID
+        admin_user_id = 1  # TODO: Get from session
+        user = User.query.get_or_404(admin_user_id)
+        
+        return render_template('admin/profile.html', user=user)
+    except Exception as e:
+        flash(f"Error loading profile: {str(e)}", "danger")
+        return redirect(url_for('admin.admin_dashboard'))
+
+
+@admin_bp.route('/profile/edit', methods=['GET', 'POST'])
+def edit_admin_profile():
+    """Edit admin profile"""
+    try:
+        admin_user_id = 1  # TODO: Get from session
+        user = User.query.get_or_404(admin_user_id)
+        
+        if request.method == 'POST':
+            # Get form data
+            username = request.form.get('username')
+            email = request.form.get('email')
+            current_password = request.form.get('current_password')
+            new_password = request.form.get('new_password')
+            confirm_password = request.form.get('confirm_password')
+            
+            # Update username and email
+            old_username = user.Username
+            old_email = user.Email
+            
+            user.Username = username
+            user.Email = email
+            
+            # Handle password change if provided
+            if current_password and new_password:
+                # Verify current password
+                if not check_password_hash(user.Password, current_password):
+                    flash("Current password is incorrect", "danger")
+                    return redirect(url_for('admin.edit_admin_profile'))
+                
+                # Check if passwords match
+                if new_password != confirm_password:
+                    flash("New passwords do not match", "danger")
+                    return redirect(url_for('admin.edit_admin_profile'))
+                
+                # Update password
+                user.Password = generate_password_hash(new_password)
+                log_activity(
+                    user_id=admin_user_id,
+                    action='updated',
+                    entity_type='User',
+                    entity_id=admin_user_id,
+                    description=f"Admin changed their password"
+                )
+            
+            # Save changes
+            db.session.commit()
+            
+            # Log the activity
+            changes = []
+            if old_username != username:
+                changes.append(f"username from '{old_username}' to '{username}'")
+            if old_email != email:
+                changes.append(f"email from '{old_email}' to '{email}'")
+            
+            if changes:
+                log_activity(
+                    user_id=admin_user_id,
+                    action='updated',
+                    entity_type='User',
+                    entity_id=admin_user_id,
+                    description=f"Admin updated profile: {', '.join(changes)}"
+                )
+            
+            flash("Profile updated successfully", "success")
+            return redirect(url_for('admin.admin_profile'))
+        
+        return render_template('admin/edit_profile.html', user=user)
+    
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Error updating profile: {str(e)}", "danger")
+        return redirect(url_for('admin.admin_profile'))
+
+
+@admin_bp.route('/notifications')
+def notifications():
+    """Display notifications for admin"""
+    try:
+        admin_user_id = 1  # TODO: Get from session
+        
+        # Get all notifications for this user, ordered by most recent
+        notifications_list = Notification.query.filter_by(User_ID=admin_user_id).order_by(Notification.Created_At.desc()).all()
+        unread_count = Notification.query.filter_by(User_ID=admin_user_id, Is_Read=False).count()
+        
+        return render_template('admin/notifications.html', 
+                             notifications=notifications_list,
+                             unread_count=unread_count)
+    except Exception as e:
+        flash(f"Error loading notifications: {str(e)}", "danger")
+        return redirect(url_for('admin.admin_dashboard'))
+
+
+@admin_bp.route('/notifications/<int:notification_id>/read', methods=['POST'])
+def mark_notification_read(notification_id):
+    """Mark a single notification as read"""
+    try:
+        from .modules.activity_logger import mark_notification_read
+        mark_notification_read(notification_id)
+        flash("Notification marked as read", "success")
+    except Exception as e:
+        flash(f"Error: {str(e)}", "danger")
+    return redirect(url_for('admin.notifications'))
+
+
+@admin_bp.route('/notifications/mark-all-read', methods=['POST'])
+def mark_all_notifications_read():
+    """Mark all notifications as read"""
+    try:
+        admin_user_id = 1  # TODO: Get from session
+        from .modules.activity_logger import mark_all_notifications_read
+        mark_all_notifications_read(admin_user_id)
+        flash("All notifications marked as read", "success")
+    except Exception as e:
+        flash(f"Error: {str(e)}", "danger")
+    return redirect(url_for('admin.notifications'))
+
+
+@admin_bp.route('/activity-log')
+def activity_log():
+    """Display activity log"""
+    try:
+        # Get all activity logs, ordered by most recent (limit to 100 for performance)
+        activities = ActivityLog.query.order_by(ActivityLog.Timestamp.desc()).limit(100).all()
+        
+        return render_template('admin/activity_log.html', activities=activities)
+    except Exception as e:
+        flash(f"Error loading activity log: {str(e)}", "danger")
+        return redirect(url_for('admin.admin_dashboard'))
+

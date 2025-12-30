@@ -1,44 +1,90 @@
 {% macro finance_header(user_id) %}
 <style>
-    .hover-pill {
-      padding: 8px 16px;
-      border-radius: 50px;
-      transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-    .hover-pill:hover {
-        background-color: #AFD46E;  /* Light green background on hover */
-        color: white;               /* White text on hover */
-        text-decoration: none;      /* Remove underline */
+    .app-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
-  </style>
+    
+    .brand-text {
+        font-weight: 700;
+        color: #ffffff;
+        font-size: 1.5rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .nav-link-custom {
+        padding: 8px 20px;
+        border-radius: 25px;
+        color: rgba(255,255,255,0.9) !important;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin: 0 5px;
+    }
+    
+    .nav-link-custom:hover {
+        background-color: rgba(255,255,255,0.2);
+        color: #ffffff !important;
+        transform: translateY(-2px);
+    }
+    
+    .user-avatar {
+        border: 2px solid rgba(255,255,255,0.5);
+        transition: border-color 0.3s ease;
+    }
+    
+    .user-avatar:hover {
+        border-color: #ffffff;
+    }
+    
+    .notification-badge {
+        position: relative;
+        display: inline-block;
+    }
+    
+    .notification-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #dc3545;
+        color: white;
+        border-radius: 10px;
+        padding: 2px 6px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        min-width: 18px;
+        text-align: center;
+    }
+</style>
 
-  <header class="p-3 mb-3 border-bottom" style="background-color: #66b775;">
-    <div class="d-flex align-items-center justify-content-between w-100">
-      <!-- FinSight Logo and Name aligned left -->
-      <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-        <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
-        <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
+  <header class="p-3 mb-4 border-0 app-header">
+    <div class="container-fluid d-flex align-items-center justify-content-between">
+      
+      <a href="{{ url_for('finance_manager.finance_manager', user_id=user_id) }}" class="d-flex align-items-center text-decoration-none">
+        <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="40" class="me-2 rounded">
+        <span class="brand-text">FinSight</span>
+        <span class="badge bg-light text-primary ms-2">Finance Manager</span>
       </a>
   
-      <!-- Navigation links centered -->
-      <ul class="nav mb-2 justify-content-center mb-md-0 flex-grow-1">
-        <li><a href="{{ url_for('finance_manager.finance_manager', user_id=user_id) }}" class="nav-link px-2 link-body-emphasis hover-pill">Dashboard</a></li>
-        <li><a href="{{ url_for('finance_manager.view_events', user_id=user_id) }}" class="nav-link px-2 link-body-emphasis hover-pill">Events</a></li>
-        <li><a href="{{ url_for('finance_manager.view_events', user_id=user_id) }}" class="nav-link px-2 link-body-emphasis hover-pill">Visualization</a></li>
+      <ul class="nav mb-0 justify-content-center flex-grow-1">
+        <li><a href="{{ url_for('finance_manager.finance_manager', user_id=user_id) }}" class="nav-link nav-link-custom">📊 Dashboard</a></li>
+        <li><a href="{{ url_for('finance_manager.view_events', user_id=user_id) }}" class="nav-link nav-link-custom">📅 Events</a></li>
       </ul>
   
-      <!-- User dropdown aligned right -->
-      <div class="dropdown text-end">
-        <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          <img src="https://github.com/mdo.png" alt="User Profile" width="32" height="32" class="rounded-circle">
+      <div class="d-flex align-items-center gap-3">
+        <a href="{{ url_for('finance_manager.notifications', user_id=user_id) }}" class="notification-badge text-white text-decoration-none">
+          <span style="font-size: 1.5rem;">🔔</span>
         </a>
-        <ul class="dropdown-menu text-small">
-          <li><a class="dropdown-item" href="#">New project...</a></li>
-          <li><a class="dropdown-item" href="#">Settings</a></li>
-          <li><a class="dropdown-item" href="#">Profile</a></li>
+        <div class="dropdown">
+        <a href="#" class="d-block text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="https://github.com/mdo.png" alt="User Profile" width="36" height="36" class="rounded-circle user-avatar">
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+          <li><h6 class="dropdown-header">Finance Manager</h6></li>
           <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="{{ url_for('home.index') }}">Sign out</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('finance_manager.finance_manager_profile', user_id=user_id) }}">👤 Profile</a></li>
+          <li><a class="dropdown-item" href="{{ url_for('finance_manager.notifications', user_id=user_id) }}">🔔 Notifications</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="{{ url_for('home.index') }}">🚪 Sign out</a></li>
         </ul>
       </div>
     </div>

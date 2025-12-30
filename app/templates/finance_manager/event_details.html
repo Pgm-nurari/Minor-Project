@@ -1,13 +1,228 @@
 {% extends 'base.html' %}
 
-{% import 'components/header_with_button.html' as section_header %}
 {% import 'finance_manager/header_bar.html' as finance_header %}
 
 {% block title %}Event Details - Finance Manager{% endblock %} 
 
 {% block extra_css %}
-  <link rel="stylesheet" href="{{url_for('static', filename='css/common.css')}}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
+<link rel="stylesheet" href="{{url_for('static', filename='css/common.css')}}">
+<style>
+    .container-fluid {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .page-header h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .page-header p {
+        margin: 0;
+        font-size: 1rem;
+        opacity: 0.95;
+    }
+
+    .section-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .section-card h3 {
+        color: #667eea;
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .info-item strong {
+        color: #718096;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+
+    .info-item span {
+        color: #2d3748;
+        font-size: 1.05rem;
+        font-weight: 500;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .stat-card.revenue {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .stat-card.expense {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    .stat-card h4 {
+        font-size: 0.9rem;
+        opacity: 0.9;
+        margin: 0 0 0.5rem 0;
+        font-weight: 500;
+    }
+
+    .stat-card .amount {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: background-color 0.2s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f7fafc;
+    }
+
+    .data-table tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        color: #4a5568;
+        font-size: 0.95rem;
+    }
+
+    .action-button {
+        display: inline-block;
+        padding: 0.75rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        border: none;
+        cursor: pointer;
+    }
+
+    .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .action-btn {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        border: none;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #a0aec0;
+    }
+
+    .no-data .icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .no-data p {
+        font-size: 1.1rem;
+        margin: 0;
+    }
+</style>
 {% endblock %} 
     
 {% block header %}
@@ -15,87 +230,161 @@
 {% endblock %}
 
 {% block content %}
-<h3>Event Financial Overview</h3>
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2>💰 {{ event_details.name }}</h2>
+        <p>Financial Overview & Analytics</p>
+    </div>
 
-<div class="event-details-card card mb-4">
-  <div class="card-body">
-    <h4 class="card-title">Event Details</h4>
-    <p><strong>Event:</strong> {{ event_details.name }}</p>
-    <p><strong>Date:</strong> {{ event_details.date }}</p>
-    <p><strong>Department:</strong> {{ event_details.department }}</p>
-    <p><strong>Event Type:</strong> {{ event_details.event_type }}</p>
-    <p><strong>Finance Manager:</strong> {{ event_details.finance_manager }}</p>
-    <p><strong>Event Manager:</strong> {{ event_details.event_manager }}</p>
-
-    <a href="{{ url_for('finance_manager.event_visualization',event_id=event_details.id, user_id=user_id) }}" class="btn btn-primary">Visualize Event Data</a>
-  </div>
-</div>
-
-{% if revenue > 0 or expenses > 0 %}
-<div class="financial-summary card mb-4">
-  <div class="card-body">
-    <h4 class="card-title">Revenue and Expenses</h4>
-    {% if revenue > 0 %}
-    <p><strong>Revenue:</strong> ₹{{ revenue }}</p>
+    <!-- Financial Stats -->
+    {% if revenue > 0 or expenses > 0 %}
+    <div class="stats-grid">
+        <div class="stat-card revenue">
+            <h4>💵 Total Revenue</h4>
+            <p class="amount">₹{{ "{:,.2f}".format(revenue) }}</p>
+        </div>
+        <div class="stat-card expense">
+            <h4>💸 Total Expenses</h4>
+            <p class="amount">₹{{ "{:,.2f}".format(expenses) }}</p>
+        </div>
+        <div class="stat-card">
+            <h4>📊 Net Balance</h4>
+            <p class="amount">₹{{ "{:,.2f}".format(revenue - expenses) }}</p>
+        </div>
+    </div>
     {% endif %}
-    {% if expenses > 0 %}
-    <p><strong>Expenses:</strong> ₹{{ expenses }}</p>
+
+    <div class="row">
+        <!-- Event Information -->
+        <div class="col-lg-6">
+            <div class="section-card">
+                <h3>📋 Event Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Event Name</strong>
+                        <span>{{ event_details.name }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Event Date</strong>
+                        <span>{{ event_details.date.strftime('%B %d, %Y') if event_details.date else 'N/A' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Department</strong>
+                        <span>{{ event_details.department }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Event Type</strong>
+                        <span>{{ event_details.event_type }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Duration</strong>
+                        <span>{{ event_details.days }} day(s)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Management Team -->
+        <div class="col-lg-6">
+            <div class="section-card">
+                <h3>👥 Management Team</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Finance Manager</strong>
+                        <span>{{ event_details.finance_manager }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Event Manager</strong>
+                        <span>{{ event_details.event_manager }}</span>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <a href="{{ url_for('finance_manager.event_visualization', event_id=event_details.id, user_id=user_id) }}" class="action-button">
+                        📊 View Visualizations
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Totals -->
+    {% if category_totals %}
+    <div class="section-card">
+        <h3>📂 Transaction Category Breakdown</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Category Name</th>
+                    <th style="text-align: right;">Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for category_name, total in category_totals.items() %}
+                {% if total > 0 %}
+                <tr>
+                    <td>{{ category_name }}</td>
+                    <td style="text-align: right; font-weight: 600;">₹{{ "{:,.2f}".format(total) }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
     {% endif %}
-  </div>
-</div>
-{% endif %}
 
-{% if category_totals %}
-<div class="category-totals card mb-4">
-  <div class="card-body">
-    <h4 class="card-title">Totals by Transaction Category</h4>
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Category Name</th>
-          <th>Total Amount (₹)</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for category_name, total in category_totals.items() %}
-          {% if total > 0 %}
-          <tr>
-            <td>{{ category_name }}</td>
-            <td>₹{{ total }}</td>
-          </tr>
-          {% endif %}
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-{% endif %}
+    <!-- Payment Mode Totals -->
+    {% if mode_totals %}
+    <div class="section-card">
+        <h3>💳 Payment Mode Breakdown</h3>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Payment Mode</th>
+                    <th style="text-align: right;">Total Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mode_name, total in mode_totals.items() %}
+                {% if total > 0 %}
+                <tr>
+                    <td>{{ mode_name }}</td>
+                    <td style="text-align: right; font-weight: 600;">₹{{ "{:,.2f}".format(total) }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
 
-{% if mode_totals %}
-<div class="payment-mode-totals card mb-4">
-  <div class="card-body">
-    <h4 class="card-title">Totals by Payment Mode</h4>
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Payment Mode</th>
-          <th>Total Amount (₹)</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for mode_name, total in mode_totals.items() %}
-          {% if total > 0 %}
-          <tr>
-            <td>{{ mode_name }}</td>
-            <td>₹{{ total }}</td>
-          </tr>
-          {% endif %}
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</div>
-{% endif %}
+    <!-- No Data State -->
+    {% if not (revenue > 0 or expenses > 0) and not category_totals and not mode_totals %}
+    <div class="section-card">
+        <div class="no-data">
+            <div class="icon">📊</div>
+            <p>No financial data available for this event yet</p>
+        </div>
+    </div>
+    {% endif %}
 
+    <!-- Action Buttons -->
+    {% if revenue > 0 or expenses > 0 %}
+    <div style="text-align: center; margin-top: 2rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="{{ url_for('finance_manager.event_visualization', user_id=user_id, event_id=event.Event_ID) }}" class="action-btn">
+            📊 View Visualizations
+        </a>
+        <a href="{{ url_for('finance_manager.ledger_view', user_id=user_id, event_id=event.Event_ID) }}" class="action-btn">
+            📒 View Ledger
+        </a>
+        <a href="{{ url_for('finance_manager.download_excel', user_id=user_id, event_id=event.Event_ID) }}" class="action-btn">
+            📥 Download Excel
+        </a>
+        <a href="{{ url_for('finance_manager.download_pdf', user_id=user_id, event_id=event.Event_ID) }}" class="action-btn">
+            📄 Download PDF
+        </a>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}
 

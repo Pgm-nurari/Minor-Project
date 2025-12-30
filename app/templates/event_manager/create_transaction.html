@@ -239,7 +239,7 @@ body {
         // Keep the fields filled for re-use
         // Optionally, you can reset only one field or leave it unchanged as per your requirements.
       } else {
-        alert('Please enter both description and amount');
+        showToast('Please enter both description and amount', 'warning');
       }
     });
     document.getElementById('close_button').addEventListener('click', function() {

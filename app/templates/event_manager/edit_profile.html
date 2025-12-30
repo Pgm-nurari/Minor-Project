@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% import 'event_manager/header_bar.html' as user_header %}
+
+{% block title %}Edit Profile - FinSight{% endblock %}
+
+{% block extra_css %}
+<style>
+    .edit-profile-container {
+        max-width: 700px;
+        margin: 40px auto;
+    }
+    
+    .form-card {
+        background: white;
+        padding: 40px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    
+    .form-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px 15px 0 0;
+        text-align: center;
+        margin: -40px -40px 30px -40px;
+    }
+    
+    .form-header h2 {
+        margin: 0;
+        font-weight: 700;
+    }
+    
+    .form-label {
+        font-weight: 600;
+        color: #555;
+        margin-bottom: 8px;
+    }
+    
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    
+    .btn-save {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-save:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+    
+    .btn-cancel {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 12px 40px;
+        border-radius: 25px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-cancel:hover {
+        background: #5a6268;
+        color: white;
+    }
+    
+    .info-text {
+        font-size: 0.9rem;
+        color: #666;
+        font-style: italic;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+{{ user_header.user_header(user_id) }}
+{% endblock %}
+
+{% block content %}
+<div class="edit-profile-container">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>✏️ Edit Profile</h2>
+        </div>
+        
+        <form method="POST" action="{{ url_for('event_manager.edit_event_manager_profile', user_id=user_id) }}">
+            <div class="mb-3">
+                <label class="form-label">User ID</label>
+                <input type="text" class="form-control" value="{{ user.User_ID }}" disabled>
+                <small class="info-text">User ID cannot be changed</small>
+            </div>
+            
+            <div class="mb-3">
+                <label for="username" class="form-label">Username *</label>
+                <input type="text" class="form-control" id="username" name="username" 
+                       value="{{ user.Username }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address *</label>
+                <input type="email" class="form-control" id="email" name="email" 
+                       value="{{ user.Email }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Role</label>
+                <input type="text" class="form-control" value="{{ user.role.Role_Name }}" disabled>
+                <small class="info-text">Role cannot be changed</small>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Department</label>
+                <input type="text" class="form-control" value="{{ user.department.Name }}" disabled>
+                <small class="info-text">Department cannot be changed</small>
+            </div>
+            
+            <hr class="my-4">
+            
+            <h5 class="mb-3">Change Password (Optional)</h5>
+            
+            <div class="mb-3">
+                <label for="current_password" class="form-label">Current Password</label>
+                <input type="password" class="form-control" id="current_password" name="current_password">
+                <small class="info-text">Leave blank to keep current password</small>
+            </div>
+            
+            <div class="mb-3">
+                <label for="new_password" class="form-label">New Password</label>
+                <input type="password" class="form-control" id="new_password" name="new_password">
+            </div>
+            
+            <div class="mb-3">
+                <label for="confirm_password" class="form-label">Confirm New Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+            </div>
+            
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-save me-2">💾 Save Changes</button>
+                <a href="{{ url_for('event_manager.event_manager_profile', user_id=user_id) }}" class="btn btn-cancel">❌ Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

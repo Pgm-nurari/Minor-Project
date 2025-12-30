@@ -5,14 +5,97 @@
 {% import 'components/userauthcard.html' as user_auth_card %}
 {% import 'admin/header_bar.html' as admin_header %}
 
-{% block title %}Admin Dashboard{% endblock %}
+{% block title %}Admin Dashboard - FinSight{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/userauthcard.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
 <style>
+  .dashboard-welcome {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  }
   
+  .dashboard-welcome h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-welcome p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+  
+  .section-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .section-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .section-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .action-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    display: inline-block;
+  }
+  
+  .action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #718096;
+  }
+  
+  .empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+  }
+  
+  .empty-state p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+  }
 </style>
 {% endblock %}
 
@@ -21,34 +104,59 @@
 {% endblock %}
 
 {% block content %}
-<section id="Events">
-  {% set button1 = {'text': 'New Event', 'action': url_for('admin.new_event'), 'class': 'header-button'} %}
-  {% set button2 = {'text': 'View Events', 'action': url_for('admin.view_events'), 'class': 'header-button'} %}
-  {{ header.render_header(title='Events', buttons=[button1, button2]) }}
-
-  <div class="cardscontainer">
-    {% if events %}
-      {{ event_card.render_event_cards_admin(events, user_role, minimum_cards=True) }}
-    {% else %}
-      <p>No events found. <a style="text-decoration:none;" href="{{ url_for('admin.new_event') }}">Create a new event</a> to get started.</p>
-    {% endif %}
+<div class="container-fluid px-4">
+  <!-- Welcome Banner -->
+  <div class="dashboard-welcome">
+    <h1>👋 Welcome, Administrator</h1>
+    <p>Manage your events, users, and monitor system activities from one place</p>
   </div>
-</section>
 
-<section id="Authentication">
-  {% set button1 = {'text': 'New User', 'action': url_for('admin.new_user'), 'class': 'header-button'} %}
-  {{ header.render_header(title='User Authentication', buttons=[button1]) }}
+  <!-- Events Section -->
+  <div class="section-card">
+    <div class="section-title">
+      <span>📅 Events Management</span>
+      <div class="section-actions">
+        <a href="{{ url_for('admin.new_event') }}" class="action-btn">➕ New Event</a>
+        <a href="{{ url_for('admin.view_events') }}" class="action-btn">📋 View All</a>
+      </div>
+    </div>
 
-  <div>
+    <div class="cardscontainer">
+      {% if events %}
+        {{ event_card.render_event_cards_admin(events, user_role, minimum_cards=True) }}
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-state-icon">📅</div>
+          <p>No events found</p>
+          <a href="{{ url_for('admin.new_event') }}" class="action-btn">Create Your First Event</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- User Authentication Section -->
+  <div class="section-card">
+    <div class="section-title">
+      <span>👤 Pending User Authorizations</span>
+      <div class="section-actions">
+        <a href="{{ url_for('admin.new_user') }}" class="action-btn">➕ New User</a>
+        <a href="{{ url_for('admin.users_table') }}" class="action-btn">👥 All Users</a>
+      </div>
+    </div>
+
     <div class="cardscontainer">
       {% if data | selectattr("verified", "equalto", 0) | list %}
         {% for card_data in data if card_data.verified == 0 %}
           {{ user_auth_card.render_user_auth_card(card_data) }}
         {% endfor %}
       {% else %}
-        <p>No unauthorized users found. <a href="{{ url_for('admin.new_user') }}" style="text-decoration: none;">Create New User</a></p>
+        <div class="empty-state">
+          <div class="empty-state-icon">✅</div>
+          <p>All users are authorized. No pending approvals.</p>
+          <a href="{{ url_for('admin.new_user') }}" class="action-btn">Add New User</a>
+        </div>
       {% endif %}
     </div>
   </div>
-</section>
+</div>
 {% endblock %}

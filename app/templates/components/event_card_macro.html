@@ -64,9 +64,9 @@
             {% endfor %}
             
             {% if minimum_cards and status_events | length > 3 %}
-              <div>
-                <a href="{{ url_for('admin.view_events') }}" class="cardbutton view-more-button">
-                  <span class="cardbuttontext">View More Events</span>
+              <div class="eventcard view-more-card" style="border: 2px dashed rgba(102, 126, 234, 0.3); background: rgba(102, 126, 234, 0.05); display: flex; align-items: center; justify-content: center; min-height: 200px;">
+                <a href="{{ url_for('admin.view_events') }}" class="cardbutton" style="max-width: 250px;">
+                  <span class="cardbuttontext">📋 View All {{ status }} Events</span>
                 </a>
               </div>
             {% endif %}

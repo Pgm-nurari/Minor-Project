@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% import 'admin/header_bar.html' as admin_header %}
+
+{% block title %}{% if sub_event %}Edit{% else %}Create{% endif %} Sub-Event - Admin{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/common.css')}}">
+<style>
+    .container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+
+    .form-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+    }
+
+    .form-section h4 {
+        color: #667eea;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #4a5568;
+        font-weight: 500;
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: #f8fafc;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .form-control:disabled {
+        background: #e2e8f0;
+        cursor: not-allowed;
+        opacity: 0.7;
+    }
+
+    .action-button {
+        padding: 0.75rem 2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 1rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .action-button.secondary {
+        background: #e2e8f0;
+        color: #4a5568;
+        box-shadow: none;
+    }
+
+    .action-button.secondary:hover {
+        background: #cbd5e0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .text-muted {
+        font-size: 0.85rem;
+        color: #718096;
+        margin-top: 0.25rem;
+        display: block;
+    }
+
+    .event-name-badge {
+        display: inline-block;
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block header %}
+{{ admin_header.header() }}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2>{% if sub_event %}✏️ Edit Sub-Event{% else %}➕ Create New Sub-Event{% endif %}</h2>
+    </div>
+
+    <!-- Form Card -->
+    <div class="form-card">
+        {% if parent_event %}
+        <div class="event-name-badge">
+            🎪 Parent Event: {{ parent_event.Name }}
+        </div>
+        {% endif %}
+
+        <form action="{% if sub_event %}{{ url_for('admin.edit_sub_event', sub_event_id=sub_event.Sub_Event_ID) }}{% else %}{{ url_for('admin.create_sub_event', event_id=parent_event.Event_ID) }}{% endif %}" method="POST">
+            <div class="form-section">
+                <h4>📝 Sub-Event Details</h4>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="name">Sub-Event Name</label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="name" 
+                                   name="name" 
+                                   placeholder="Enter sub-event name" 
+                                   value="{{ sub_event.Name if sub_event else '' }}" 
+                                   required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h4>📅 Schedule</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" 
+                                   class="form-control" 
+                                   id="date" 
+                                   name="date" 
+                                   value="{{ sub_event.Date.strftime('%Y-%m-%d') if sub_event and sub_event.Date else '' }}" 
+                                   required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="time">Time</label>
+                            <input type="time" 
+                                   class="form-control" 
+                                   id="time" 
+                                   name="time" 
+                                   value="{{ sub_event.Time.strftime('%H:%M') if sub_event and sub_event.Time else '' }}" 
+                                   required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(102, 126, 234, 0.1);">
+                <button type="submit" class="action-button">
+                    {% if sub_event %}💾 Update Sub-Event{% else %}✅ Create Sub-Event{% endif %}
+                </button>
+                <a href="{% if sub_event %}{{ url_for('admin.event_details', event_id=sub_event.Event_ID) }}{% else %}{{ url_for('admin.event_details', event_id=parent_event.Event_ID) }}{% endif %}" 
+                   class="action-button secondary">✕ Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

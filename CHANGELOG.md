@@ -2,6 +2,64 @@
 
 All notable changes and improvements to the FinSight project.
 
+## [1.2.0] - 2025-12-31
+
+### 🔔 Notification System & Activity Logging
+
+#### Added
+- ✨ **Real-time Notification System** - Comprehensive notification system with bell icon and unread badges
+- ✨ **Activity Logging** - Complete audit trail of all user actions with timestamps and IP addresses
+- ✨ **Budget Monitoring** - Automatic budget threshold alerts (50%, 75%, 90%, 100%)
+- ✨ **Profile Management** - Edit profile and change password for all user types
+- ✨ **Smart Notifications** - Context-aware notifications for:
+  - Event assignments (admin → managers)
+  - Manager changes (old/new managers notified)
+  - Transaction creation (event manager → finance manager)
+  - Large transactions (₹10,000+ threshold warning)
+  - Budget threshold crossings (automatic alerts)
+  - Report generation (finance manager → event manager)
+  - User role changes (admin → affected user)
+  - New user creation (welcome notification)
+
+#### Database
+- 🗄️ Added `Notification` table with type-based notifications (info/success/warning/danger)
+- 🗄️ Added `Activity_Log` table for system-wide activity tracking
+- 🗄️ Added indexes for performance optimization
+- 🗄️ Foreign keys to User, Event, and Transaction tables
+
+#### New Modules
+- 📦 **activity_logger.py** - Helper functions for notifications and logging
+  - `create_notification()` - Create user notifications
+  - `log_activity()` - Log user actions
+  - `get_unread_notification_count()` - Count unread notifications
+  - `mark_notification_read()` - Mark single notification as read
+  - `mark_all_notifications_read()` - Mark all notifications as read
+- 📦 **budget_monitor.py** - Budget tracking and alerts
+  - `check_budget_thresholds()` - Monitor budget usage
+  - `notify_large_transaction()` - Alert for large transactions
+
+#### Templates
+- 🎨 **Profile Pages** - Edit profile for admin, event manager, finance manager
+- 🎨 **Notification Pages** - View notifications for all user types
+- 🎨 **Activity Log** - Admin-only activity timeline view
+- 🎨 **Header Updates** - Notification bell with dropdown in all headers
+
+#### Features
+- 🔔 Notification bell icon with live unread count badge
+- 🔔 Dropdown preview of recent notifications
+- 🔔 Mark as read functionality (single & bulk)
+- 📊 Activity log timeline with color-coded actions
+- ⚠️ Budget threshold warnings at key percentages
+- 💰 Large transaction alerts (configurable threshold)
+- 👤 Profile editing with password change validation
+
+#### Documentation
+- 📚 **NOTIFICATION_SYSTEM.md** - Complete notification system documentation
+- 📚 Updated README.md with notification features
+- 📚 Updated CHANGELOG.md with detailed changes
+
+---
+
 ## [1.1.0] - 2025-12-30
 
 ### 🔒 Security Update - Environment Variables

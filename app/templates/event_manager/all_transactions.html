@@ -25,10 +25,13 @@
             actions=True,
             table_classes="table table-striped table-hover table-bordered",
             action_buttons=[
-                {'endpoint': 'view', 'label': 'View', 'class': 'view'}
+                {'endpoint': 'view', 'label': 'View', 'class': 'view'},
+                {'endpoint': 'edit', 'label': 'Edit', 'class': 'edit'}
             ],
             identifier_key='id',
-            url_patterns={'view': 'event_manager.view_individual_transaction'}
+            url_patterns={'view': 'event_manager.view_individual_transaction', 'edit': 'event_manager.edit_transaction'},
+            extra_url_params={'user_id': user_id},
+            url_param_mapping={'id': 'transaction_id'}
         ) }}
     {% else %}
         <div class="alert alert-info text-center">

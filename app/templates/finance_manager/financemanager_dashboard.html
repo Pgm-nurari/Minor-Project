@@ -5,11 +5,97 @@
 
 {% import 'finance_manager/header_bar.html' as finance_header %}
 
-{% block title %}Dashboard -Finance Manager{% endblock %}
+{% block title %}Finance Manager Dashboard - FinSight{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{url_for('static',filename='css/common.css')}}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
+<style>
+  .dashboard-welcome {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 40px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  }
+  
+  .dashboard-welcome h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  
+  .dashboard-welcome p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+  
+  .section-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .section-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .section-actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .action-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    display: inline-block;
+  }
+  
+  .action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #718096;
+  }
+  
+  .empty-state-icon {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    opacity: 0.5;
+  }
+  
+  .empty-state p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+  }
+</style>
 {% endblock %}
 
 {% block header %}
@@ -17,25 +103,34 @@
 {% endblock %}
 
 {% block content %}
-
-<section >
-  <h1>Welcome to the Finance Manager Dashboard</h1>
-</section>
-
-<section id="Events">
-  <!-- Render New Event and View Events buttons with header component -->
-  {% set button1 = {'text': 'View Events', 'action': url_for('finance_manager.view_events', user_id=user_id), 'class': 'header-button'} %}
-  {{ section_header.render_header(title='Events', buttons=[button1]) }}
-
-  <!-- Check if there are events to display, otherwise prompt to create new events -->
-  <div class="cardscontainer">
-    {% if events %}
-      {{ event_card.render_event_cards_finance_manager(events, user_role, minimum_cards=True, user_id=user_id) }}
-
-    {% else %}
-      <p>No events assigned to you. Please contact the admin for a new event.</p>
-    {% endif %}
+<div class="container-fluid px-4">
+  <!-- Welcome Banner -->
+  <div class="dashboard-welcome">
+    <h1>👋 Welcome, Finance Manager</h1>
+    <p>Monitor budgets, review transactions, and analyze financial data for all events</p>
   </div>
-</section>
+
+  <!-- Events Section -->
+  <div class="section-card">
+    <div class="section-title">
+      <span>💰 Event Finances</span>
+      <div class="section-actions">
+        <a href="{{ url_for('finance_manager.view_events', user_id=user_id) }}" class="action-btn">📋 View All Events</a>
+      </div>
+    </div>
+
+    <div class="cardscontainer">
+      {% if events %}
+        {{ event_card.render_event_cards_finance_manager(events, user_role, minimum_cards=True, user_id=user_id) }}
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-state-icon">💰</div>
+          <p>No events assigned for financial management</p>
+          <p style="font-size: 0.95rem;">Please contact the administrator to get assigned to events.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
 {% endblock %}
 

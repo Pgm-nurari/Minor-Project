@@ -1,190 +1,192 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New User Request Form</title>
-    <style>
-        body {
-            font-family: 'Samsung Sans', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        h2 {
-            text-align: center;
-            color: #6cba5e;
-            margin-bottom: 20px;
-        }
-        .form-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 100%;
-            position: relative;
-        }
+{% extends 'base.html' %}
 
-        .form-container h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+{% import 'admin/header_bar.html' as admin_header %}
 
-        .form-field {
-            margin-bottom: 20px;
-        }
+{% block title %}Create New User - Admin{% endblock %}
 
-        .form-field label {
-            display: block;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+<style>
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .page-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+    .form-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
+    .form-section {
+        margin-bottom: 2rem;
+    }
+    .form-section h4 {
+        color: #667eea;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+    }
+    .form-group label {
+        color: #667eea;
+        font-weight: 500;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.5rem;
+    }
+    .form-control {
+        border: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 8px;
+        padding: 0.7rem;
+    }
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    }
+    .action-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        margin-right: 0.5rem;
+    }
+    .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .action-button.secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+    .action-button.secondary:hover {
+        background: #667eea;
+        color: white;
+    }
+    .error-message {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+        display: block;
+    }
+</style>
+{% endblock %}
 
-        .form-field input, .form-field select {
-            width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
+{% block header %}
+{{ admin_header.header() }}
+{% endblock %}
 
-        .submit-btn {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            background-color: #afd46e;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .submit-btn:hover {
-            background-color: #94b65a;
-        }
-
-        .error-message {
-            color: red;
-            font-size: 12px;
-        }
-
-        .flash-messages .flash {
-            margin-bottom: 20px;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .flash.success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .flash.error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        .back-button {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            color: #555;
-        }
-
-        .back-button:hover {
-            color: #333;
-        }
-
-        .back-button:focus {
-            outline: none;
-        }
-    </style>
-</head>
-<body>
-    <button class="back-button" onclick="window.history.back();">&larr; Back</button>
-    <div class="form-container">
-        <h2>New User Form</h2>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="flash-messages">
-                    {% for category, message in messages %}
-                        <div class="flash {{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
-        
-        <form id="userForm" action="{{ url_for('admin.new_user') }}" method="POST" onsubmit="return validateForm()">
-
-            <div class="form-field">
-                <label for="username">Full Name</label>
-                <input type="text" id="username" name="username" required minlength="3" maxlength="30" pattern="[A-Za-z\s]+" title="Username should contain only letters and be between 3 and 30 characters">
-                <span class="error-message" id="usernameError"></span>
-            </div>
-
-            <!-- Department select dropdown -->
-            <div class="form-field">
-                <label for="department">Department</label>
-                <select id="department" name="department" required>
-                    <!-- Options will be populated here -->
-                    <option value="" disabled selected>Select Department</option>
-                    {% for department in departments %}
-                        <option value="{{ department.Dept_ID }}">{{ department.Name }}</option>
-                    {% endfor %}
-                </select>
-                <span class="error-message" id="departmentError"></span>
-            </div>
-
-            <!-- Role select dropdown -->
-            <div class="form-field">
-                <label for="role">Role</label>
-                <select id="role" name="role" required>
-                    <!-- Options will be populated here -->
-                    <option value="" disabled selected>Select Role</option>
-                    {% for role in roles %}
-                        <option value="{{ role.Role_ID }}">{{ role.Role_Name }}</option>
-                    {% endfor %}
-                </select>
-                <span class="error-message" id="roleError"></span>
-            </div>
-
-            <div class="form-field">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
-                <span class="error-message" id="emailError"></span>
-            </div>
-            <button type="submit" class="submit-btn">Submit</button>
-        </form>
+{% block content %}
+<div class="container-fluid" style="max-width: 800px; padding-top: 100px;">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2>{% if user %}✏️ Edit User{% else %}➕ Create New User{% endif %}</h2>
     </div>
 
-    <script>
-        function validateForm() {
-            let valid = true;
-            const usernameInput = document.getElementById('username');
+    <!-- Form Card -->
+    <div class="form-card">
+        <form id="userForm" action="{% if user %}{{ url_for('admin.edit_user', user_id=user.User_ID) }}{% else %}{{ url_for('admin.new_user') }}{% endif %}" method="POST" onsubmit="return validateForm()">
+            <div class="form-section">
+                <h4>👤 User Information</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="username">Full Name</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter full name" value="{{ user.Username if user else '' }}" required minlength="3" maxlength="30" pattern="[A-Za-z\s]+" title="Name should contain only letters and spaces">
+                            <span class="error-message" id="usernameError"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="user@example.com" value="{{ user.Email if user else '' }}" required>
+                            <span class="error-message" id="emailError"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            // Clear all error messages
-            document.querySelectorAll('.error-message').forEach(function (el) {
-                el.innerText = "";
-            });
+            <div class="form-section">
+                <h4>🏢 Organization Details</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="department">Department</label>
+                            <select class="form-control" id="department" name="department" required>
+                                <option value="" disabled {% if not user %}selected{% endif %}>Select Department</option>
+                                {% for department in departments %}
+                                    <option value="{{ department.Dept_ID }}" {% if user and user.Dept_ID == department.Dept_ID %}selected{% endif %}>{{ department.Name }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="error-message" id="departmentError"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select class="form-control" id="role" name="role" required>
+                                <option value="" disabled {% if not user %}selected{% endif %}>Select Role</option>
+                                {% for role in roles %}
+                                    <option value="{{ role.Role_ID }}" {% if user and user.Role == role.Role_ID %}selected{% endif %}>{{ role.Role_Name }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="error-message" id="roleError"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-            // Validate Username (Only letters and spaces allowed)
-            if (!/^[A-Za-z\s]+$/.test(usernameInput.value)) {
-                document.getElementById('usernameError').innerText = "Username must contain only letters and spaces.";
-                valid = false;
-            }
-            return valid;
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(102, 126, 234, 0.1);">
+                <button type="submit" class="action-button">{% if user %}💾 Update User{% else %}✅ Create User{% endif %}</button>
+                <a href="{{ url_for('admin.users_table') }}" class="action-button secondary" style="text-decoration: none;">✕ Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function validateForm() {
+        let valid = true;
+        const usernameInput = document.getElementById('username');
+        const emailInput = document.getElementById('email');
+
+        // Clear all error messages
+        document.querySelectorAll('.error-message').forEach(function (el) {
+            el.innerText = "";
+        });
+
+        // Validate Username (Only letters and spaces allowed)
+        if (!/^[A-Za-z\s]+$/.test(usernameInput.value)) {
+            document.getElementById('usernameError').innerText = "Name must contain only letters and spaces.";
+            valid = false;
         }
-    </script>
-</body>
-</html>
+
+        // Validate Email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(emailInput.value)) {
+            document.getElementById('emailError').innerText = "Please enter a valid email address.";
+            valid = false;
+        }
+
+        return valid;
+    }
+</script>
+{% endblock %}

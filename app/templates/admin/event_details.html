@@ -8,30 +8,150 @@
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
 <style>
-    .card {
-        border: 1px solid #ccc;
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    .page-header h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: 600;
+    }
+    .page-header .event-type-badge {
+        display: inline-block;
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
+    .section-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        margin-bottom: 1.5rem;
+    }
+    .section-card h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #667eea;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.1);
+    }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1rem;
+    }
+    .info-item {
+        background: #f8f9fa;
+        padding: 1rem;
         border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 16px;
-        background-color: #f9f9f9;
+        border-left: 3px solid #667eea;
     }
-    .card h5 {
-        margin-bottom: 12px;
-        font-size: 18px;
+    .info-item strong {
+        display: block;
+        color: #667eea;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.3rem;
     }
-    .btn {
-        margin-right: 8px;
+    .info-item span {
+        color: #333;
+        font-size: 1rem;
+    }
+    .budget-card {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        border-radius: 12px;
+        padding: 1.5rem;
+        text-align: center;
+    }
+    .budget-amount {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #667eea;
+        margin: 1rem 0;
+    }
+    .budget-notes {
+        background: white;
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        font-size: 0.9rem;
+        color: #666;
+    }
+    .sub-event-card {
+        background: white;
+        border: 1px solid rgba(102, 126, 234, 0.15);
+        border-radius: 10px;
+        padding: 1.2rem;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+    .sub-event-card:hover {
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        transform: translateY(-2px);
+    }
+    .sub-event-card h5 {
+        color: #333;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .sub-event-info {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+    }
+    .action-button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+        margin-right: 0.5rem;
+    }
+    .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        color: white;
+        text-decoration: none;
+    }
+    .action-button.secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+    .action-button.secondary:hover {
+        background: #667eea;
+        color: white;
     }
     .no-data {
+        text-align: center;
+        padding: 2rem;
         color: #999;
         font-style: italic;
     }
-    .modal-content {
-        max-width: 600px;
-        margin: auto;
+    .modal-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 8px 8px 0 0;
     }
-    .event-details, .budget-section {
-        margin-bottom: 16px;
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
     }
 </style>
 {% endblock %}
@@ -41,52 +161,75 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2 class="mb-4">Event Details: {{ event.Name }}</h2>
+<div class="container-fluid" style="max-width: 1400px; padding-top: 100px;">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2>{{ event.Name }}</h2>
+        <div class="event-type-badge">
+            {{ event.event_type.Event_Type_Name if event.event_type else "N/A" }}
+        </div>
+    </div>
 
     <div class="row">
         <!-- Event Details Column -->
-        <div class="col-md-8 event-details">
-            <ul class="list-group mb-4">
-                <li class="list-group-item"><strong>Event Name:</strong> {{ event.Name }}</li>
-                <li class="list-group-item"><strong>Event Type:</strong> 
-                    {{ event.event_type.Event_Type_Name if event.event_type else "N/A" }}
-                </li>
-                <li class="list-group-item"><strong>Department:</strong> 
-                    {{ event.department.Name if event.department else "N/A" }}
-                </li>
-                <li class="list-group-item"><strong>Date:</strong> 
-                    {{ event.Date.strftime('%Y-%m-%d') if event.Date else "N/A" }}
-                </li>
-                <li class="list-group-item"><strong>Duration (Days):</strong> 
-                    {{ event.Days if event.Days else "N/A" }}
-                </li>
-                <li class="list-group-item"><strong>Event Manager:</strong> 
-                    {{ event.event_manager.Username if event.event_manager else "N/A" }}
-                </li>
-                <li class="list-group-item"><strong>Finance Manager:</strong> 
-                    {{ event.finance_manager.Username if event.finance_manager else "N/A" }}
-                </li>
-            </ul>
-
-            <!-- Edit Event Button -->
-            <a href="{{ url_for('admin.edit_event', event_id=event.Event_ID) }}" class="btn btn-warning">Edit Event</a>
+        <div class="col-lg-8">
+            <div class="section-card">
+                <h3>📋 Event Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Event Name</strong>
+                        <span>{{ event.Name }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Department</strong>
+                        <span>{{ event.department.Name if event.department else "N/A" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Event Date</strong>
+                        <span>{{ event.Date.strftime('%B %d, %Y') if event.Date else "N/A" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Duration</strong>
+                        <span>{{ event.Days if event.Days else "N/A" }} day(s)</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Event Manager</strong>
+                        <span>{{ event.event_manager.Username if event.event_manager else "N/A" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Finance Manager</strong>
+                        <span>{{ event.finance_manager.Username if event.finance_manager else "N/A" }}</span>
+                    </div>
+                </div>
+                <div style="margin-top: 1.5rem;">
+                    <a href="{{ url_for('admin.edit_event', event_id=event.Event_ID) }}" class="action-button">✏️ Edit Event</a>
+                </div>
+            </div>
         </div>
 
         <!-- Budget Column -->
-        <div class="col-md-4 budget-section">
-            <h3 class="mb-3">Budget Allocation</h3>
-
-            {% if budget %}
-                <div class="card">
-                    <h5>Budget Amount: ${{ budget.Amount }}</h5>
-                    <p><strong>Notes:</strong> {{ budget.Notes or "No notes available" }}</p>
-                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#budgetModal">Edit Budget</a>
-                </div>
-            {% else %}
-                <p class="no-data">No budget allocated for this event.</p>
-                <a href="#" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#budgetModal">Allocate Budget</a>
-            {% endif %}
+        <div class="col-lg-4">
+            <div class="section-card">
+                <h3>💰 Budget</h3>
+                {% if budget %}
+                    <div class="budget-card">
+                        <div style="color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">Allocated Amount</div>
+                        <div class="budget-amount">${{ "{:,.2f}".format(budget.Amount) }}</div>
+                        {% if budget.Notes %}
+                            <div class="budget-notes">
+                                <strong>Notes:</strong> {{ budget.Notes }}
+                            </div>
+                        {% endif %}
+                        <a href="#" class="action-button" data-bs-toggle="modal" data-bs-target="#budgetModal" style="margin-top: 1rem;">✏️ Edit Budget</a>
+                    </div>
+                {% else %}
+                    <div class="no-data">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">💵</div>
+                        <p>No budget allocated yet</p>
+                        <a href="#" class="action-button" data-bs-toggle="modal" data-bs-target="#budgetModal">➕ Allocate Budget</a>
+                    </div>
+                {% endif %}
+            </div>
         </div>
     </div>
 
@@ -119,28 +262,39 @@
     </div>
 
     <!-- Sub-Events Section -->
-    <h3 class="mb-3">Sub-Events</h3>
-    {% if sub_events %}
-        <div class="row">
-            {% for sub_event in sub_events %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <h5>{{ sub_event.Name }}</h5>
-                        <p><strong>Date:</strong> {{ sub_event.Date.strftime('%Y-%m-%d') }}</p>
-                        <p><strong>Time:</strong> {{ sub_event.Time.strftime('%H:%M:%S') }}</p>
-                        <p><strong>Manager:</strong> 
-                            {{ sub_event.sub_event_manager.Username if sub_event.sub_event_manager else "N/A" }}
-                        </p>
-                        <a href="{{ url_for('admin.view_sub_event', sub_event_id=sub_event.Sub_Event_ID) }}" 
-                           class="btn btn-primary">View Details</a>
-                        <a href="{{ url_for('admin.edit_sub_event', sub_event_id=sub_event.Sub_Event_ID) }}" 
-                           class="btn btn-secondary">Edit Sub-Event</a>
-                    </div>
-                </div>
-            {% endfor %}
+    <div class="section-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0;">🎯 Sub-Events</h3>
+            <a href="{{ url_for('admin.create_sub_event', event_id=event.Event_ID) }}" class="action-button" style="font-size: 0.9rem; padding: 0.6rem 1.2rem;">➕ Add Sub-Event</a>
         </div>
-    {% else %}
-        <p class="no-data">No sub-events available for this event.</p>
-    {% endif %}
+        {% if sub_events %}
+            <div class="row">
+                {% for sub_event in sub_events %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="sub-event-card">
+                            <h5>{{ sub_event.Name }}</h5>
+                            <div class="sub-event-info">
+                                <strong>📅 Date:</strong> {{ sub_event.Date.strftime('%B %d, %Y') if sub_event.Date else "N/A" }}
+                            </div>
+                            <div class="sub-event-info">
+                                <strong>🕐 Time:</strong> {{ sub_event.Time.strftime('%I:%M %p') if sub_event.Time else "N/A" }}
+                            </div>
+                            <div class="sub-event-info" style="margin-bottom: 1rem;">
+                                <strong>👤 Manager:</strong> {{ sub_event.sub_event_manager.Username if sub_event.sub_event_manager else "N/A" }}
+                            </div>
+                            <a href="{{ url_for('admin.view_sub_event', sub_event_id=sub_event.Sub_Event_ID) }}" class="action-button" style="font-size: 0.85rem; padding: 0.5rem 1rem; margin-right: 0.3rem;">👁️ View</a>
+                            <a href="{{ url_for('admin.edit_sub_event', sub_event_id=sub_event.Sub_Event_ID) }}" class="action-button secondary" style="font-size: 0.85rem; padding: 0.5rem 1rem;">✏️ Edit</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="no-data">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🎯</div>
+                <p>No sub-events for this event</p>
+                <a href="{{ url_for('admin.create_sub_event', event_id=event.Event_ID) }}" class="action-button">➕ Add Sub-Event</a>
+            </div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

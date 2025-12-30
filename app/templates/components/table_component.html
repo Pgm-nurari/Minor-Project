@@ -20,7 +20,7 @@
   ) }}
 #}
 
-{% macro render_table(data, filters={}, sort_key=None, sort_order='asc', actions=True, table_classes="table table-striped table-hover table-bordered", action_buttons=None, identifier_key='id', url_patterns=None) %}
+{% macro render_table(data, filters={}, sort_key=None, sort_order='asc', actions=True, table_classes="table table-striped table-hover table-bordered", action_buttons=None, identifier_key='id', url_patterns=None, extra_url_params=None, url_param_mapping=None) %}
   <div class="container mt-5 table-responsive">
 
     <!-- Table Controls -->
@@ -89,8 +89,18 @@
                   <div class="d-flex justify-content-center">
                     {% if action_buttons and url_patterns %}
                       {% for button in action_buttons %}
+                        {% set url_kwargs = {} %}
+                        {% if url_param_mapping %}
+                          {% set param_name = url_param_mapping.get(identifier_key, identifier_key) %}
+                        {% else %}
+                          {% set param_name = identifier_key %}
+                        {% endif %}
+                        {% set _ = url_kwargs.update({param_name: row[identifier_key]}) %}
+                        {% if extra_url_params %}
+                          {% set _ = url_kwargs.update(extra_url_params) %}
+                        {% endif %}
                         <a 
-                          href="{{ url_for(url_patterns[button['endpoint']], **{identifier_key: row[identifier_key]}) }}" 
+                          href="{{ url_for(url_patterns[button['endpoint']], **url_kwargs) }}" 
                           class="btn btn-clean btn-clean-{{ button['class'] }} me-2"
                           {% if button.get('title') %} title="{{ button['title'] }}" {% endif %}>
                           {{ button['label'] }}

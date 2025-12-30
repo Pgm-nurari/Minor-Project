@@ -56,8 +56,12 @@ python run.py
 - 📊 **Event Management** - Create and track events, sub-events, and budgets
 - 💰 **Transaction Tracking** - Record and manage financial transactions
 - 📈 **Advanced Analytics** - Interactive visualizations and reports
+- � **Real-time Notifications** - Smart alerts for assignments, updates, and budget thresholds
+- 📝 **Activity Logging** - Complete audit trail of all system actions
+- 💵 **Budget Monitoring** - Automatic alerts at 50%, 75%, 90%, and 100% of budget
 - 🔍 **Smart Tables** - Search, filter, sort, and export data
 - 🎨 **Modern UI** - Responsive design with gradient themes
+- ✏️ **Profile Management** - Edit profile and change passwords for all users
 
 ## 👤 Default Credentials
 
@@ -74,7 +78,8 @@ After first run, login with:
 ## 📖 Documentation
 
 - 🚀 **[FIRST_TIME_SETUP.md](FIRST_TIME_SETUP.md)** - Complete first-time setup guide
-- 📚 **[docs/README.md](docs/README.md)** - Full documentation
+- � **[NOTIFICATION_SYSTEM.md](NOTIFICATION_SYSTEM.md)** - Notification and activity logging system
+- �📚 **[docs/README.md](docs/README.md)** - Full documentation
 - 🔧 **[docs/INSTALLATION.md](docs/INSTALLATION.md)** - Advanced installation
 - 🔒 **[docs/SECURITY.md](docs/SECURITY.md)** - Security best practices
 - 📊 **[docs/PROJECT_SUMMARY.md](docs/PROJECT_SUMMARY.md)** - Project overview
@@ -93,6 +98,9 @@ After first run, login with:
 FinSight/
 ├── app/                  # Main application
 │   ├── modules/         # Core business logic
+│   │   ├── models.py          # Database models
+│   │   ├── activity_logger.py # Notification & logging
+│   │   └── budget_monitor.py  # Budget tracking
 │   ├── static/          # CSS, JS, images
 │   └── templates/       # HTML templates
 ├── scripts/             # Utility scripts
@@ -135,26 +143,16 @@ pip install -r requirements.txt
 python run.py --port 5001
 ```
 
-## 📁 Project Structure
+## � Notification System
 
-```
-FinSight/
-├── app/              # Main application
-├── scripts/          # Utility scripts
-├── docs/             # Documentation
-├── run.py            # Application entry point
-└── requirements.txt  # Dependencies
-```
+FinSight includes a comprehensive notification and activity logging system:
 
-## 🔧 Additional Commands
+- **Real-time Notifications** - Notification bell in header with unread count
+- **Smart Alerts** - Budget thresholds, large transactions, manager assignments
+- **Activity Logs** - Complete audit trail of all user actions
+- **Automated Triggers** - Event creation, transaction updates, report generation
 
-```bash
-# Populate database with sample data (first run)
-python scripts/populate_db.py
-
-# Reset database
-python scripts/setup_database.py
-```
+See [NOTIFICATION_SYSTEM.md](NOTIFICATION_SYSTEM.md) for complete documentation.
 
 ## 📝 License
 
@@ -167,42 +165,3 @@ Contributions, issues, and feature requests are welcome!
 ---
 
 **Made with ❤️ for efficient financial event management**
-
-FinSight is a web application built with Flask to provide management dashboards for admins, event managers, and finance teams. This project utilizes MySQL for data storage and Bootstrap for front-end styling, creating a seamless user experience across different roles.
-
-## Project Structure
-
-```
-FinSight/
-├── app/
-│   ├── modules/              # Reusable Python modules (e.g., validations)
-│   ├── static/               # Static assets: CSS, images, JavaScript
-│   │   ├── css/
-│   │   ├── images/
-│   │   └── js/
-│   ├── templates/            # HTML templates for each section and component
-│   │   ├── admin/            # Templates specific to admin views
-│   │   ├── components/       # Shared components for reuse
-│   │   ├── event_manager/    # Templates specific to event management
-│   │   ├── finance_manager/  # Templates specific to finance management
-│   │   ├── home/             # Templates for the homepage
-│   │   └── base.html         # Base template structure for all pages
-│   ├── __init__.py           # Initializes the Flask app and registers blueprints
-│   ├── admin.py              # Admin dashboard logic and views
-│   ├── event_manager.py      # Event management logic and views
-│   ├── finance_manager.py    # Finance management logic and views
-│   ├── home.py               # Homepage logic and views
-│   └── routes.py             # General route definitions
-├── .flaskenv                 # Environment variables for Flask setup
-├── app.py                    # Main entry point to start the Flask app
-├── LICENSE                   # Project license
-├── README.md                 # Documentation for project setup and usage
-└── requirements.txt          # List of Python dependencies
-```
-
-## Project Demo
-<p align="center">
-  <img src="https://github.com/Pgm-nurari/FinSight/blob/main/images/admin-dashboard_page.png" alt="Project Screenshot" width="500"/>
-  <br>
-  <sub><b>Fig 1:</b> Admin Dashboard Page</sub>
-</p>

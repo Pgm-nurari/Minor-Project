@@ -5,12 +5,83 @@
 {% import 'admin/header_bar.html' as admin_header %}
 {% import 'components/userauthcard.html' as user_auth_card %}
 
-{% block title %}Users - Admin{% endblock %}
+{% block title %}User Management - Admin{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/userauthcard.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tablecomponent.css') }}">
+<style>
+  .page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px 40px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  }
+  
+  .page-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  .page-header p {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin: 0;
+  }
+  
+  .section-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  }
+  
+  .section-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .action-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    display: inline-block;
+  }
+  
+  .action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #718096;
+  }
+  
+  .empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.5;
+  }
+</style>
 {% endblock %}
 
 {% block header %}
@@ -18,25 +89,41 @@
 {% endblock %}
 
 {% block content %}
-<section id="Authentication">
-  {% set button1 = {'text': 'New User', 'action': url_for('admin.new_user'), 'class': 'header-button'} %}
-  {{ header.render_header(title='User Authentication', buttons=[button1]) }}
-
-  <div class="cardscontainer">
-    {% if data | selectattr("verified", "equalto", 0) | list %}
-      {% for card_data in data if card_data.verified == 0 %}
-        {{ user_auth_card.render_user_auth_card(card_data) }}
-      {% endfor %}
-    {% else %}
-      <p>No unauthorized users found. <a href="{{ url_for('admin.new_user') }}" style="text-decoration: none;">Create New User</a></p>
-    {% endif %}
+<div class="container-fluid px-4">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h1>👥 User Management</h1>
+    <p>Manage user accounts, authorizations, and access permissions</p>
   </div>
-</section>
 
-<section id="UsersTable">
-  {{ header.render_header(title='User Table', buttons=[]) }}
+  <!-- Pending Authorizations Section -->
+  <div class="section-card">
+    <div class="section-title">
+      <span>⏳ Pending User Authorizations</span>
+      <a href="{{ url_for('admin.new_user') }}" class="action-btn">➕ Create New User</a>
+    </div>
 
-  <div>
+    <div class="cardscontainer">
+      {% if data | selectattr("verified", "equalto", 0) | list %}
+        {% for card_data in data if card_data.verified == 0 %}
+          {{ user_auth_card.render_user_auth_card(card_data) }}
+        {% endfor %}
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-state-icon">✅</div>
+          <p>All users are authorized. No pending approvals.</p>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- All Users Table Section -->
+  <div class="section-card">
+    <div class="section-title">
+      <span>📋 All Users</span>
+      <a href="{{ url_for('admin.new_user') }}" class="action-btn">➕ Add User</a>
+    </div>
+
     {{ table.render_table(
       users_table, 
       filters={
@@ -49,13 +136,13 @@
       actions=True,
       table_classes="table table-striped table-hover table-bordered",
       action_buttons=[
-        {'endpoint': 'edit', 'label': 'Edit', 'class': 'warning'},
-        {'endpoint': 'delete', 'label': 'Delete', 'class': 'danger'}
+        {'endpoint': 'edit', 'label': 'Edit', 'class': 'edit'},
+        {'endpoint': 'delete', 'label': 'Delete', 'class': 'delete'}
       ],
       identifier_key='user_id',
       url_patterns={'edit': 'admin.edit_user', 'delete': 'admin.delete_user'}
     ) }}
   </div>
-</section>
+</div>
 {% endblock %}
 

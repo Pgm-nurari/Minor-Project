@@ -1,44 +1,308 @@
 {% extends 'base.html' %}
 
-{% import 'components/header_with_button.html' as section_header %}
 {% import 'finance_manager/header_bar.html' as finance_header %}
 
 {% block title %}Event Visualization - Finance Manager{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/eventcard.css') }}">
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 <style>
-    .card {
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        margin-bottom: 30px;
-        background-color: #ffffff;
+    .container-fluid {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
     }
-    .card-header {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #2c3e50;
-        margin-bottom: 10px;
-        border-bottom: 2px solid #ddd;
-        padding-bottom: 5px;
+
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
-    .breaker {
-        width: 100%;
-        height: 2px;
-        background-color: #ddd;
-        margin: 20px 0;
+
+    .page-header-content h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+        font-weight: 700;
     }
+
+    .page-header-content p {
+        margin: 0;
+        font-size: 1rem;
+        opacity: 0.95;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 0.75rem 1.5rem;
+        background: white;
+        color: #667eea;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        color: #667eea;
+    }
+
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .header-actions {
+            width: 100%;
+        }
+
+        .action-btn {
+            flex: 1;
+            justify-content: center;
+        }
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-summary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .stat-summary:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .stat-summary h4 {
+        margin: 0 0 1rem 0;
+        font-size: 1.1rem;
+        opacity: 0.95;
+        font-weight: 600;
+    }
+
+    .stat-value {
+        margin: 0;
+        font-size: 2.2rem;
+        font-weight: 700;
+    }
+
+    .chart-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .chart-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .chart-card h3 {
+        color: #667eea;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    }
+
     .chart-container {
         width: 100%;
-        height: 400px;
-        margin-top: 10px;
+        min-height: 380px;
+        margin-top: 0.5rem;
+        background: #f8fafc;
+        border-radius: 8px;
+        padding: 0.25rem;
     }
-    h1, h2 {
-        color: #2c3e50;
+
+    .budget-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1rem;
+    }
+
+    .budget-item {
+        text-align: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 10px;
+    }
+
+    .budget-label {
+        color: #718096;
+        margin: 0;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .budget-value {
+        color: #2d3748;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #a0aec0;
+    }
+
+    .no-data .icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .no-data p {
+        font-size: 1.1rem;
+        margin: 0;
+        font-style: italic;
+    }
+
+    .action-button {
+        display: inline-block;
+        padding: 0.75rem 2rem;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        margin-top: 1rem;
+    }
+
+    .action-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .container-fluid {
+            max-width: 100%;
+            padding: 2rem 1rem;
+        }
+
+        .row {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .chart-card {
+            padding: 1.25rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .container-fluid {
+            padding: 1.5rem 0.75rem;
+        }
+
+        .page-header {
+            padding: 2rem 1.5rem;
+        }
+
+        .page-header-content h2 {
+            font-size: 1.5rem;
+        }
+
+        .stat-summary {
+            padding: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+        }
+
+        .chart-card {
+            padding: 1rem;
+        }
+
+        .chart-card h3 {
+            font-size: 1.1rem;
+        }
+
+        .chart-container {
+            min-height: 350px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .container-fluid {
+            padding: 1rem 0.5rem;
+        }
+
+        .page-header {
+            padding: 1.5rem 1rem;
+        }
+
+        .page-header-content h2 {
+            font-size: 1.3rem;
+        }
+
+        .stat-summary {
+            padding: 1.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+        }
+
+        .chart-card {
+            padding: 0.75rem;
+        }
+
+        .chart-container {
+            min-height: 300px;
+            padding: 0.25rem;
+        }
     }
 </style>
 {% endblock %}
@@ -48,52 +312,188 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <h1>Event Visualization for "{{ event_name }}"</h1>
-    <hr class="breaker">
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="page-header-content">
+            <h2>📊 {{ event_name }}</h2>
+            <p>Comprehensive Financial Analysis & Reports</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('finance_manager.ledger_view', user_id=user_id, event_id=event_id) }}" class="action-btn">
+                📒 View Ledger
+            </a>
+            <a href="{{ url_for('finance_manager.download_excel', user_id=user_id, event_id=event_id) }}" class="action-btn">
+                📥 Download Excel
+            </a>
+            <a href="{{ url_for('finance_manager.download_pdf', user_id=user_id, event_id=event_id) }}" class="action-btn">
+                📄 Download PDF
+            </a>
+        </div>
+    </div>
 
-    <!-- Revenue vs Expense Bar Chart -->
-    <div class="card">
-        <div class="card-header">Revenue vs Expenses</div>
+    <!-- Financial Summary Stats -->
+    <div class="stats-row">
+        <div class="stat-summary" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <h4>💰 Total Revenue</h4>
+            <p class="stat-value">₹{{ "{:,.2f}".format(revenue) }}</p>
+        </div>
+        <div class="stat-summary" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+            <h4>💸 Total Expenses</h4>
+            <p class="stat-value">₹{{ "{:,.2f}".format(expense) }}</p>
+        </div>
+        <div class="stat-summary" style="background: linear-gradient(135deg, {% if profit_loss >= 0 %}#667eea 0%, #764ba2{% else %}#ef4444 0%, #dc2626{% endif %} 100%);">
+            <h4>📈 Net {{ "Profit" if profit_loss >= 0 else "Loss" }}</h4>
+            <p class="stat-value">₹{{ "{:,.2f}".format(profit_loss|abs) }}</p>
+        </div>
+    </div>
+
+    <!-- Profit/Loss Analysis -->
+    <div class="chart-card">
+        <h3>📊 Profit/Loss Analysis</h3>
+        <div id="profit_loss_chart" class="chart-container"></div>
+    </div>
+
+    <!-- Budget Tracker -->
+    {% if budget_fig %}
+    <div class="chart-card">
+        <h3>🎯 Budget Tracker</h3>
+        <div id="budget_gauge_chart" class="chart-container"></div>
+    </div>
+    {% endif %}
+
+    <!-- Financial Overview -->
+    <div class="chart-card">
+        <h3>💰 Financial Overview</h3>
         <div id="revenue_expense_chart" class="chart-container"></div>
     </div>
 
-    <!-- Pie Chart for Categories -->
-    <div class="card">
-        <div class="card-header">Transaction Totals by Category</div>
+    <!-- Budget vs Actual Spending -->
+    {% if budget_comparison_fig %}
+    <div class="chart-card">
+        <h3>📊 Budget vs Actual Spending</h3>
+        <div id="budget_comparison_chart" class="chart-container"></div>
+    </div>
+    {% endif %}
+
+    <!-- Revenue Sources -->
+    {% if revenue_breakdown_fig %}
+    <div class="chart-card">
+        <h3>💵 Revenue Sources</h3>
+        <div id="revenue_breakdown_chart" class="chart-container"></div>
+    </div>
+    {% endif %}
+
+    <!-- Expense Breakdown -->
+    {% if expense_breakdown_fig %}
+    <div class="chart-card">
+        <h3>💸 Expense Breakdown</h3>
+        <div id="expense_breakdown_chart" class="chart-container"></div>
+    </div>
+    {% endif %}
+
+    <!-- Category Distribution -->
+    <div class="chart-card">
+        <h3>📂 Category Distribution</h3>
         {% if category_fig %}
             <div id="category_chart" class="chart-container"></div>
         {% else %}
-            <p>No category data available.</p>
+            <div class="no-data">
+                <div class="icon">📊</div>
+                <p>No category data available</p>
+            </div>
         {% endif %}
     </div>
 
-    <!-- Pie Chart for Payment Modes -->
-    <div class="card">
-        <div class="card-header">Transaction Totals by Payment Mode</div>
+    <!-- Payment Mode Distribution -->
+    <div class="chart-card">
+        <h3>💳 Payment Mode Distribution</h3>
         {% if mode_fig %}
             <div id="mode_chart" class="chart-container"></div>
         {% else %}
-            <p>No payment mode data available.</p>
+            <div class="no-data">
+                <div class="icon">💳</div>
+                <p>No payment mode data available</p>
+            </div>
         {% endif %}
+    </div>
+
+    <!-- Budget Summary Card -->
+    {% if budget_amount > 0 %}
+    <div class="chart-card" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);">
+        <h3>📋 Budget Summary</h3>
+        <div class="budget-grid">
+            <div class="budget-item">
+                <p class="budget-label">Allocated Budget</p>
+                <p class="budget-value">₹{{ "{:,.2f}".format(budget_amount) }}</p>
+            </div>
+            <div class="budget-item">
+                <p class="budget-label">Total Spent</p>
+                <p class="budget-value" style="color: #f59e0b;">₹{{ "{:,.2f}".format(expense) }}</p>
+            </div>
+            <div class="budget-item">
+                <p class="budget-label">Remaining</p>
+                <p class="budget-value" style="color: {% if budget_remaining >= 0 %}#10b981{% else %}#ef4444{% endif %};">₹{{ "{:,.2f}".format(budget_remaining) }}</p>
+            </div>
+            <div class="budget-item">
+                <p class="budget-label">Utilization</p>
+                <p class="budget-value" style="color: {% if budget_utilization < 70 %}#10b981{% elif budget_utilization < 100 %}#f59e0b{% else %}#ef4444{% endif %};">{{ "{:.1f}".format(budget_utilization) }}%</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Back Button -->
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{{ url_for('finance_manager.event_details', event_id=event_id, user_id=user_id) }}" class="action-button">
+            ← Back to Event Details
+        </a>
     </div>
 </div>
 
 <script>
+    // Profit/Loss Indicator
+    var profitLossFig = {{ profit_loss_fig | safe }};
+    Plotly.newPlot('profit_loss_chart', profitLossFig.data, profitLossFig.layout, {responsive: true});
+
     // Revenue vs Expense Bar Chart
     var revenueExpenseFig = {{ revenue_expense_fig | safe }};
-    Plotly.newPlot('revenue_expense_chart', revenueExpenseFig.data, revenueExpenseFig.layout);
+    Plotly.newPlot('revenue_expense_chart', revenueExpenseFig.data, revenueExpenseFig.layout, {responsive: true});
 
-    // Pie Chart for Categories
-    {% if category_fig %}
-        var categoryFig = {{ category_fig | safe }};
-        Plotly.newPlot('category_chart', categoryFig.data, categoryFig.layout);
+    // Budget Gauge Chart
+    {% if budget_fig %}
+        var budgetFig = {{ budget_fig | safe }};
+        Plotly.newPlot('budget_gauge_chart', budgetFig.data, budgetFig.layout, {responsive: true});
     {% endif %}
 
-    // Pie Chart for Modes
+    // Budget Comparison Chart
+    {% if budget_comparison_fig %}
+        var budgetComparisonFig = {{ budget_comparison_fig | safe }};
+        Plotly.newPlot('budget_comparison_chart', budgetComparisonFig.data, budgetComparisonFig.layout, {responsive: true});
+    {% endif %}
+
+    // Revenue Breakdown Chart
+    {% if revenue_breakdown_fig %}
+        var revenueBreakdownFig = {{ revenue_breakdown_fig | safe }};
+        Plotly.newPlot('revenue_breakdown_chart', revenueBreakdownFig.data, revenueBreakdownFig.layout, {responsive: true});
+    {% endif %}
+
+    // Expense Breakdown Chart
+    {% if expense_breakdown_fig %}
+        var expenseBreakdownFig = {{ expense_breakdown_fig | safe }};
+        Plotly.newPlot('expense_breakdown_chart', expenseBreakdownFig.data, expenseBreakdownFig.layout, {responsive: true});
+    {% endif %}
+
+    // Category Distribution Pie Chart
+    {% if category_fig %}
+        var categoryFig = {{ category_fig | safe }};
+        Plotly.newPlot('category_chart', categoryFig.data, categoryFig.layout, {responsive: true});
+    {% endif %}
+
+    // Payment Mode Distribution Pie Chart
     {% if mode_fig %}
         var modeFig = {{ mode_fig | safe }};
-        Plotly.newPlot('mode_chart', modeFig.data, modeFig.layout);
+        Plotly.newPlot('mode_chart', modeFig.data, modeFig.layout, {responsive: true});
     {% endif %}
 </script>
 {% endblock %}
