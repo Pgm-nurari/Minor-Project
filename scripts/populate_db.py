@@ -8,8 +8,8 @@ import sys
 from datetime import date, time, datetime
 from werkzeug.security import generate_password_hash
 
-# Add the app directory to the path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add the parent directory to the path so we can import app
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app import create_app, db
 from app.modules.models import (
@@ -18,29 +18,72 @@ from app.modules.models import (
     Transaction, TransactionItem, Budget
 )
 
+def create_tables_if_not_exist():
+    """Create all tables if they don't exist"""
+    print("Checking if tables exist...")
+    try:
+        from sqlalchemy import inspect
+        inspector = inspect(db.engine)
+        existing_tables = inspector.get_table_names()
+        
+        if not existing_tables:
+            print("⚠ No tables found. Creating tables...")
+            db.create_all()
+            print("✓ Tables created successfully")
+        else:
+            print(f"✓ Found {len(existing_tables)} existing tables")
+        return True
+    except Exception as e:
+        print(f"✗ Error checking/creating tables: {e}")
+        return False
+
 def clear_all_data():
     """Clear all existing data from the database"""
     print("Clearing existing data...")
     try:
-        TransactionItem.query.delete()
-        Transaction.query.delete()
-        Budget.query.delete()
-        SubEvent.query.delete()
-        Event.query.delete()
-        User.query.delete()
-        Department.query.delete()
-        Role.query.delete()
-        EventType.query.delete()
-        TransactionNature.query.delete()
-        PaymentMode.query.delete()
-        TransactionCategory.query.delete()
-        AccountCategory.query.delete()
+        # Check if tables exist before trying to delete
+        from sqlalchemy import inspect
+        inspector = inspect(db.engine)
+        existing_tables = inspector.get_table_names()
+        
+        if not existing_tables:
+            print("⚠ No tables to clear")
+            return
+        
+        # Delete in proper order (respecting foreign key constraints)
+        if 'transactionitem' in existing_tables:
+            TransactionItem.query.delete()
+        if 'transactions_table' in existing_tables:
+            Transaction.query.delete()
+        if 'budget' in existing_tables:
+            Budget.query.delete()
+        if 'sub_event' in existing_tables:
+            SubEvent.query.delete()
+        if 'event' in existing_tables:
+            Event.query.delete()
+        if 'user' in existing_tables:
+            User.query.delete()
+        if 'department' in existing_tables:
+            Department.query.delete()
+        if 'role' in existing_tables:
+            Role.query.delete()
+        if 'event_type' in existing_tables:
+            EventType.query.delete()
+        if 'transaction_nature' in existing_tables:
+            TransactionNature.query.delete()
+        if 'payment_mode' in existing_tables:
+            PaymentMode.query.delete()
+        if 'transaction_category' in existing_tables:
+            TransactionCategory.query.delete()
+        if 'account_category' in existing_tables:
+            AccountCategory.query.delete()
+        
         db.session.commit()
         print("✓ Existing data cleared successfully")
     except Exception as e:
         db.session.rollback()
-        print(f"Error clearing data: {e}")
-        raise
+        print(f"⚠ Error clearing data: {e}")
+        print("Continuing with population...")
 
 def populate_departments():
     """Insert departments"""
@@ -399,6 +442,11 @@ def main():
     
     with app.app_context():
         try:
+            # Create tables if they don't exist
+            if not create_tables_if_not_exist():
+                print("\n✗ Failed to create tables. Aborting.")
+                return
+            
             # Clear existing data
             clear_all_data()
             
@@ -419,7 +467,8 @@ def main():
         except Exception as e:
             print(f"\n✗ Error during population: {e}")
             db.session.rollback()
-            raise
+            import traceback
+            traceback.print_exc()
 
 if __name__ == '__main__':
     main()

@@ -6,7 +6,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import asc, desc
 from sqlalchemy import func
 from datetime import datetime, date
-from .test_data import test_user_data, test_event_data
+
 from werkzeug.security import generate_password_hash
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')

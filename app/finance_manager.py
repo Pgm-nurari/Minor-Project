@@ -13,7 +13,6 @@ import base64
 import plotly.graph_objects as go
 import plotly.express as px
 from datetime import datetime, date
-from .test_data import test_user_data, test_event_data
 from .modules.transaction_utils import *
 
 finance_manager_bp = Blueprint('finance_manager', __name__, url_prefix='/finmng/<int:user_id>')

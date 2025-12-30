@@ -133,8 +133,11 @@
 
     // Initialize column filters on page load
     document.addEventListener('DOMContentLoaded', function() {
-      initializeColumnFilters();
-      updateFilterCount();
+      const table = document.getElementById('dataTable');
+      if (table) {
+        initializeColumnFilters();
+        updateFilterCount();
+      }
     });
 
     function initializeColumnFilters() {

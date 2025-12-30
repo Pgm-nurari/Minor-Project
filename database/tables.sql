@@ -57,13 +57,12 @@ CREATE TABLE Sub_Event (
     Time TIME NOT NULL,
     Dept_ID INT,
     Event_ID INT,
-    Budget DECIMAL(10, 2) DEFAULT NULL,  -- Added budget column
+    Budget DECIMAL(10, 2) DEFAULT NULL,
     modified_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (Sub_Event_Manager) REFERENCES User(User_ID),
     FOREIGN KEY (Event_Type_ID) REFERENCES Event_Type(Event_Type_ID),
     FOREIGN KEY (Dept_ID) REFERENCES Department(Dept_ID),
-    FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID),
-    CONSTRAINT fk_sub_event_budget CHECK (Budget <= (SELECT Budget FROM Event WHERE Event_ID = Event_ID))  -- Ensure sub-event budget is <= event budget
+    FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID)
 );
 
 -- 7. Transaction_Nature Table
@@ -91,11 +90,12 @@ CREATE TABLE Account_Category (
 );
 
 -- 11. Individual Event Transaction Table
-CREATE TABLE Transactions_table (
+CREATE TABLE transaction_table (
     Transaction_ID INT AUTO_INCREMENT PRIMARY KEY,
     User_ID INT,
     Event_ID INT,
-    Amount DECIMAL(10, 2) NOT NULL,
+    Sub_Event_ID INT,
+    Amount DECIMAL(10, 2) DEFAULT 0.00,
     Nature_ID INT,
     Mode_ID INT,
     Date DATE NOT NULL,
@@ -104,8 +104,10 @@ CREATE TABLE Transactions_table (
     Party_Name VARCHAR(100),
     Transaction_Category_ID INT,
     Account_Category_ID INT,
+    modified_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (User_ID) REFERENCES User(User_ID),
     FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID),
+    FOREIGN KEY (Sub_Event_ID) REFERENCES Sub_Event(Sub_Event_ID),
     FOREIGN KEY (Nature_ID) REFERENCES Transaction_Nature(Nature_ID),
     FOREIGN KEY (Mode_ID) REFERENCES Payment_Mode(Mode_ID),
     FOREIGN KEY (Transaction_Category_ID) REFERENCES Transaction_Category(Transaction_Category_ID),
@@ -139,3 +141,23 @@ CREATE TABLE Balance_Sheet (
     FOREIGN KEY (Statement_ID) REFERENCES Financial_Statement(Statement_ID)
 );
 
+-- 15. Transaction Items Table
+CREATE TABLE transactionitem (
+    TransactionItem_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Transaction_ID INT NOT NULL,
+    Description TEXT,
+    Amount DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (Transaction_ID) REFERENCES transaction_table(Transaction_ID) ON DELETE CASCADE
+);
+
+-- 16. Budget Table
+CREATE TABLE Budget (
+    Budget_ID INT AUTO_INCREMENT PRIMARY KEY,
+    Amount DECIMAL(10, 2) NOT NULL,
+    Notes TEXT,
+    Event_ID INT,
+    Sub_Event_ID INT,
+    modified_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (Event_ID) REFERENCES Event(Event_ID),
+    FOREIGN KEY (Sub_Event_ID) REFERENCES Sub_Event(Sub_Event_ID)
+);
