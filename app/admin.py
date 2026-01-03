@@ -360,8 +360,8 @@ def edit_user(user_id):
             role_changed = True
             old_role_obj = Role.query.get(user.Role)
             new_role_obj = Role.query.get(role_id)
-            old_role = old_role_obj.Name if old_role_obj else "Unknown"
-            new_role = new_role_obj.Name if new_role_obj else "Unknown"
+            old_role = old_role_obj.Role_Name if old_role_obj else "Unknown"
+            new_role = new_role_obj.Role_Name if new_role_obj else "Unknown"
             user.Role = role_id
             user.Verified = 0  # Require re-authorization when role changes
         

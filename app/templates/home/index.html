@@ -1,172 +1,528 @@
 {% extends 'base.html' %}
 
-{% block title %}Home - FinSight{% endblock %}
+{% block title %}FinSight - Smart Event Finance Management{% endblock %}
 
 {% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/trialindex.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 {% endblock %}
 
 {% block header %}
-<div class="container">
-    <header class="d-flex flex-wrap align-items-center justify-content-between py-3 mb-0 border-bottom">
-        <!-- Header Name Section -->
-        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-            <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight" width="40" height="32" class="me-2">
-            <span class="fs-4" style="font-weight: bold; color: #AFD46E;">FinSight</span>
+<nav class="modern-navbar">
+    <div class="nav-container">
+        <a href="/" class="brand-logo">
+            <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight">
+            <span class="brand-name">Fin<span class="brand-accent">Sight</span></span>
         </a>
-
-        <!-- Navigation Section -->
-        <nav class="col-md-6">
-            <ul class="nav justify-content-center">
-                <li><a href="#home" class="nav-link px-2 link-secondary">Home</a></li>
-                <li><a href="#about" class="nav-link px-2">About Us</a></li>
-                <li><a href="#contact" class="nav-link px-2">Contact Us</a></li>
-            </ul>
-        </nav>
-
-        <!-- Header Button Section (Login/Signup) -->
-        <div class="col-md-3 text-end header-button">
-            {% if request.endpoint == 'home.index' %}
-                <a href="{{ url_for('home.login') }}"><button>Login</button></a>
-                <a href="{{ url_for('home.signup') }}"><button>Signup</button></a>
-            {% elif request.endpoint.startswith('admin.') %}
-                <a href="{{ url_for('home.index') }}"><button>Logout</button></a>
-            {% else %}
-                <a href="{{ url_for('home.index') }}"><button>Logout</button></a>
-            {% endif %}
+        
+        <div class="nav-menu" id="navMenu">
+            <a href="#home" class="nav-item active">Home</a>
+            <a href="#features" class="nav-item">Features</a>
+            <a href="#about" class="nav-item">About</a>
+            <a href="#contact" class="nav-item">Contact</a>
         </div>
-    </header>
-</div>
+        
+        <div class="nav-actions">
+            <a href="{{ url_for('home.login') }}" class="btn-login">Login</a>
+            <a href="{{ url_for('home.signup') }}" class="btn-signup">Get Started</a>
+        </div>
+        
+        <button class="mobile-toggle" id="mobileToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</nav>
 {% endblock %}
 
 {% block content %}
-<section id="home" class="hero">
-    <div class="container">
-        <h1>Event Finance Management Software</h1>
-        <p>Streamline your events and manage them with ease.</p>
-        <a href="#about" class="cta-button">Learn More</a>
+<!-- Hero Section -->
+<section id="home" class="hero-section">
+    <div class="hero-background">
+        <div class="hero-shape shape-1"></div>
+        <div class="hero-shape shape-2"></div>
+        <div class="hero-shape shape-3"></div>
+    </div>
+    
+    <div class="hero-container">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span>🎯 Professional Event Finance Management</span>
+            </div>
+            <h1 class="hero-title">
+                Manage Event Finances
+                <span class="gradient-text">Like Never Before</span>
+            </h1>
+            <p class="hero-description">
+                Transform your event financial management with real-time tracking, 
+                intelligent budgeting, and powerful visualization tools. All in one platform.
+            </p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('home.signup') }}" class="btn-primary-large">
+                    Start Free Trial
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="#features" class="btn-secondary-large">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polygon points="10 8 16 12 10 16 10 8"/>
+                    </svg>
+                    Watch Demo
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Events Managed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Organizations</div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="dashboard-preview">
+                <div class="preview-header">
+                    <div class="preview-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="preview-title">FinSight Dashboard</div>
+                </div>
+                <div class="preview-content">
+                    <div class="preview-card card-1">
+                        <div class="card-icon">💰</div>
+                        <div class="card-title">Total Budget</div>
+                        <div class="card-value">₹2,45,000</div>
+                        <div class="card-trend positive">+12.5%</div>
+                    </div>
+                    <div class="preview-card card-2">
+                        <div class="card-icon">📊</div>
+                        <div class="card-title">Expenses</div>
+                        <div class="card-value">₹1,87,500</div>
+                        <div class="card-trend negative">-3.2%</div>
+                    </div>
+                    <div class="preview-card card-3">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-title">Active Events</div>
+                        <div class="card-value">24</div>
+                        <div class="card-trend positive">+5</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
 <!-- Features Section -->
-<section id="features" class="features">
-
-        <div class="feature">
-            <h3>Secure</h3>
-            <p>Your data is encrypted using TLS protocols for maximum security.</p>
+<section id="features" class="features-section">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-badge">Features</span>
+            <h2 class="section-title">Everything You Need to<br>Manage Event Finances</h2>
+            <p class="section-description">Powerful features to streamline your event financial operations</p>
         </div>
-        <div class="feature">
-            <h3>Easy-to-use</h3>
-            <p>Simplified onboarding and a comprehensive knowledge base.</p>
-        </div>
-        <div class="feature">
-            <h3>All-in-one</h3>
-            <p>Manage all event data seamlessly from one platform.</p>
-        </div>
-        <div class="feature">
-            <h3>Customizable</h3>
-            <p>Adapt FinSight to meet the needs of your business.</p>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon icon-blue">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Bank-Grade Security</h3>
+                <p class="feature-description">Your financial data is protected with enterprise-level encryption and security protocols.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-purple">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Real-Time Tracking</h3>
+                <p class="feature-description">Monitor expenses and budgets in real-time with automatic updates and notifications.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-green">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Budget Management</h3>
+                <p class="feature-description">Set budgets, track spending, and get alerts before you exceed your limits.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-orange">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6" y1="20" x2="6" y2="14"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Visual Analytics</h3>
+                <p class="feature-description">Beautiful charts and graphs to understand your financial data at a glance.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-pink">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Team Collaboration</h3>
+                <p class="feature-description">Assign roles, manage permissions, and collaborate with your team seamlessly.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon icon-teal">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Automated Reports</h3>
+                <p class="feature-description">Generate comprehensive financial reports with a single click.</p>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- About Us Section -->
-<section id="about" class="about">
-<div class="about-content container">
-    <div class="about-image">
-        <img src="{{url_for('static',filename='images/About_us.webp')}}" alt="About Us Image">
+<!-- About Section -->
+<section id="about" class="about-section">
+    <div class="about-container">
+        <div class="about-image">
+            <img src="{{ url_for('static', filename='images/About_us.webp') }}" alt="About FinSight">
+            <div class="about-image-overlay">
+                <div class="overlay-stat">
+                    <div class="overlay-number">4+</div>
+                    <div class="overlay-label">Years Experience</div>
+                </div>
+            </div>
+        </div>
+        <div class="about-content">
+            <span class="section-badge">About Us</span>
+            <h2 class="section-title">Empowering Event Organizers with Financial Intelligence</h2>
+            <p class="about-text">
+                FinSight was born from a simple vision: make event financial management accessible, 
+                intuitive, and powerful for everyone. Developed by a passionate team of students from 
+                Amrita School of Computing, Kochi, we combined our expertise in technology and finance 
+                to create a platform that truly understands your needs.
+            </p>
+            <div class="about-features">
+                <div class="about-feature-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Real-time expense tracking and monitoring</span>
+                </div>
+                <div class="about-feature-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Intelligent budget allocation and forecasting</span>
+                </div>
+                <div class="about-feature-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Beautiful data visualization and insights</span>
+                </div>
+                <div class="about-feature-item">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                    <span>Secure, scalable, and user-friendly platform</span>
+                </div>
+            </div>
+            <a href="{{ url_for('home.signup') }}" class="btn-about">Start Your Journey</a>
+        </div>
     </div>
-    <div class="about-text">
-        <h1>About Us</h1>
-        <p>
-            "Welcome to FinSight, your trusted Event Finance Management and Visualization platform! Developed with passion and innovation, FinSight simplifies the complex financial tasks associated with organizing events. Our platform empowers users with real-time expense tracking, budget allocation, financial reporting, and seamless data visualization—all in one easy-to-use application."
-        </p>
-        <p>
-            <strong>Why Choose FinSight?</strong><br>
-            Whether you're an event manager, accountant, or finance enthusiast, FinSight is tailored to streamline the challenges of managing event finances. From handling single events to overseeing multiple projects, our platform adapts to your needs with its customizable features and secure environment.
-        </p>
-        <p>
-            <strong>Our Story:</strong><br>
-            FinSight is the brainchild of a talented team of four students from Amrita School of Computing, Kochi. Combining a shared vision for innovation and a deep understanding of financial complexities, we designed this software to address the gaps in event financial management. With a strong focus on usability and data security, we aim to make event finance management simpler, more efficient, and stress-free for everyone.
-        </p>
-        <p>
-            <strong>Our Commitment:</strong><br>
-            At FinSight, we are dedicated to empowering users with the tools and insights they need to make informed financial decisions. With advanced features, seamless integration, and user-centric design, we ensure every event you plan becomes a financial success.
-        </p>
-    </div>
-</div>
 </section>
 
-<!-- Users Section -->
-<section id="users" class="users">
-<div class="users-content container">
-    <div class="users-text">
-        <h1>Our Users</h1>
-        <p>
-            FinSight is designed to cater to the unique needs of three primary user roles:
-        </p>
-        <p>
-            <strong>1. Admin:</strong><br>
-            The Admin manages the overall platform, oversees user accounts, sets permissions, and ensures the smooth functioning of the system.
-        </p>
-        <p>
-            <strong>2. Finance Manager:</strong><br>
-            The Finance Manager tracks budgets, oversees financial reporting, manages transactions, and ensures all finances are aligned with organizational goals.
-        </p>
-        <p>
-            <strong>3. Event Manager:</strong><br>
-            The Event Manager focuses on planning and managing event-related tasks, keeping a close eye on expenditures, and ensuring the event stays within budget.
-        </p>
-        <p>
-            Each user role is equipped with tailored features and permissions, ensuring a seamless experience for managing events and finances effectively.
-        </p>
+<!-- Roles Section -->
+<section class="roles-section">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-badge">User Roles</span>
+            <h2 class="section-title">Built for Every Team Member</h2>
+            <p class="section-description">Tailored experiences for different roles in your organization</p>
+        </div>
+        
+        <div class="roles-grid">
+            <div class="role-card">
+                <div class="role-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <h3 class="role-title">Admin</h3>
+                <p class="role-description">
+                    Full platform control with user management, permissions, system configuration, 
+                    and comprehensive oversight of all operations.
+                </p>
+                <ul class="role-features">
+                    <li>User account management</li>
+                    <li>System configuration</li>
+                    <li>Access control</li>
+                    <li>Activity monitoring</li>
+                </ul>
+            </div>
+            
+            <div class="role-card highlighted">
+                <div class="role-badge">Most Popular</div>
+                <div class="role-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                </div>
+                <h3 class="role-title">Event Manager</h3>
+                <p class="role-description">
+                    Plan, organize, and execute events while managing budgets, tracking expenses, 
+                    and ensuring financial compliance throughout the event lifecycle.
+                </p>
+                <ul class="role-features">
+                    <li>Event planning & execution</li>
+                    <li>Expense tracking</li>
+                    <li>Budget monitoring</li>
+                    <li>Team collaboration</li>
+                </ul>
+            </div>
+            
+            <div class="role-card">
+                <div class="role-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                </div>
+                <h3 class="role-title">Finance Manager</h3>
+                <p class="role-description">
+                    Oversee financial operations, generate reports, analyze budgets, manage transactions, 
+                    and ensure fiscal responsibility across all events.
+                </p>
+                <ul class="role-features">
+                    <li>Financial reporting</li>
+                    <li>Transaction management</li>
+                    <li>Budget analysis</li>
+                    <li>Compliance monitoring</li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <div class="users-image">
-        <img src="{{url_for('static',filename='images/Users.webp')}}" alt="Users in FinSight">
-    </div>
-</div>
 </section>
 
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="cta-container">
+        <div class="cta-content">
+            <h2 class="cta-title">Ready to Transform Your Event Finance Management?</h2>
+            <p class="cta-description">Join hundreds of organizations already using FinSight</p>
+            <div class="cta-buttons">
+                <a href="{{ url_for('home.signup') }}" class="btn-cta-primary">Get Started Free</a>
+                <a href="#contact" class="btn-cta-secondary">Contact Sales</a>
+            </div>
+        </div>
+    </div>
+</section>
 
-
-<!-- Contact Us Section -->
-<section id="contact" class="contact">
-    <div class="container">
-        <h2>Contact Us</h2>
-        <p>Follow us on social media or reach out via email:</p>
-        <div class="social-links">
-            <a href="https://www.instagram.com" target="_blank">Instagram</a>
-            <a href="https://www.facebook.com" target="_blank">Facebook</a>
-            <a href="mailto:info@finsight.com">Gmail</a>
+<!-- Contact Section -->
+<section id="contact" class="contact-section">
+    <div class="section-container">
+        <div class="section-header">
+            <span class="section-badge">Get in Touch</span>
+            <h2 class="section-title">We'd Love to Hear From You</h2>
+            <p class="section-description">Have questions? Our team is here to help</p>
+        </div>
+        
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                        <polyline points="22,6 12,13 2,6"/>
+                    </svg>
+                </div>
+                <h3>Email Us</h3>
+                <p>info@finsight.com</p>
+                <a href="mailto:info@finsight.com" class="contact-link">Send Email →</a>
+            </div>
+            
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                </div>
+                <h3>Instagram</h3>
+                <p>@finsight.official</p>
+                <a href="https://www.instagram.com" target="_blank" class="contact-link">Follow Us →</a>
+            </div>
+            
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                    </svg>
+                </div>
+                <h3>Facebook</h3>
+                <p>FinSight Official</p>
+                <a href="https://www.facebook.com" target="_blank" class="contact-link">Visit Page →</a>
+            </div>
         </div>
     </div>
 </section>
 
 <!-- Footer -->
-<footer class="main-footer">
-    <div class="container">
-        <p>&copy; 2024 FinSight. All rights reserved.</p>
+<footer class="modern-footer">
+    <div class="footer-container">
+        <div class="footer-top">
+            <div class="footer-brand">
+                <a href="/" class="footer-logo">
+                    <img src="{{ url_for('static', filename='images/favicon.jpg') }}" alt="FinSight">
+                    <span>Fin<span>Sight</span></span>
+                </a>
+                <p class="footer-tagline">Smart Event Finance Management for Modern Organizations</p>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a href="https://www.twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Product</h4>
+                    <a href="#features">Features</a>
+                    <a href="#about">About</a>
+                    <a href="{{ url_for('home.signup') }}">Get Started</a>
+                    <a href="{{ url_for('home.login') }}">Login</a>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Resources</h4>
+                    <a href="#">Documentation</a>
+                    <a href="#">API Reference</a>
+                    <a href="#">Support</a>
+                    <a href="#">Blog</a>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>Company</h4>
+                    <a href="#about">About Us</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Press</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 FinSight. All rights reserved.</p>
+            <div class="footer-legal">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
     </div>
 </footer>
 
 <!-- Scroll to Top Button -->
-<button id="scroll-to-top" class="scroll-to-top-btn">↑</button>
+<button id="scrollToTop" class="scroll-to-top">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M18 15l-6-6-6 6"/>
+    </svg>
+</button>
 
 <script>
-    // Scroll-to-top functionality
-    const scrollToTopBtn = document.getElementById('scroll-to-top');
+// Mobile menu toggle
+const mobileToggle = document.getElementById('mobileToggle');
+const navMenu = document.getElementById('navMenu');
 
-    window.onscroll = function () {
-        if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-            scrollToTopBtn.style.display = 'block';
-        } else {
-            scrollToTopBtn.style.display = 'none';
+mobileToggle.addEventListener('click', () => {
+    navMenu.classList.toggle('active');
+    mobileToggle.classList.toggle('active');
+});
+
+// Scroll to top functionality
+const scrollToTop = document.getElementById('scrollToTop');
+
+window.addEventListener('scroll', () => {
+    if (window.pageYOffset > 300) {
+        scrollToTop.classList.add('visible');
+    } else {
+        scrollToTop.classList.remove('visible');
+    }
+});
+
+scrollToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Smooth scroll for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            navMenu.classList.remove('active');
+            mobileToggle.classList.remove('active');
         }
-    };
-
-    scrollToTopBtn.addEventListener('click', function () {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
+});
+
+// Active nav link on scroll
+const sections = document.querySelectorAll('section[id]');
+const navItems = document.querySelectorAll('.nav-item');
+
+window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (pageYOffset >= sectionTop - 200) {
+            current = section.getAttribute('id');
+        }
+    });
+    
+    navItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('href') === `#${current}`) {
+            item.classList.add('active');
+        }
+    });
+});
 </script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 {% endblock %}

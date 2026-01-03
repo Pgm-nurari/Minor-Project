@@ -99,7 +99,7 @@ def event_details(user_id, event_id):
         event_types = db.session.query(EventType).all()
 
         return render_template(
-            'event_manager/event_details_new.html',
+            'event_manager/event_details.html',
             event=event_data,
             event_types=event_types,
             user_id=user_id,

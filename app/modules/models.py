@@ -102,11 +102,13 @@ class Transaction(db.Model, BaseMixin):
     User_ID = db.Column(db.Integer, db.ForeignKey('User.User_ID'), nullable=False)
     Event_ID = db.Column(db.Integer, db.ForeignKey('Event.Event_ID'), nullable=False)
     Sub_Event_ID = db.Column(db.Integer, db.ForeignKey('Sub_Event.Sub_Event_ID'), nullable=True)  # New column for SubEvent
+    Amount = db.Column(DECIMAL(10, 2), default=0.00)
     Bill_No = db.Column(db.String(50), nullable=True)
     Party_Name = db.Column(db.String(100), nullable=True)
     Nature_ID = db.Column(db.Integer, db.ForeignKey('Transaction_Nature.Nature_ID'))
     Mode_ID = db.Column(db.Integer, db.ForeignKey('Payment_Mode.Mode_ID'))
     Date = db.Column(db.Date, nullable=False)
+    Description = db.Column(db.Text, nullable=True)
     Transaction_Category_ID = db.Column(db.Integer, db.ForeignKey('Transaction_Category.Transaction_Category_ID'))
     Account_Category_ID = db.Column(db.Integer, db.ForeignKey('Account_Category.Account_Category_ID'))
     modified_date = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())

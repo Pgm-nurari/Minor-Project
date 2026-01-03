@@ -1,133 +1,274 @@
 {% extends 'base.html' %}
 
-{% import 'components/header_with_button.html' as section_header %}
 {% import 'event_manager/header_bar.html' as user_header %}
 
-{% block title %}Event Detail - Event Manager{% endblock %}
+{% block title %}Event Details - Event Manager{% endblock %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
 <style>
-/* Container for centering content */
-.event-detail-container {
-    max-width: 1200px;
-    margin: 0 auto; /* Centers the container */
-    padding: 20px;
-}
+    .container-fluid {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
 
-/* Card Styling */
-.event-detail-card {
-    margin-top: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2.5rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
 
-/* Center text inside the card */
-.event-detail-card-body {
-    text-align: left;
-    margin-left: 20px;
-    padding: 20px;
-}
+    .page-header h2 {
+        margin: 0 0 0.5rem 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }
 
-/* Transaction Table */
-.table-responsive-event {
-    margin-top: 20px;
-    overflow-x: auto; /* Makes the table scrollable on smaller screens */
-}
+    .event-status {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+    }
 
-.event-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px; /* Adds spacing between table and other elements */
-}
+    .status-upcoming { background: #3b82f6; }
+    .status-ongoing { background: #10b981; }
+    .status-completed { background: #6c757d; }
 
-.event-table th, .event-table td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-}
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
 
-/* Table header styles */
-.event-table th {
-    background-color: #f8f9fa;
-    font-weight: bold;
-    color: #333;
-}
+    .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid;
+        transition: all 0.3s ease;
+    }
 
-/* Table row hover effect */
-.event-table tbody tr:hover {
-    background-color: #f1f1f1;
-}
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
 
-/* Transaction Button for View All */
-.view-all-btn-info {
-    background-color: #5bc0de; /* Bootstrap default info button color */
-    color: white;
-    padding: 10px 15px;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 16px;
-}
+    .stat-card.transactions { border-left-color: #667eea; }
+    .stat-card.revenue { border-left-color: #10b981; }
+    .stat-card.expense { border-left-color: #f59e0b; }
 
-.view-all-btn-info:hover {
-    background-color: #31b0d5; /* Darker shade on hover */
-}
+    .stat-label {
+        color: #718096;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
 
-/* Button for Edit and Save */
-.edit-event-btn, .cancel-event-btn {
-    margin-top: 10px;
-}
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
 
-.edit-event-btn {
-    background-color: #AFD46E; /* Light green background */
-    border: none;
-    color: white;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-}
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
 
-.cancel-event-btn {
-    background-color: #f8f9fa;
-    border: 1px solid #ddd;
-    color: #333;
-    padding: 10px 15px;
-    cursor: pointer;
-    border-radius: 5px;
-}
+    .section-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(102, 126, 234, 0.1);
+    }
 
-.edit-event-btn:hover, .cancel-event-btn:hover {
-    opacity: 0.8;
-}
+    .section-card h3 {
+        color: #667eea;
+        font-size: 1.3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+    }
 
-/* Transaction Section (Additional Margin) */
-.transaction-section {
-    margin-top: 30px;
-    text-align: center;
-}
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
 
-/* Styling for Table and Pagination Section */
-.event-table-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centers the table */
-    margin-top: 30px;
-}
+    .info-item:last-child {
+        border-bottom: none;
+    }
 
-/* Button for Adding New Transaction */
-.add-transaction-btn {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    margin-top: 20px;
-}
+    .info-item strong {
+        color: #4a5568;
+        font-weight: 600;
+    }
 
-.add-transaction-btn:hover {
-    background-color: #218838;
-}
+    .info-item span {
+        color: #2d3748;
+        font-weight: 500;
+    }
+
+    .data-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .data-table thead {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+    }
+
+    .data-table th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .data-table th:first-child {
+        border-top-left-radius: 8px;
+    }
+
+    .data-table th:last-child {
+        border-top-right-radius: 8px;
+    }
+
+    .data-table tbody tr {
+        border-bottom: 1px solid #e2e8f0;
+        transition: background-color 0.2s ease;
+    }
+
+    .data-table tbody tr:hover {
+        background-color: #f7fafc;
+    }
+
+    .data-table td {
+        padding: 1rem;
+        color: #4a5568;
+        font-size: 0.95rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: inline-block;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        color: white;
+    }
+
+    .btn-success {
+        background: #10b981;
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #059669;
+        color: white;
+    }
+
+    .btn-warning {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .btn-warning:hover {
+        background: #d97706;
+        color: white;
+    }
+
+    .btn-danger {
+        background: #ef4444;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+        color: white;
+    }
+
+    .btn-info {
+        background: #3b82f6;
+        color: white;
+    }
+
+    .btn-info:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+    .credit {
+        color: #10b981;
+        font-weight: 600;
+    }
+
+    .debit {
+        color: #ef4444;
+        font-weight: 600;
+    }
+
+    .no-data {
+        text-align: center;
+        padding: 3rem;
+        color: #a0aec0;
+    }
+
+    .no-data-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+    }
 </style>
 {% endblock %}
 
@@ -136,154 +277,148 @@
 {% endblock %}
 
 {% block content %}
-<div class="event-detail-container mt-4">
-    <h2>Event Details</h2>
-    <div class="event-detail-card my-4">
-        <div class="event-detail-card-body">
-            <h5 class="card-title">Event Name: {{ event['event_name'] }}</h5>
-            <p class="card-text">
-                <strong>Type:</strong> {{ event['type'] }} <br>
-                <strong>Status:</strong> {{ event['status'] }} <br>
-                <strong>Department:</strong> {{ event['department'] }} <br>
-                <strong>Date:</strong> {{ event['date'] }} <br>
-                {% if event['time'] %}
-                    <strong>Time:</strong> {{ event['time'] }} <br>
-                {% endif %}
-                
-                {% if event['main_event_name'] %}
-                    <strong>Main Event:</strong> {{ event['main_event_name'] }} <br>
-                {% endif %}
-            </p>
-
-            <!-- Editable form (hidden by default) -->
-            <form method="POST" action="{{ url_for('event_manager.update_event', user_id=user_id, event_id=event['id']) }}" class="edit-form" style="display: none;">
-                <div class="mb-3">
-                    <label for="event_type" class="form-label">Event Type</label>
-                    <select id="event_type" name="event_type" class="form-select" required>
-                        {% for etype in event_types %}
-                        <option value="{{ etype.Event_Type_ID }}" {% if etype.Event_Type_ID == event['Event_Type_ID'] %} selected {% endif %}>
-                            {{ etype.Event_Type_Name }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
-                <div class="mb-3">
-                    <label for="date" class="form-label">Date</label>
-                    <input type="date" id="date" name="date" class="form-control" value="{{ event['date'] }}" required>
-                </div>
-
-                {% if event['time'] %}
-                <div class="mb-3">
-                    <label for="time" class="form-label">Time</label>
-                    <input type="time" id="time" name="time" class="form-control" value="{{ event['time'] }}">
-                </div>
-                {% endif %}
-
-                <button type="submit" class="btn btn-primary">Save Changes</button>
-                <button type="button" class="btn btn-secondary cancel-event-btn">Cancel</button>
-            </form>
-
-            <!-- Edit button -->
-            <button type="button" class="btn btn-outline-primary edit-event-btn">Edit</button>
-        </div>
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h2>📊 {{ event.event_name }}</h2>
+        <span class="event-status status-{{ event.status|lower|replace(' ', '-') }}">
+            {{ event.status }}
+        </span>
     </div>
-</div>
 
-<!-- Transactions Section -->
-<div class="transaction-section">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3>Transactions</h3>
-        <div>
-            <a href="{{ url_for('event_manager.view_all_transactions', event_id=event['id'], user_id=user_id) }}" class="view-all-btn-info me-2">View All Transactions</a>
-            <a href="{{ url_for('event_manager.create_transaction', user_id=user_id, event_id=event['id']) }}" class="add-transaction-btn">Add New Transaction</a>
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+        <div class="stat-card transactions">
+            <div class="stat-label">📝 Total Transactions</div>
+            <div class="stat-value">{{ transaction_data|length }}</div>
+        </div>
+        <div class="stat-card revenue">
+            <div class="stat-label">💰 Total Revenue</div>
+            <div class="stat-value credit">₹{{ "{:,.2f}".format(total_revenue) }}</div>
+        </div>
+        <div class="stat-card expense">
+            <div class="stat-label">💸 Total Expenses</div>
+            <div class="stat-value debit">₹{{ "{:,.2f}".format(total_expenses) }}</div>
         </div>
     </div>
 
-    {% if transactions %}
-        <!-- Search and Filter Options -->
-        <div class="mb-3 d-flex justify-content-between">
-            <input type="text" id="transaction-search" class="form-control me-2" placeholder="Search by Party Name or Bill No" style="max-width: 300px;">
-            <select id="transaction-filter" class="form-select" style="max-width: 200px;">
-                <option value="all">All Dates</option>
-                <option value="last7">Last 7 Days</option>
-                <option value="last30">Last 30 Days</option>
-                <option value="thisMonth">This Month</option>
-            </select>
+    <!-- Event Information Grid -->
+    <div class="info-grid">
+        <div class="section-card">
+            <h3>📋 Event Information</h3>
+            <div class="info-item">
+                <strong>Event Type</strong>
+                <span>{{ event.type }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Department</strong>
+                <span>{{ event.department }}</span>
+            </div>
+            <div class="info-item">
+                <strong>Event Date</strong>
+                <span>{{ event.date }}</span>
+            </div>
+            {% if event.time %}
+            <div class="info-item">
+                <strong>Event Time</strong>
+                <span>{{ event.time }}</span>
+            </div>
+            {% endif %}
+            {% if event.main_event_name %}
+            <div class="info-item">
+                <strong>Parent Event</strong>
+                <span>{{ event.main_event_name }}</span>
+            </div>
+            {% endif %}
         </div>
 
-        <div class="event-table-container">
-            <div class="table-responsive-event">
-                <table class="event-table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th>Bill No</th>
-                            <th>Party Name</th>
-                            <th>Amount</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transaction-table-body">
-                        {% for transaction in transactions %}
-                        <tr>
-                            <td>{{ transaction['bill_no'] }}</td>
-                            <td>{{ transaction['party_name'] }}</td>
-                            <td>{{ transaction['amount'] }}</td>
-                            <td>{{ transaction['date'] }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <div class="section-card">
+            <h3>📈 Quick Actions</h3>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <a href="{{ url_for('event_manager.create_transaction', user_id=user_id, event_id=event.id) }}" 
+                   class="action-btn btn-success" style="text-align: center;">
+                    ➕ Add New Transaction
+                </a>
+                <a href="{{ url_for('event_manager.event_visualization', user_id=user_id, event_id=event.id) }}" 
+                   class="action-btn btn-primary" style="text-align: center;">
+                    📊 View Visualizations
+                </a>
+                <a href="{{ url_for('event_manager.view_all_transactions', user_id=user_id, event_id=event.id) }}" 
+                   class="action-btn btn-info" style="text-align: center;">
+                    📋 View All Transactions
+                </a>
+                <a href="{{ url_for('event_manager.view_events', user_id=user_id) }}" 
+                   class="action-btn btn-primary" style="text-align: center;">
+                    ← Back to Events
+                </a>
             </div>
         </div>
-    {% else %}
-        <p>No transactions were made for this event. 
-            <a href="{{ url_for('event_manager.create_transaction', user_id=user_id, event_id=event['id']) }}">
-                Click here
-            </a> to make a transaction.
-        </p>
-    {% endif %}
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="section-card">
+        <div class="section-header">
+            <h3 style="margin: 0;">📝 Recent Transactions</h3>
+            {% if transaction_data|length > 5 %}
+            <a href="{{ url_for('event_manager.view_all_transactions', user_id=user_id, event_id=event.id) }}" 
+               class="action-btn btn-info">View All</a>
+            {% endif %}
+        </div>
+
+        {% if transaction_data %}
+        <div style="overflow-x: auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Bill No</th>
+                        <th>Party Name</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Nature</th>
+                        <th>Payment Mode</th>
+                        <th>Category</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transaction_data[:5] %}
+                    <tr>
+                        <td><strong>{{ txn.bill_no or '-' }}</strong></td>
+                        <td>{{ txn.party_name or '-' }}</td>
+                        <td class="{{ 'credit' if txn.nature == 'Credit' else 'debit' }}">
+                            ₹{{ "{:,.2f}".format(txn.amount) }}
+                        </td>
+                        <td>{{ txn.date.strftime('%Y-%m-%d') if txn.date else '-' }}</td>
+                        <td>
+                            <span class="{{ 'credit' if txn.nature == 'Credit' else 'debit' }}">
+                                {{ txn.nature }}
+                            </span>
+                        </td>
+                        <td>{{ txn.payment_mode }}</td>
+                        <td>{{ txn.category }}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ url_for('event_manager.view_individual_transaction', user_id=user_id, transaction_id=txn.id) }}" 
+                                   class="action-btn btn-info">View</a>
+                                <a href="{{ url_for('event_manager.edit_transaction', user_id=user_id, transaction_id=txn.id) }}" 
+                                   class="action-btn btn-warning">Edit</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="no-data">
+            <div class="no-data-icon">📝</div>
+            <p>No transactions recorded yet</p>
+            <a href="{{ url_for('event_manager.create_transaction', user_id=user_id, event_id=event.id) }}" 
+               class="action-btn btn-success">
+                ➕ Create First Transaction
+            </a>
+        </div>
+        {% endif %}
+    </div>
 </div>
-
-<script>
-    document.getElementById('transaction-search').addEventListener('input', function () {
-        const searchValue = this.value.toLowerCase();
-        const rows = document.querySelectorAll('#transaction-table-body tr');
-
-        rows.forEach(row => {
-            const billNo = row.cells[0].textContent.toLowerCase();
-            const partyName = row.cells[1].textContent.toLowerCase();
-            if (billNo.includes(searchValue) || partyName.includes(searchValue)) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    });
-
-    document.getElementById('transaction-filter').addEventListener('change', function () {
-        const filterValue = this.value;
-        const rows = document.querySelectorAll('#transaction-table-body tr');
-        const now = new Date();
-
-        rows.forEach(row => {
-            const dateCell = row.cells[3].textContent;
-            const transactionDate = new Date(dateCell);
-            let showRow = true;
-
-            if (filterValue === 'last7') {
-                showRow = (now - transactionDate) / (1000 * 60 * 60 * 24) <= 7;
-            } else if (filterValue === 'last30') {
-                showRow = (now - transactionDate) / (1000 * 60 * 60 * 24) <= 30;
-            } else if (filterValue === 'thisMonth') {
-                showRow = transactionDate.getMonth() === now.getMonth() && transactionDate.getFullYear() === now.getFullYear();
-            }
-
-            row.style.display = showRow || filterValue === 'all' ? '' : 'none';
-        });
-    });
-</script>
-
-
 {% endblock %}
-
