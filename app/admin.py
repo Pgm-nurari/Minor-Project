@@ -3,6 +3,7 @@ from . import db
 from .modules.models import *
 from .modules.db_queries import *
 from .modules.activity_logger import log_activity, create_notification
+from .auth import role_required, get_current_user
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy import asc, desc
 from sqlalchemy import func
@@ -11,6 +12,17 @@ from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+@admin_bp.before_request
+def check_admin_access():
+    """Check if user is logged in and has Admin role before accessing any admin route."""
+    if 'user_id' not in session:
+        flash('Please log in to access this page.', 'error')
+        return redirect(url_for('home.login'))
+    
+    if session.get('role') != 'Admin':
+        flash('You do not have permission to access this page.', 'error')
+        return redirect(url_for('home.index'))
 
 @admin_bp.route('/')
 def admin_dashboard():

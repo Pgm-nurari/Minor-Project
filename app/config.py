@@ -9,6 +9,13 @@ class Config:
     """Base configuration with default settings."""
     SECRET_KEY = os.environ.get('SECRET_KEY', 'your_secret_key_here')
     
+    # Session Security
+    PERMANENT_SESSION_LIFETIME = int(os.environ.get('PERMANENT_SESSION_LIFETIME', 3600))  # 1 hour default
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    # Only enable in production with HTTPS:
+    # SESSION_COOKIE_SECURE = True
+    
     # Database credentials from environment variables
     DB_USERNAME = os.environ.get('DB_USERNAME', 'root')
     DB_PASSWORD = os.environ.get('DB_PASSWORD', '')

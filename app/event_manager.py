@@ -4,6 +4,7 @@ import json
 from .modules.models import *
 from .modules.db_queries import *
 from .modules.activity_logger import log_activity, create_notification
+from .auth import login_required
 from sqlalchemy.orm import joinedload, validates
 from sqlalchemy.exc import SQLAlchemyError
 from collections import defaultdict
@@ -12,6 +13,18 @@ from datetime import datetime, date
 from werkzeug.security import generate_password_hash, check_password_hash
 
 event_manager_bp = Blueprint('event_manager', __name__, url_prefix='/evemng/<int:user_id>')
+
+@event_manager_bp.before_request
+def check_event_manager_access():
+    """Check if user is logged in before accessing any event manager route."""
+    if 'user_id' not in session:
+        flash('Please log in to access this page.', 'error')
+        return redirect(url_for('home.login'))
+    
+    # Check if user is accessing their own routes or has appropriate role
+    if session.get('role') not in ['Event Manager', 'Admin']:
+        flash('You do not have permission to access this page.', 'error')
+        return redirect(url_for('home.index'))
 
 # Dashboard for event manager with the list of events
 @event_manager_bp.route('/')

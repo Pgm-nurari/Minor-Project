@@ -1,4 +1,4 @@
-from flask import render_template, Blueprint, request, redirect, url_for
+from flask import render_template, Blueprint, request, redirect, url_for, session, flash
 from app.modules import validations
 from .modules.models import Department, Role, User
 from .modules.db_queries import filter_data, create_entry, update_entry
@@ -49,6 +49,13 @@ def login():
         # Check the role of the user
         role = current_user.role.Role_Name  # Assuming the role is an object and has a 'Role_Name' attribute
 
+        # Create session for authenticated user
+        session['user_id'] = current_user.User_ID
+        session['username'] = current_user.Username
+        session['email'] = current_user.Email
+        session['role'] = role
+        session.permanent = True  # Make session persistent
+
         # Redirect based on role
         if role == 'Admin':
             return redirect(url_for('admin.admin_dashboard'))
@@ -62,6 +69,13 @@ def login():
     
     # Render the login page for GET requests
     return render_template("home/login.html")
+
+@home_bp.route("/logout")
+def logout():
+    """Log out the current user by clearing the session."""
+    session.clear()
+    flash('You have been logged out successfully.', 'success')
+    return redirect(url_for('home.login'))
 
 @home_bp.route("/forgot-password", methods=["GET", "POST"])
 def forgot_password():

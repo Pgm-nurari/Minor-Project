@@ -4,6 +4,7 @@ from app import db
 from .modules.models import *
 from .modules.db_queries import *
 from .modules.activity_logger import log_activity, create_notification
+from .auth import login_required
 from sqlalchemy.orm import joinedload, validates
 from sqlalchemy.exc import SQLAlchemyError
 from collections import defaultdict
@@ -25,6 +26,18 @@ import tempfile
 import os
 
 finance_manager_bp = Blueprint('finance_manager', __name__, url_prefix='/finmng/<int:user_id>')
+
+@finance_manager_bp.before_request
+def check_finance_manager_access():
+    """Check if user is logged in before accessing any finance manager route."""
+    if 'user_id' not in session:
+        flash('Please log in to access this page.', 'error')
+        return redirect(url_for('home.login'))
+    
+    # Check if user is accessing their own routes or has appropriate role
+    if session.get('role') not in ['Finance Manager', 'Admin']:
+        flash('You do not have permission to access this page.', 'error')
+        return redirect(url_for('home.index'))
 
 @finance_manager_bp.route('/')
 def finance_manager(user_id):
